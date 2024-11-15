@@ -101,7 +101,7 @@
         </form>
         <div class="text-center">or <a href="register.php">create an account</a></div>
       </div>
-
+      
     </div>
   </div>
 </div> <!-- End modal -->
