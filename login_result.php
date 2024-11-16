@@ -22,29 +22,31 @@ echo "conneted successful.\n";
 
 
 if($_POST['email'] != "" && $_POST['password'] != ""){
-    session_start();
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $sql = "select user_id, username, password from user where email='$email' and password='$password';";
+    $sql = "select user_id, username, password, email, accountType from user where email='$email' and password='$password';";
     $result = mysqli_query($con, $sql);
     $row = mysqli_num_rows($result);
     if(!$row){
         echo('<div class="text-center">Error:User does not exists.</div>');
         exit();
-    }else{
-        $_SESSION['logged_in'] = true;
-        $_SESSION['username'] = $_POST['email'];
     }
 }else{
     echo('<div class="text-center">Error:Login information required.</div>');
-    header("refresh:5;url=index.php");
+    header("refresh:5;url=browse.php");
     exit();
 }
 
-
+$fetch = mysqli_fetch_array($result);
+session_start();
+$_SESSION['logged_in'] = true;
+$_SESSION['username'] = $fetch['username'];
+$_SESSION['email'] = $fetch['email'];
+$_SESSION['account_type'] = $fetch['accountType'];
 echo('<div class="text-center">You are now logged in! You will be redirected shortly.</div>');
 
-// Redirect to index after 5 seconds
-header("refresh:5;url=index.php");
+
+// Redirect to browse after 5 seconds
+header("refresh:5;url=browse.php");
 
 ?>

@@ -62,5 +62,5 @@ if($con->query($sql) == true){
 }
 $con->close();
 
-header("refresh:5;url=index.php");
+header("refresh:5;url=browse.php");
 ?>
