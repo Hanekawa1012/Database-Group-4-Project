@@ -31,9 +31,9 @@ if ($_POST["email"] == ""){//check if the email is not filled in
     if(!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/", $email)){//check if the format is valid.
         die("Error: Email address invalid.");
     }
-    $sql = "select * from user where email =" . "'" . $email . "'";//check if the email is already registered
+    $sql = "select * from user where email = '$email';";//check if the email is already registered
     $result = $con->query($sql);
-    if(!empty($result)){
+    if(empty($result)){
         die("Account already exists.");
         //TO DO: Add a change_password.php, and choose accountType in account login window
     }
