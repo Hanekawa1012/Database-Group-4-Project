@@ -1,26 +1,11 @@
 <?php include_once("header.php")?>
-
+<?php require("my_db_connect.php")?>
 
 <?php
 
 // TODO: Extract $_POST variables, check they're OK, and attempt to create
 // an account. Notify user of success/failure and redirect/give navigation 
 // options.
-
-
-//connect to database (if YOURS in XAMPP is DIFFERENT PLEASE CHANGE)
-$mydbhost = "localhost";
-$mydbuser = "root";
-$mydbpasswd = "";
-$dbname = "db-group4";
-
-$con = new mysqli($mydbhost, $mydbuser, $mydbpasswd, $dbname);
-
-if ($con->connect_error){
-  die("connect error" . $con->connect_error);
-}
-
-echo "conneted successful.\n";
 
 
 //check if all variables in the from are OK. If OK, innitialize variables here:
@@ -62,5 +47,5 @@ if($con->query($sql) == true){
 }
 $con->close();
 
-header("refresh:5;url=browse.php");
+header("refresh:3;url=browse.php");
 ?>

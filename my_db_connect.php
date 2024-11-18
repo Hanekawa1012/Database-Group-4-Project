@@ -10,6 +10,4 @@ $con = new mysqli($mydbhost, $mydbuser, $mydbpasswd, $dbname);
 if ($con->connect_error){
   die("connect error" . $con->connect_error);
 }
-
-echo "conneted successful.\n";
 ?>

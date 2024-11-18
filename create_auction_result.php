@@ -3,12 +3,11 @@
 <div class="container my-5">
 
 <?php
-
 // This function takes the form data and adds the new auction to the database.
 
 /* TODO #1: Connect to MySQL database (perhaps by requiring a file that
             already does this). */
-require_once "my_db_connect.php";
+require "my_db_connect.php";
 
 /* TODO #2: Extract form data into variables. Because the form was a 'post'
             form, its data can be accessed via $POST['auctionTitle'], 
@@ -21,21 +20,26 @@ $auctionCategory = $_POST['auctionCategory'];
 $auctionStartPrice = $_POST['auctionStartPrice'];
 $auctionReservePrice = $_POST['auctionReservePrice'];
 $auctionEndDate = $_POST['auctionEndDate'];
+$auctionSellerID = $_SESSION['user_id'];
 
 if($auctionTitle == ""){
     echo "Error:Title required.";
+    header("refresh:3;url=create_auction.php");
     exit();
 }
 if($auctionCategory == ""){
     echo "Error:category needed";
+    header("refresh:3;url=create_auction.php");
     exit();
 }
 if($auctionStartPrice == ""){
     echo "Error:starting price required";
+    header("refresh:3;url=create_auction.php");
     exit();
 }
 if($auctionEndDate == ""){
     echo "Error:end date needed";
+    header("refresh:3;url=create_auction.php");
     exit();
 }
 
@@ -43,9 +47,10 @@ if($auctionEndDate == ""){
 /* TODO #3: If everything looks good, make the appropriate call to insert
             data into the database. */
 
-$sql = "insert into auctions(title, details, category, startPrice, reservePrice, endDate) 
-        values('$auctionTitle','$auctionDetails','$auctionCategory','$auctionStartPrice','$auctionReservePrice','$auctionEndDate')";
-if($con->query($sql) == true){
+$sql = "insert into auctions(title, details, category, startPrice, reservePrice, endDate, seller_id) 
+        values('$auctionTitle','$auctionDetails','$auctionCategory','$auctionStartPrice','$auctionReservePrice','$auctionEndDate', '$auctionSellerID' );";
+
+if(mysqli_query($con, $sql)){
     echo "data insert success.\n";
 }else{
     echo "data insert fail.\n"."<br/>".$con->error;

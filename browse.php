@@ -1,5 +1,6 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
+<?php require("my_db_connect.php")?>
 
 <div class="container">
 
@@ -88,15 +89,19 @@
   /* TODO: Use above values to construct a query. Use this query to 
      retrieve data from the database. (If there is no form data entered,
      decide on appropriate default value/default query to make. */
-  
+  $sql = "select * from auctions";
+  $result = mysqli_query($con, $sql);
+
   /* For the purposes of pagination, it would also be helpful to know the
      total number of results that satisfy the above query */
-  $num_results = 96; // TODO: Calculate me for real
+  $num_results = mysqli_num_rows($result); // TODO: Calculate me for real
   $results_per_page = 10;
   $max_page = ceil($num_results / $results_per_page);
 ?>
 
 <div class="container mt-5">
+
+
 
 <!-- TODO: If result set is empty, print an informative message. Otherwise... -->
 
@@ -105,7 +110,23 @@
 <!-- TODO: Use a while loop to print a list item for each auction listing
      retrieved from the query -->
 
+
 <?php
+  if ($result->num_rows<=0){
+    echo "No accessible auctions for now.";
+    exit();
+  }
+  while($fetch = mysqli_fetch_array($result)){
+    $item_id = $fetch['item_id'];
+    $title = $fetch['title'];
+    $description = $fetch['details'];
+    $current_price = $fetch['startPrice'];
+    $num_bids = 1;
+    $end_date = $fetch['endDate'];
+  }
+
+  print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+
   // Demonstration of what listings will look like using dummy data.
   $item_id = "87021";
   $title = "Dummy title";

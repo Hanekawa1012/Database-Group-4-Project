@@ -1,18 +1,23 @@
 <?php include_once("header.php")?>
 <?php require("utilities.php")?>
+<?php require("my_db_connect.php")?>
+<?php //session_start();?>
 
 <?php
   // Get info from the URL:
   $item_id = $_GET['item_id'];
 
   // TODO: Use item_id to make a query to the database.
+  $sql = "select * from auctions where item_id = '$item_id'";
+  $result = mysqli_query($con, $sql);
+  $fetch = mysqli_fetch_array($result);
   
   // DELETEME: For now, using placeholder data.
-  $title = "Placeholder title";
-  $description = "Description blah blah blah";
-  $current_price = 30.50;
+  $title = $fetch['title'];
+  $description = $fetch['details'];
+  $current_price = $fetch['startPrice'];
   $num_bids = 1;
-  $end_time = new DateTime('2020-11-02T00:00:00');
+  $end_time = new DateTime($fetch['endDate']);
 
   // TODO: Note: Auctions that have ended may pull a different set of data,
   //       like whether the auction ended in a sale or was cancelled due
@@ -29,8 +34,21 @@
   // TODO: If the user has a session, use it to make a query to the database
   //       to determine if the user is already watching this item.
   //       For now, this is hardcoded.
-  $has_session = true;
-  $watching = false;
+  if(isset($_SESSION['user_id'])){
+    $has_session = true;
+    $user_id = $_SESSION['user_id'];
+    $sql = "select user_id, item_id from watchlist where user_id = '$user_id' and item_id = '$item_id'";
+    $result = mysqli_query($con, $sql);
+    $row = mysqli_num_rows($result);
+    if(!$row){
+      $watching = false;
+    }else{
+      $watching = true;
+    }
+  }else{
+    $has_session = false;
+    $watching = false;
+  }
 ?>
 
 
@@ -70,10 +88,10 @@
 
     <p>
 <?php if ($now > $end_time): ?>
-     This auction ended <?php echo(date_format($end_time, 'j M H:i')) ?>
+     This auction ended <?php echo(date_format($end_time, 'y-m-d H:i:s')) ?>
      <!-- TODO: Print the result of the auction here? -->
 <?php else: ?>
-     Auction ends <?php echo(date_format($end_time, 'j M H:i') . $time_remaining) ?></p>  
+     Auction ends <?php echo(date_format($end_time, 'y-m-d H:i:s') . $time_remaining) ?></p>  
     <p class="lead">Current bid: £<?php echo(number_format($current_price, 2)) ?></p>
 
     <!-- Bidding form -->
@@ -102,25 +120,27 @@
 // JavaScript functions: addToWatchlist and removeFromWatchlist.
 
 function addToWatchlist(button) {
-  console.log("These print statements are helpful for debugging btw");
+  console.log("Function call success.");
 
   // This performs an asynchronous call to a PHP function using POST method.
   // Sends item ID as an argument to that function.
   $.ajax('watchlist_funcs.php', {
     type: "POST",
-    data: {functionname: 'add_to_watchlist', arguments: [<?php echo($item_id);?>]},
+    data: {functionname: 'add_to_watchlist', arguments: <?php echo($item_id);?>},
 
     success: 
       function (obj, textstatus) {
         // Callback function for when call is successful and returns obj
         console.log("Success");
+        
         var objT = obj.trim();
  
         if (objT == "success") {
+          
           $("#watch_nowatch").hide();
           $("#watch_watching").show();
         }
-        else {
+        else {        
           var mydiv = document.getElementById("watch_nowatch");
           mydiv.appendChild(document.createElement("br"));
           mydiv.appendChild(document.createTextNode("Add to watch failed. Try again later."));
@@ -140,7 +160,7 @@ function removeFromWatchlist(button) {
   // Sends item ID as an argument to that function.
   $.ajax('watchlist_funcs.php', {
     type: "POST",
-    data: {functionname: 'remove_from_watchlist', arguments: [<?php echo($item_id);?>]},
+    data: {functionname: 'remove_from_watchlist', arguments: <?php echo($item_id);?>},
 
     success: 
       function (obj, textstatus) {
@@ -148,7 +168,7 @@ function removeFromWatchlist(button) {
         console.log("Success");
         var objT = obj.trim();
  
-        if (objT == "success") {
+        if (objT == "success") {          
           $("#watch_watching").hide();
           $("#watch_nowatch").show();
         }

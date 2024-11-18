@@ -12,6 +12,6 @@ session_destroy();
 
 // Redirect to main page
 echo "Logout success, redirecting to main page...";
-header("refresh:5;url=browse.php");
+header("refresh:3;url=browse.php");
 
 ?>
