@@ -6,6 +6,7 @@
 <?php
   // Get info from the URL:
   $item_id = $_GET['item_id'];
+  $_SESSION['viewing'] = $item_id;
 
   // TODO: Use item_id to make a query to the database.
   $sql = "select * from auctions where item_id = '$item_id'";
@@ -100,7 +101,7 @@
         <div class="input-group-prepend">
           <span class="input-group-text">£</span>
         </div>
-	    <input type="number" class="form-control" id="bid">
+	    <input type="number" class="form-control" name="bidPrice" id="bid">
       </div>
       <button type="submit" class="btn btn-primary form-control">Place bid</button>
     </form>
