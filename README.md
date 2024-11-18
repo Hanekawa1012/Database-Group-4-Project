@@ -35,3 +35,12 @@
     -  to call that in your working php please type require_once("my_db_connect.php") at the beginning
 - All changes in branch Tim.
 - *Maybe I will upload my sql script for creating tables needed in index.php tomorrow morning, stay tuned guys...(zzz)
+
+## Commit at 6:14, 18/11/2024 by TIM
+
+- Modified browse, create_auction_result, listing, login_result, logout, my_db_connect, process_registration, watchlist_funcs
+    - About the files modified above, the point is that the database is kind of applicated foreign key constraint and I added watchlist table to store new data of watchlist relationship between user and auctions.
+    - Accomplished smooth watchlist adding/removing, added foreign key seller_id to auctions, added recording user_id to sessions
+- Added pdo_db_connect, sql_script
+    - These are for you to get along with different database connection and database initializations. If you just right to get started with the project, make use of them.:)
+- All changes in branch Tim. Maybe it's time to merge my things since I have to look at PythonIntro. Don't hesitate to ask me if there are any problems in my code. =)
