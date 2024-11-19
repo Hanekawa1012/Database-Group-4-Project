@@ -32,11 +32,6 @@ $_SESSION['username'] = $fetch['username'];
 $_SESSION['email'] = $fetch['email'];
 $_SESSION['account_type'] = $fetch['accountType'];
 echo('<div class="text-center">You are now logged in! You will be redirected shortly.</div>');
-echo "$_SESSION['logged_in']\n";
-echo "$_SESSION['user_id']\n";
-echo "$_SESSION['username']\n";
-echo "$_SESSION['email']\n";
-echo "$_SESSION['account_type']\n";
 
 // Redirect to browse after 5 seconds
 header("refresh:3;url=browse.php");
