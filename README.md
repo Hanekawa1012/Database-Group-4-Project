@@ -44,3 +44,9 @@
 - Added pdo_db_connect, sql_script
     - These are for you to get along with different database connection and database initializations. If you just right to get started with the project, make use of them.:)
 - All changes in branch Tim. Maybe it's time to merge my things since I have to look at PythonIntro. Don't hesitate to ask me if there are any problems in my code. =)
+
+## Commit at 6:14, 18/11/2024 by TIM
+
+- Modified listing, place_bid
+    - accomplished bidding items
+    - created table bids, updated in sql_script
