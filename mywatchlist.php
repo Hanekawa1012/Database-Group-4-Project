@@ -15,6 +15,10 @@
   
   
   // TODO: Check user's credentials (cookie/session).
+  if(!(isset($_SESSION['logged_in'])&& $_SESSION['logged_in']== true)){
+    echo('<div class="text-center">Page not accessible for guests. If you want to watch an itemm, please <a href="register.php">register</a></div>.');
+    exit();
+  }
   
   // TODO: Perform a query to pull up their auctions.
   
