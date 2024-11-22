@@ -6,6 +6,16 @@ CREATE TABLE `user`
 `accountType` VARCHAR(10) NOT NULL ,
 ) ENGINE = InnoDB;
 
+//草稿 睡醒了实现
+CREATE TABLE `buyer`
+(
+) ENGINE = InnoDB;
+
+CREATE TABLE `seller`
+(
+) ENGINE = InnoDB;
+//
+
 CREATE TABLE `auctions`
 (`item_id` INT PRIMARY KEY AUTO_INCREMENT,
  `title` VARCHAR(30) NOT NULL ,
@@ -15,6 +25,7 @@ CREATE TABLE `auctions`
  `reservePrice` INT, 
 `endDate` DATETIME NOT NULL,
 `seller_id` INT,
+`currentPrice` INT,
 FOREIGN KEY (seller_id) REFERENCES user(user_id)
 ) ENGINE = InnoDB;
 

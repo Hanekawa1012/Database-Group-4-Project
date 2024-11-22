@@ -44,9 +44,9 @@
           <div class="col-sm-10">
             <select class="form-control" name="auctionCategory" id="auctionCategory">
               <option selected>Choose...</option>
-              <option value="classA">A stuff</option>
-              <option value="classB">B stuff</option>
-              <option value="classC">C stuff</option><!----needs further changes here--->
+              <option value="classA">classA</option>
+              <option value="classB">classB</option>
+              <option value="classC">classC</option><!----needs further changes here--->
             </select>
             <small id="categoryHelp" class="form-text text-muted"><span class="text-danger">* Required.</span> Select a category for this item.</small>
           </div>

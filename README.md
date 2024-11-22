@@ -50,3 +50,34 @@
 - Modified listing, place_bid
     - accomplished bidding items
     - created table bids, updated in sql_script
+
+## Commit at 6:11, 22/11/2024 by TIM
+
+- Modified... a lot of things
+    - In conclusion the item pages including mybids, mylistings, mywatchlist, browse are all accomplished basically, including showing items, filtering ans searching, and showing remaining time
+- But after that a lot of other problems come out, so maybe you could check my thoughts below.
+
+## Other Notices
+### 1.自用，可以不看：
+- 所有搜索页面的num_bids 都还没改，醒来记得改（用tim这个名字注释了，可以在代码里搜）
+- 需要创建buyer和seller的单独表格，记得醒来创建一下
+    - 同时需要改下外键约束，让bids和auctions分别连接到buyer和seller表格上
+- watchlist有权限，只有buyer能watch，应当禁止seller账号竞拍和收藏，记得做
+
+### 2.关于仍未实现的基本功能的一些提示与个人想法：
+
+作业明确要求拍卖成交后需要award to the highest bidder, and confirm to both the winner and seller:
+- 你们对于这两句说法对应的功能实现有何看法？
+
+award是否对应着buyer需要credit属性或是额外的order表格？
+confirm意思是发送邮件还是页面弹窗？可补充。。。
+- 可能需要考虑时间到达以后对订单的状态设定函数（是否达到最低价，买卖家分别是谁）
+    -额外组件1：建立页面查看已成交的订单 myorders.php（buyer和seller皆可访问）
+    -额外组件2：在my listing/my bid/listing显示该物品状态（竞拍中/成交/流拍/已结束，即被其他买家拍走）
+        -以上可以二选一，但无论实现以上哪种额外功能，均需要在auctions添加额外的status属性
+    -是否需要监听listings上的时间变化，以确保时间到时商品页面能及时切换到已成交/已结束状态（或者直接刷新页面即可，那样就不考虑这个了）
+
+### 3.关于仍未实现的额外功能的一些注解和看法：
+- email发送功能和watchlist这个功能紧密绑定，也就是watch之后必定会收到邮件，也就是说邮件发送不需要额外的user.subscription属性判定发不发，而是watch后立即就向收藏者发送确认邮件， 并在每次新bid出现时再发送一次提醒邮件
+- recommendations点明了使用协同过滤算法，简单来说即以余弦相似度为基础的预测公式来推送数据
+    - 不知道你们本科学不学这个，但这个是推荐算法与语言模型最基础的东西之一，下学期选了大数据相关课的家人可以试试，只占5分，没那时间和能力就算了

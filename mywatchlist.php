@@ -4,7 +4,7 @@
 
 <div class="container">
 
-<h2 class="my-3">My listings</h2>
+<h2 class="my-3">My watchlists</h2>
 
 <?php
   // This page is for showing a user the auction listings they've made.
@@ -22,12 +22,11 @@
   
 ?>
 
-
 <div id="searchSpecs">
 <!-- When this form is submitted, this PHP page is what processes it.
      Search/sort specs are passed to this page through parameters in the URL
      (GET method of passing data to a page). -->
-<form method="get" action="mylistings.php">
+<form method="get" action="mywatchlist.php">
   <div class="row">
     <div class="col-md-5 pr-0">
       <div class="form-group">
@@ -109,8 +108,8 @@
   /* TODO: Use above values to construct a query. Use this query to 
      retrieve data from the database. (If there is no form data entered,
      decide on appropriate default value/default query to make. */
-  $seller_id = $_SESSION['user_id'];
-  $sql = "select * from (select * from auctions where seller_id = $seller_id) as A";
+  $buyer_id = $_SESSION['user_id'];
+  $sql = "select * from (select * from auctions where item_id in (select item_id from watchlist where user_id = $buyer_id)) as B";
   if(isset($_GET['keyword']) || $keyword != ""){
     $sql .= " where locate('$keyword',title) > 0";
     if($category != ""){
@@ -188,7 +187,7 @@
   if ($curr_page != 1) {
     echo('
     <li class="page-item">
-      <a class="page-link" href="mylistings.php?' . $querystring . 'page=' . ($curr_page - 1) . '" aria-label="Previous">
+      <a class="page-link" href="mywatchlist.php?' . $querystring . 'page=' . ($curr_page - 1) . '" aria-label="Previous">
         <span aria-hidden="true"><i class="fa fa-arrow-left"></i></span>
         <span class="sr-only">Previous</span>
       </a>
@@ -209,14 +208,14 @@
     
     // Do this in any case
     echo('
-      <a class="page-link" href="mylistings.php?' . $querystring . 'page=' . $i . '">' . $i . '</a>
+      <a class="page-link" href="mywatchlist.php?' . $querystring . 'page=' . $i . '">' . $i . '</a>
     </li>');
   }
   
   if ($curr_page != $max_page) {
     echo('
     <li class="page-item">
-      <a class="page-link" href="mylistings.php?' . $querystring . 'page=' . ($curr_page + 1) . '" aria-label="Next">
+      <a class="page-link" href="mywatchlist.php?' . $querystring . 'page=' . ($curr_page + 1) . '" aria-label="Next">
         <span aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
         <span class="sr-only">Next</span>
       </a>
