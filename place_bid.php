@@ -3,7 +3,11 @@
 
 // TODO: Extract $_POST variables, check they're OK, and attempt to make a bid.
 // Notify user of success/failure and redirect/give navigation options.
-session_start();
+if(!(isset($_SESSION['logged_in'])&& $_SESSION['logged_in']== true)){
+    header("Location:guest_error.php");
+    exit();
+  }
+
 require "my_db_connect.php";
 
 if(!isset($_SESSION['logged_in'])||$_SESSION['logged_in']==false){
