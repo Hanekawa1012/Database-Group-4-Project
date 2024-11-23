@@ -16,7 +16,7 @@
   // DELETEME: For now, using placeholder data.
   $title = $fetch['title'];
   $description = $fetch['details'];
-  $current_price = $fetch['startPrice'];
+  $current_price = $fetch['currentPrice'];
   $num_bids = 1;
   $end_time = new DateTime($fetch['endDate']);
 

@@ -137,7 +137,7 @@
     $item_id = $fetch['item_id'];
     $title = $fetch['title'];
     $description = $fetch['details'];
-    $current_price = $fetch['startPrice'];
+    $current_price = $fetch['currentPrice'];
     //TO DO: get num_bids in bid history(table `bids`) by TIM
     $num_bids = 1;
     $end_date = $fetch['endDate'];
