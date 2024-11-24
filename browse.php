@@ -43,7 +43,7 @@
           <option selected value="">Choose one...</option>
           <option value="currentPrice">Price (low to high)</option>
           <option value="currentPrice desc">Price (high to low)</option>
-          <option value="endDate">Soonest expiry</option>
+          <option value="datediff(endDate, now())">Soonest expiry</option>
         </select>
       </div>
     </div>
@@ -133,13 +133,17 @@
     echo "No accessible auctions for now.";
     exit();
   }
+  if ($curr_page != ""){
+    $sql .= " limit ".(($curr_page-1)*3).",3";
+  }
+  $result = mysqli_query($con, $sql);
   while($fetch = mysqli_fetch_array($result)){
     $item_id = $fetch['item_id'];
     $title = $fetch['title'];
     $description = $fetch['details'];
     $current_price = $fetch['currentPrice'];
     //TO DO: get num_bids in bid history(table `bids`) by TIM
-    $num_bids = 1;
+    $num_bids = mysqli_num_rows(mysqli_query($con, "select user_id from bids where item_id = $item_id"));
     $end_date = $fetch['endDate'];
     print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
   }
