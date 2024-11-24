@@ -9,14 +9,13 @@ if (!isset($_POST['functionname']) || !isset($_POST['arguments'])) {
 
 // Extract arguments from the POST variables:
 $item_id = intval($_POST['arguments']);
-$user_id = intval($_SESSION['user_id']);
+$buyer_id = intval($_SESSION['user_id']);
 
 
 if ($_POST['functionname'] == "add_to_watchlist") {
   // TODO: Update database and return success/failure.
   //NEEDS FIXING!!! I CAN'T FIND WHAT'S WRONG!!! -- TIM
-  $sql = "insert into watchlist(user_id, item_id) 
-          values( '$user_id', '$item_id' );";
+  $sql = "insert into watchlist(buyer_id, item_id) values($buyer_id, $item_id);";
   if(mysqli_query($con, $sql)){
     $res = "success";
   }else{
@@ -27,7 +26,7 @@ if ($_POST['functionname'] == "add_to_watchlist") {
 else if ($_POST['functionname'] == "remove_from_watchlist") {
   // TODO: Update database and return success/failure.
   //NEEDS FIXING!!! I CAN'T FIND WHAT'S WRONG!!! -- TIM
-  $sql = "delete from watchlist where user_id = $user_id and item_id = $item_id;";
+  $sql = "delete from watchlist where buyer_id = $buyer_id and item_id = $item_id;";
   if(mysqli_query($con, $sql)){
     $res = "success";
   }else{

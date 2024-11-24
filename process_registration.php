@@ -13,12 +13,14 @@ if ($_POST["email"] == ""){//check if the email is not filled in
     die("Error:Email needed.");    
 }else {
     $email = $_POST["email"];
+    $accountType = $_POST['accountType'];
     if(!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/", $email)){//check if the format is valid.
         die("Error: Email address invalid.");
     }
-    $sql = "select * from user where email = '$email';";//check if the email is already registered
+    $sql = "select * from user where email = '$email' and accountType = '$accountType';";//check if the email is already registered
     $result = $con->query($sql);
-    if(empty($result)){
+    if(mysqli_num_rows($result) > 0){
+        echo mysqli_fetch_array($result);
         die("Account already exists.");
         //TO DO: Add a change_password.php, and choose accountType in account login window
     }
@@ -34,18 +36,23 @@ if ($_POST['password'] != $_POST['passwordConfirmation']){//check if the passwor
     die('Error:Passwords do not match.');
 }
 
-$accountType = $_POST["accountType"];
 $username = "user" . uniqid();//random name. can be edited in user profile
 
-
 //send insert request to the database
-$sql = "insert into user(username, password, email, accountType) values('$username','$password','$email','$accountType')";
+$sql = "insert into user(username, password, email, accountType) values('$username','$password','$email','$accountType');";
+$sql_id = "insert into $accountType select user_id from user where email = '$email' and accountType = '$accountType';";
 if($con->query($sql) == true){
-    echo "data insert success.\n";
+    echo "user data insert success.\n";
+    if ($con->query($sql_id) == true){
+        echo "account type data insert success.\n";
+        header("refresh:3;url=browse.php");
+    }else{
+        echo "account type data insert fail.\n";
+    }
 }else{
     echo "data insert fail.\n"."<br/>".$con->error;
 }
 $con->close();
 
-header("refresh:3;url=browse.php");
+header("refresh:10;url=browse.php");
 ?>

@@ -27,7 +27,7 @@ if($auctionTitle == ""){
     header("refresh:3;url=create_auction.php");
     exit();
 }
-if($auctionCategory == ""){
+if($auctionCategory == "None"){
     echo "Error:category needed";
     header("refresh:3;url=create_auction.php");
     exit();
@@ -42,7 +42,13 @@ if($auctionEndDate == ""){
     header("refresh:3;url=create_auction.php");
     exit();
 }
-
+$now = new DateTime();
+$checkEndDate = new DateTime($auctionEndDate);
+if($checkEndDate <= $now){
+    echo "Error:end date should be later than present time.";
+    header("refresh:3;url=create_auction.php");
+    exit();
+}
 
 /* TODO #3: If everything looks good, make the appropriate call to insert
             data into the database. */

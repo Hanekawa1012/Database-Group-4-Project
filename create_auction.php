@@ -43,7 +43,7 @@
           <label for="auctionCategory" class="col-sm-2 col-form-label text-right">Category</label>
           <div class="col-sm-10">
             <select class="form-control" name="auctionCategory" id="auctionCategory">
-              <option selected>Choose...</option>
+              <option selected value = "None">Choose...</option>
               <option value="classA">classA</option>
               <option value="classB">classB</option>
               <option value="classC">classC</option><!----needs further changes here--->

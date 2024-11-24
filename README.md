@@ -57,12 +57,28 @@
     - In conclusion the item pages including mybids, mylistings, mywatchlist, browse are all accomplished basically, including showing items, filtering ans searching, and showing remaining time
 - But after that a lot of other problems come out, so maybe you could check my thoughts below.
 
+## Commit at 23:23, 25/11/2024 by TIM
+- 不装了，让我们说中文
+- 几乎重构了整个数据库，添加了buyer和seller的约束表格，并将其他相关的表都从user外键转移到了buyer和seller上，同时auctions还增删了一些属性（比如auctions里删除了currentPrice（想了一下不符合3nf就删了）以及添加了status，方便用于筛选已结束的auction来发邮件）所以，请记得看我更新的sql_script（笑）
+- 
+
 ## Other Notices
 ### 1.自用，可以不看：
-- 所有搜索页面的num_bids 都还没改，醒来记得改（用tim这个名字注释了，可以在代码里搜）
-- 需要创建buyer和seller的单独表格，记得醒来创建一下
-    - 同时需要改下外键约束，让bids和auctions分别连接到buyer和seller表格上
+-[*] 所有搜索页面的num_bids 都还没改，醒来记得改（用tim这个名字注释了，可以在代码里搜）
+- [*] 需要创建buyer和seller的单独表格，记得醒来创建一下
+    - [*] 同时需要改下外键约束，让bids和auctions分别连接到buyer和seller表格上
+- [*]login按钮不知道怎么失效了？？？
+    - [*]然后又莫名其妙好了？？？我的母语是无语
+#### bugs:
+- 已创建了buyer和seller两个新table，但注册功能（process_registration.php）输入两个表时会出错，记得改
+- watchlist存在未知问题，无法插入数据
+#### 仍需实现：
 - watchlist有权限，只有buyer能watch，应当禁止seller账号竞拍和收藏，记得做
+- auctions加入status(goingon/canceled/success)，判断可以展示到browse上的商品
+- 邮件发信：大概需要添加的接口位置：auctions更新后将status为canceled/success 的邮件分别向参与其中的买卖家进行发送
+#### 新的思考：
+- browse或许可以同时进行精准或模糊搜索？
+
 
 ### 2.关于仍未实现的基本功能的一些提示与个人想法：
 

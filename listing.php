@@ -5,19 +5,30 @@
 
 <?php
   // Get info from the URL:
-  $item_id = $_GET['item_id'];
+  if(!isset($_GET['item_id'])){
+    $item_id = $_SESSION['viewing'];
+  }else{
+    $item_id = $_GET['item_id'];
+  }
+  
   $_SESSION['viewing'] = $item_id;
 
   // TODO: Use item_id to make a query to the database.
-  $sql = "select * from auctions where item_id = '$item_id'";
+  $sql = "select * from auctions where item_id = '$item_id';";
   $result = mysqli_query($con, $sql);
   $fetch = mysqli_fetch_array($result);
   
   // DELETEME: For now, using placeholder data.
   $title = $fetch['title'];
   $description = $fetch['details'];
-  $current_price = $fetch['currentPrice'];
-  $num_bids = 1;
+  $bid_sql = "select bidPrice from bids where item_id = $item_id order by bidPrice desc";
+  $bid_result = mysqli_query($con, $bid_sql);
+  $num_bids = mysqli_num_rows($bid_result);
+  if($num_bids > 0){
+    $current_price = mysqli_fetch_assoc($bid_result)['bidPrice'];
+  }else{
+    $current_price = $fetch['startPrice'];
+  }
   $end_time = new DateTime($fetch['endDate']);
 
   // TODO: Note: Auctions that have ended may pull a different set of data,
@@ -38,7 +49,7 @@
   if(isset($_SESSION['user_id'])){
     $has_session = true;
     $user_id = $_SESSION['user_id'];
-    $sql = "select user_id, item_id from watchlist where user_id = '$user_id' and item_id = '$item_id'";
+    $sql = "select buyer_id, item_id from watchlist where buyer_id = '$user_id' and item_id = '$item_id'";
     $result = mysqli_query($con, $sql);
     $row = mysqli_num_rows($result);
     if(!$row){
