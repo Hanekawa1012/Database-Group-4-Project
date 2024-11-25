@@ -63,22 +63,23 @@
 - 
 
 ## Other Notices
-### 1.自用，可以不看：
--[*] 所有搜索页面的num_bids 都还没改，醒来记得改（用tim这个名字注释了，可以在代码里搜）
-- [*] 需要创建buyer和seller的单独表格，记得醒来创建一下
-    - [*] 同时需要改下外键约束，让bids和auctions分别连接到buyer和seller表格上
-- [*]login按钮不知道怎么失效了？？？
-    - [*]然后又莫名其妙好了？？？我的母语是无语
-#### bugs:
-- 已创建了buyer和seller两个新table，但注册功能（process_registration.php）输入两个表时会出错，记得改
-- watchlist存在未知问题，无法插入数据
-#### 仍需实现：
-- watchlist有权限，只有buyer能watch，应当禁止seller账号竞拍和收藏，记得做
-- auctions加入status(goingon/canceled/success)，判断可以展示到browse上的商品
-- 邮件发信：大概需要添加的接口位置：auctions更新后将status为canceled/success 的邮件分别向参与其中的买卖家进行发送
-#### 新的思考：
-- browse或许可以同时进行精准或模糊搜索？
+### 1.ToDoList：
+#### Done:
+- [x] 所有搜索页面的num_bids 都还没改，醒来记得改（用tim这个名字注释了，可以在代码里搜）
+- [x] 需要创建buyer和seller的单独表格，记得醒来创建一下
+    - [x] 同时需要改下外键约束，让bids和auctions分别连接到buyer和seller表格上
+- [x] login按钮不知道怎么失效了？？？
+    - [x] 然后又莫名其妙好了？？？我的母语是无语
+- [x] watchlist存在未知问题，无法插入数据
+- [x] 已创建了buyer和seller，但注册功能输入两个表时会出错，记得改
+- [x] watchlist有权限，只有buyer能watch，应当禁止seller账号竞拍和收藏，记得做
 
+#### 仍需实现：
+- auctions加入status(goingon/canceled/success)，判断可以展示到browse上的商品
+- 邮件发信：大概需要添加的接口：auctions更新后将canceled/success 的邮件分别向参与其中的买卖家进行发送
+
+#### 新的思考：
+- browse或许可以同时进行精准或模糊搜索？（即让sql产生intersect和union的区别）
 
 ### 2.关于仍未实现的基本功能的一些提示与个人想法：
 
