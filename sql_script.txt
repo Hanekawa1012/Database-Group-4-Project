@@ -26,6 +26,7 @@ CREATE TABLE `auctions`
  `reservePrice` INT, 
 `endDate` DATETIME NOT NULL,
 `seller_id` INT,
+`status` VARCHAR(10), 
 FOREIGN KEY (seller_id) REFERENCES seller(user_id)
 ) ENGINE = InnoDB;
 
