@@ -178,11 +178,12 @@ function removeFromWatchlist(button) {
       function (obj, textstatus) {
         // Callback function for when call is successful and returns obj
         console.log("Success");
+
         var objT = obj.trim();
- 
+
         if (objT == "success") {          
           $("#watch_watching").hide();
-          $("#watch_nowatch").show();
+          $("#watch_nowatconsole.log("Error");ch").show();
         }
         else {
           var mydiv = document.getElementById("watch_watching");
@@ -193,7 +194,7 @@ function removeFromWatchlist(button) {
 
     error:
       function (obj, textstatus) {
-        console.log("Error");
+        
       }
   }); // End of AJAX call
 

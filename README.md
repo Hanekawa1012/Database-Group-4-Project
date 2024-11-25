@@ -60,7 +60,6 @@
 ## Commit at 23:23, 25/11/2024 by TIM
 - 不装了，让我们说中文
 - 几乎重构了整个数据库，添加了buyer和seller的约束表格，并将其他相关的表都从user外键转移到了buyer和seller上，同时auctions还增删了一些属性（比如auctions里删除了currentPrice（想了一下不符合3nf就删了）以及添加了status，方便用于筛选已结束的auction来发邮件）所以，请记得看我更新的sql_script（笑）
-- 
 
 ## Other Notices
 ### 1.ToDoList：
