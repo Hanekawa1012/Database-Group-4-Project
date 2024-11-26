@@ -42,9 +42,6 @@ if (!empty($errors)) {
 $sql = "UPDATE user SET ";
 $updates = [];
 
-echo "用户输入 Email: " . $email . "<br>";
-echo "Session Email: " . $_SESSION['email'] . "<br>";
-
 if (!empty($email) && $email !== $_SESSION['email']) {
     $updates[] = "email = '$email'";
     $_SESSION['email'] = $email;
