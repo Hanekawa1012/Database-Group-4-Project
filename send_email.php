@@ -2,16 +2,18 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-class sendmail{
-    static function sendemail($toEmail,$toName,$emailTitle,$emailContent,$emailOutline){
+class sendmail
+{
+    static function sendemail($toEmail, $toName, $emailTitle, $emailContent, $emailOutline)
+    {
         require 'PHPMailer-6.9.3//src//Exception.php';
         require 'PHPMailer-6.9.3//src//PHPMailer.php';
         require 'PHPMailer-6.9.3//src//SMTP.php';
-        $mail = new PHPMailer(true); 
+        $mail = new PHPMailer(true);
         try {
             //服务器配置
-            $mailconfig=json_decode('{"Host":"smtp.163.com","Username":"cdzhj1012@163.com","Password":"WZbdaNUUc9NKqDTx","SMTPSecure":"ssl","Port":465}');
-            $mail->CharSet ="UTF-8";                                // 设定邮件编码
+            $mailconfig = json_decode('{"Host":"smtp.163.com","Username":"cdzhj1012@163.com","Password":"WZbdaNUUc9NKqDTx","SMTPSecure":"ssl","Port":465}');
+            $mail->CharSet = "UTF-8";                                // 设定邮件编码
             $mail->SMTPDebug = 0;                                   // 调试模式输出
             $mail->isSMTP();                                        // 使用SMTP
             $mail->Host = $mailconfig->Host;                        // SMTP服务器
@@ -34,7 +36,7 @@ class sendmail{
             //Content
             $mail->isHTML(true);                            // 是否以HTML文档格式发送  发送后客户端可直接显示对应HTML内容
             $mail->Subject = $emailTitle;
-            $mail->Body    = $emailContent;
+            $mail->Body = $emailContent;
             $mail->AltBody = $emailOutline;
 
             $mail->send();

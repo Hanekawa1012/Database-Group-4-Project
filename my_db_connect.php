@@ -7,7 +7,7 @@ $dbname = "db-group4";
 
 $con = new mysqli($mydbhost, $mydbuser, $mydbpasswd, $dbname);
 
-if ($con->connect_error){
-  die("connect error" . $con->connect_error);
+if ($con->connect_error) {
+    die("connect error" . $con->connect_error);
 }
 ?>

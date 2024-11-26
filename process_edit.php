@@ -6,7 +6,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     die("You haven't logged in. Please log in.");
 }
 
-$user_id = $_SESSION['user_id']; 
+$user_id = $_SESSION['user_id'];
 
 $errors = [];
 
@@ -73,7 +73,7 @@ if (!empty($updates)) {
         echo "<div class='alert alert-danger' role='alert'>";
         echo "<p>Oops something went wrong " . $con->error . "</p>";
         echo "</div>";
-         echo "<a href='user_info.php' class='btn btn-primary'>Try again</a>";
+        echo "<a href='user_info.php' class='btn btn-primary'>Try again</a>";
         echo "</div>";
     }
 } else {
@@ -83,7 +83,7 @@ if (!empty($updates)) {
     echo "</div>";
     echo "<a href='user_info.php' class='btn btn-primary'>Return Profile</a>";
     echo "</div>";
-     header("refresh:3;url=user_info.php");
+    header("refresh:3;url=user_info.php");
 }
 
 $con->close();
