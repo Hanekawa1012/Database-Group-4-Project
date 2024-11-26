@@ -168,6 +168,7 @@ function addToWatchlist(button) {
 } // End of addToWatchlist func
 
 function removeFromWatchlist(button) {
+  console.log("Function call success.");
   // This performs an asynchronous call to a PHP function using POST method.
   // Sends item ID as an argument to that function.
   $.ajax('watchlist_funcs.php', {
@@ -180,10 +181,10 @@ function removeFromWatchlist(button) {
         console.log("Success");
 
         var objT = obj.trim();
-
+        console.log(objT);
         if (objT == "success") {          
           $("#watch_watching").hide();
-          $("#watch_nowatconsole.log("Error");ch").show();
+          $("#watch_nowatch").show();
         }
         else {
           var mydiv = document.getElementById("watch_watching");
@@ -194,7 +195,7 @@ function removeFromWatchlist(button) {
 
     error:
       function (obj, textstatus) {
-        
+        console.log("Error");
       }
   }); // End of AJAX call
 
