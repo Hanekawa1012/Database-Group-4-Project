@@ -3,7 +3,9 @@ CREATE TABLE `user`
  `username` VARCHAR(30) NOT NULL ,
  `password` VARCHAR(30), 
 `email` VARCHAR(30) NOT NULL , 
-`accountType` VARCHAR(10) NOT NULL
+`accountType` VARCHAR(10) NOT NULL,
+`tel` VARCHAR(30), 
+`address` VARCHAR(10),
 ) ENGINE = InnoDB;
 
 CREATE TABLE `buyer`
