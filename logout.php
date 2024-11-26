@@ -6,6 +6,7 @@ unset($_SESSION['logged_in']);
 unset($_SESSION['username']);
 unset($_SESSION['email']);
 unset($_SESSION['account_type']);
+unset($_SESSION['viewing']);
 setcookie(session_name(), "", time() - 3600);
 session_destroy();
 

@@ -16,7 +16,7 @@
 - mybid, mylisting, my watchlist 的每一栏是否需要改动？将bid history和auction history放在对应的商品页的下方，还是直接输出在mybid/mylisting 里面？（还是两个都做？：两个都做，而且多做两个按钮供用户选择）
 - auctions加入status(goingon/canceled/success)，判断可以展示到browse上的商品
 - 邮件发信范围：
-    - 每次buyer添加新的商品到watchlist时，对将该商品添加至watchlist的buyer发送订阅成功邮件；
+    - [x]每次buyer添加新的商品到watchlist时，对将该商品添加至watchlist的buyer发送订阅成功邮件；
     - 每次buyer向商品发起bid之后，向所有watch该商品的buyer发送价格更新邮件，并在邮件中附带商品信息与最新价格（要不要也向seller发一份变动邮件？）sol：
    - 如果设定了reserveprice，则在bidprice首次超过时向卖家发送邮件
     - 当商品拍卖到期后，商品通过sql cronjob更新auctions status，并向seller与所有watch该商品的buyer发送交易结束邮件，并在邮件中附带商品状态与ending price，若endprice小于reservePrice则流拍，其余情况则交易成功（好像需要一个新的orders table来专门记录endPrice?：大概需要新表？仍然需要思考）
