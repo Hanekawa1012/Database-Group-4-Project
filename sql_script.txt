@@ -4,7 +4,7 @@ CREATE TABLE `user`
  `password` VARCHAR(30), 
 `email` VARCHAR(30) NOT NULL , 
 `accountType` VARCHAR(10) NOT NULL,
-`tel` VARCHAR(30), 
+`tel` VARCHAR(30), /* tel and address relate to edit_information.php user_info.php */
 `address` VARCHAR(10),
 ) ENGINE = InnoDB;
 
