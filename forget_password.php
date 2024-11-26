@@ -1,6 +1,6 @@
-<?php include_once("header.php")?>
-<?php require_once("send_code.php")?>
-<?php require_once("my_db_connect.php")?>
+<?php include_once("header.php") ?>
+<?php require_once("send_code.php") ?>
+<?php require_once("my_db_connect.php") ?>
 <?php
 
 $step = isset($_GET['step']) ? $_GET['step'] : 1;
@@ -13,8 +13,8 @@ if ($step == 1) {
         $sql = "SELECT user_id, username FROM user WHERE email = '$email'";
         $user_record = mysqli_query($con, $sql);
         $row = mysqli_num_rows($user_record);
-        if(!$row){
-            echo('<div class="text-center">Error:User does not exists.</div>');
+        if (!$row) {
+            echo ('<div class="text-center">Error:User does not exists.</div>');
             exit();
         }
         $fetch = mysqli_fetch_array($user_record);
@@ -75,49 +75,54 @@ if ($step == 3) {
 <div class="container">
     <h2 class="my-3">Change Password</h2>
 
-    <?php if (!empty($success_message)) : ?>
+    <?php if (!empty($success_message)): ?>
         <div class="alert alert-success"><?php echo $success_message; ?></div>
     <?php endif; ?>
 
-    <?php if (!empty($error_message)) : ?>
+    <?php if (!empty($error_message)): ?>
         <div class="alert alert-danger"><?php echo $error_message; ?></div>
     <?php endif; ?>
 
-    <?php if ($step == 1) : ?>
+    <?php if ($step == 1): ?>
         <form method="POST" action="forget_password.php?step=1">
             <div class="form-group">
                 <label for="enter_email">Please Enter Your Account Email</label>
-                <input type="text" class="form-control" name="email" id="email" placeholder="Please enter your email" required>
+                <input type="text" class="form-control" name="email" id="email" placeholder="Please enter your email"
+                    required>
             </div>
             <p>Please click "Send Code" button. We will send an email with verification code to your email.</p>
             <button type="submit" name="send_code" class="btn btn-primary">Send Code</button>
         </form>
     <?php endif; ?>
 
-    <?php if ($step == 2) : ?>
+    <?php if ($step == 2): ?>
         <form method="POST" action="forget_password.php?step=2">
             <div class="form-group">
                 <label for="verification_code">Verification Code</label>
-                <input type="text" class="form-control" name="verification_code" id="verification_code" placeholder="Please enter the code" required>
-                <small class="form-text text-muted">The code will expire in ten minutes. Please enter it as soon as possible.</small>
+                <input type="text" class="form-control" name="verification_code" id="verification_code"
+                    placeholder="Please enter the code" required>
+                <small class="form-text text-muted">The code will expire in ten minutes. Please enter it as soon as
+                    possible.</small>
             </div>
             <button type="submit" name="verify_code" class="btn btn-primary">Verify</button>
         </form>
     <?php endif; ?>
 
-    <?php if ($step == 3) : ?>
+    <?php if ($step == 3): ?>
         <form method="POST" action="forget_password.php?step=3">
             <div class="form-group">
                 <label for="new_password">New Password</label>
-                <input type="password" class="form-control" name="new_password" id="new_password" placeholder="Please enter your new password." required>
+                <input type="password" class="form-control" name="new_password" id="new_password"
+                    placeholder="Please enter your new password." required>
             </div>
             <div class="form-group">
                 <label for="confirm_password">Confirm New Password</label>
-                <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Please enter your new password again" required>
+                <input type="password" class="form-control" name="confirm_password" id="confirm_password"
+                    placeholder="Please enter your new password again" required>
             </div>
             <button type="submit" name="change_password" class="btn btn-primary">Change Password</button>
         </form>
     <?php endif; ?>
 </div>
 
-<?php include_once("footer.php")?>
+<?php include_once("footer.php") ?>

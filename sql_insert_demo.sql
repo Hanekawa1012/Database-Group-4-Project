@@ -4,51 +4,51 @@ USE `db-group4`;
 
 CREATE TABLE `user` (
     `user_id` INT PRIMARY KEY AUTO_INCREMENT,
-    `username` VARCHAR(30) NOT NULL,
-    `password` VARCHAR(30),
-    `email` VARCHAR(30) NOT NULL,
-    `accountType` VARCHAR(10) NOT NULL
+    `username` VARCHAR(50) NOT NULL,
+    `password` VARCHAR(50) NOT NULL,
+    `email` VARCHAR(100) NOT NULL UNIQUE,
+    `accountType` ENUM('buyer', 'seller') NOT NULL
 ) ENGINE = InnoDB;
 
 CREATE TABLE `buyer` (
-    `user_id` INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id)
+    `user_id` INT PRIMARY KEY,
+    FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `seller` (
-    `user_id` INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id)
+    `user_id` INT PRIMARY KEY,
+    FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `auctions` (
     `item_id` INT PRIMARY KEY AUTO_INCREMENT,
-    `title` VARCHAR(30) NOT NULL,
-    `details` VARCHAR(200),
-    `category` VARCHAR(20) NOT NULL,
+    `title` VARCHAR(50) NOT NULL,
+    `details` TEXT,
+    `category` VARCHAR(30) NOT NULL,
     `startPrice` DECIMAL(10, 2) NOT NULL,
     `reservePrice` DECIMAL(10, 2),
     `endDate` DATETIME NOT NULL,
-    `seller_id` INT,
-    `status` VARCHAR(10),
-    FOREIGN KEY (seller_id) REFERENCES user(user_id)
+    `seller_id` INT NOT NULL,
+    `status` ENUM('open', 'sold', 'unsold', 'cancelled') DEFAULT 'open',
+    FOREIGN KEY (`seller_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `watchlist` (
-    `list_id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `list_id` INT PRIMARY KEY AUTO_INCREMENT,
     `buyer_id` INT NOT NULL,
     `item_id` INT NOT NULL,
-    FOREIGN KEY (buyer_id) REFERENCES buyer(user_id),
-    FOREIGN KEY (item_id) REFERENCES auctions(item_id)
+    FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`item_id`) REFERENCES `auctions` (`item_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `bids` (
-    `bid_id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `bid_id` INT PRIMARY KEY AUTO_INCREMENT,
     `buyer_id` INT NOT NULL,
     `item_id` INT NOT NULL,
     `bidPrice` DECIMAL(10, 2) NOT NULL,
     `bidTime` DATETIME NOT NULL,
-    FOREIGN KEY (buyer_id) REFERENCES buyer(user_id),
-    FOREIGN KEY (item_id) REFERENCES auctions(item_id)
+    FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`item_id`) REFERENCES `auctions` (`item_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO
