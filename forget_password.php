@@ -1,21 +1,26 @@
 <?php include_once("header.php")?>
 <?php require_once("send_code.php")?>
 <?php require_once("my_db_connect.php")?>
-
 <?php
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    die("You haven't logged in. Please log in.");
-}
 
-$user_id = $_SESSION['user_id'];
-$email = $_SESSION['email'];
-$username = $_SESSION['username'];
 $step = isset($_GET['step']) ? $_GET['step'] : 1;
 $error_message = '';
 $success_message = '';
 
 if ($step == 1) {
     if (isset($_POST['send_code'])) {
+        $email = $_POST['email'];
+        $sql = "SELECT user_id, username FROM user WHERE email = '$email'";
+        $user_record = mysqli_query($con, $sql);
+        $row = mysqli_num_rows($user_record);
+        if(!$row){
+            echo('<div class="text-center">Error:User does not exists.</div>');
+            exit();
+        }
+        $fetch = mysqli_fetch_array($user_record);
+        $username = $fetch['username'];
+        $user_id = $fetch['user_id'];
+        $_SESSION['user_id'] = $user_id;
         $result = send_verification_code($email, $username);
         if ($result == "e000") {
             $success_message = "Verification code has been sent to your email. Please go to your email to check.";
@@ -50,12 +55,13 @@ if ($step == 3) {
     if (isset($_POST['change_password'])) {
         $new_password = $_POST['new_password'];
         $confirm_password = $_POST['confirm_password'];
+        $user_id = $_SESSION['user_id'];
 
         if ($new_password === $confirm_password) {
-            $sql = "UPDATE user SET password = '$new_password' WHERE user_id = '$user_id'";
-            if ($con->query($sql) === TRUE) {
+            $sql_update_password = "UPDATE user SET password = '$new_password' WHERE user_id = $user_id";
+            if ($con->query($sql_update_password) === TRUE) {
                 $success_message = "Password was changed successfully.";
-                header("refresh:3;url=user_info.php");
+                header("refresh:3;url=browse.php");
             } else {
                 $error_message = "Fail to change password. Please try again.";
             }
@@ -78,14 +84,18 @@ if ($step == 3) {
     <?php endif; ?>
 
     <?php if ($step == 1) : ?>
-        <form method="POST" action="change_password.php?step=1">
-            <p>Please click "Send Code" button. We will send an email with verification code to <?php echo htmlspecialchars($email); ?></p>
+        <form method="POST" action="forget_password.php?step=1">
+            <div class="form-group">
+                <label for="enter_email">Please Enter Your Account Email</label>
+                <input type="text" class="form-control" name="email" id="email" placeholder="Please enter your email" required>
+            </div>
+            <p>Please click "Send Code" button. We will send an email with verification code to your email.</p>
             <button type="submit" name="send_code" class="btn btn-primary">Send Code</button>
         </form>
     <?php endif; ?>
 
     <?php if ($step == 2) : ?>
-        <form method="POST" action="change_password.php?step=2">
+        <form method="POST" action="forget_password.php?step=2">
             <div class="form-group">
                 <label for="verification_code">Verification Code</label>
                 <input type="text" class="form-control" name="verification_code" id="verification_code" placeholder="Please enter the code" required>
@@ -96,7 +106,7 @@ if ($step == 3) {
     <?php endif; ?>
 
     <?php if ($step == 3) : ?>
-        <form method="POST" action="change_password.php?step=3">
+        <form method="POST" action="forget_password.php?step=3">
             <div class="form-group">
                 <label for="new_password">New Password</label>
                 <input type="password" class="form-control" name="new_password" id="new_password" placeholder="Please enter your new password." required>
