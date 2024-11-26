@@ -104,6 +104,7 @@
           <button type="submit" class="btn btn-primary form-control">Sign in</button>
         </form>
         <div class="text-center">or <a href="register.php">create an account</a></div>
+        <div class="text-center"> Forget password? <a href="change_password.php" class="text-primary">Please click here.</a></div>
       </div>
 
     </div>
