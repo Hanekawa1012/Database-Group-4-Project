@@ -14,9 +14,11 @@
 
 #### 仍需实现：
 - mybid, mylisting, my watchlist 的每一栏是否需要改动？将bid history和auction history放在对应的商品页的下方，还是直接输出在mybid/mylisting 里面？（还是两个都做？：两个都做，而且多做两个按钮供用户选择）
+  - by Evan: 我觉得是应该都做的，my bid只显示自己的竞价吧，而且应该有一个“是否是最高竞价者”的显示；商品页下面应该有关于对应商品的所有bid history（没理解错问题吧？
 - auctions加入status(goingon/canceled/success)，判断可以展示到browse上的商品
+  - by Evan: auctions的status我把它默认设成open（在拍），然后可以改成scheduled（计划开拍），cancelled（取消），sold（已售），unsold（未售出，可能是无人竞拍或者没达到reserved price）。
 - 邮件发信范围：
-    - 每次buyer添加新的商品到watchlist时，对将该商品添加至watchlist的buyer发送订阅成功邮件；
+    - [x]每次buyer添加新的商品到watchlist时，对将该商品添加至watchlist的buyer发送订阅成功邮件；
     - 每次buyer向商品发起bid之后，向所有watch该商品的buyer发送价格更新邮件，并在邮件中附带商品信息与最新价格（要不要也向seller发一份变动邮件？）sol：
    - 如果设定了reserveprice，则在bidprice首次超过时向卖家发送邮件
     - 当商品拍卖到期后，商品通过sql cronjob更新auctions status，并向seller与所有watch该商品的buyer发送交易结束邮件，并在邮件中附带商品状态与ending price，若endprice小于reservePrice则流拍，其余情况则交易成功（好像需要一个新的orders table来专门记录endPrice?：大概需要新表？仍然需要思考）
@@ -24,12 +26,15 @@
 
 #### 新的思考：
 - browse或许可以同时进行精准或模糊搜索？（即让sql产生intersect和union的区别）
+  - by Evan: 在做了在做了
 
 ### 2.关于仍未实现的基本功能的一些提示与个人想法：
 
 - 可能需要考虑时间到达以后对订单的状态设定函数（是否达到最低价，买卖家分别是谁）
     -额外组件1：建立页面查看已成交的订单 myorders.php（buyer和seller皆可访问）
+      - by Evan: 我觉得用不到，直接在mybid页面加一个filtering
     -额外组件2：在my listing/my bid/listing显示该物品状态（竞拍中/成交/流拍/已结束，即被其他买家拍走）
+      - by Evan: 要做！！！我觉得应该直接在显示剩余时间的位置
 
 ## Commits
 
