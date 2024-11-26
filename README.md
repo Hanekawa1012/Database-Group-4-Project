@@ -93,3 +93,11 @@
 ## Commit at 23:23, 25/11/2024 by TIM
 - 不装了，让我们说中文
 - 几乎重构了整个数据库，添加了buyer和seller的约束表格，并将其他相关的表都从user外键转移到了buyer和seller上，同时auctions还增删了一些属性（比如auctions里删除了currentPrice（想了一下不符合3nf就删了）以及添加了status，方便用于筛选已结束的auction来发邮件）所以，请记得看我更新的sql_script（笑）
+
+## Commit at 2:30, 26/11/24 by Zhenghao
+- 写了下个人信息编辑，耶！
+
+## Commit at 10:06, 26/11/24 by Evan
+- 添加模拟测试数据，正在和新版的sql_script比对...
+- 要不要新增comments？评论区还可以添加点赞之类的功能
+- browse.php修改进行中...
