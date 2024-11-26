@@ -4,7 +4,7 @@
 <!-- When this form is submitted, this PHP page is what processes it.
      Search/sort specs are passed to this page through parameters in the URL
      (GET method of passing data to a page). -->
-<form method="get" action="mylistings.php">
+<form method="get" action="">
   <div class="row">
     <div class="col-md-5 pr-0">
       <div class="form-group">
