@@ -85,6 +85,7 @@
     </form>
 </div> <!-- end search specs bar -->
 
+
 <script>
     // Function to populate form fields from URL parameters
     function syncFormWithUrl() {
