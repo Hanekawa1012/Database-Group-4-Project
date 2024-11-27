@@ -108,14 +108,14 @@
 - browse.php修改进行中...
 
 ## Commit at 21:00, 26/11/24 by Zhenghao
-- 实现了忘记密码验证邮箱验证码后重置密码，并以类似的机制实现了变更密码功能
+- 实现了忘记密码验证邮箱验证码后重置密码，并以类似的机制实现了变更密码功能（Tim：GOOD JOB，还缺了一些组件，我添加上来）
 
 ## Commit at 1:42, 27/11/2024 by Evan
 - 将所有的文件的缩进、sql语句格式、注释等格式统一调整
 - 修改了部分邮件发送格式
 - 添加新的模拟数据
 - 添加了footer
-- 关于header：
+- 关于header：（Tim：WELL DONE 帮大忙 质感一下就上来了）
     - 添加模糊搜索选项
     - 将搜索栏重做，现在三个搜索选项下拉框被装入了一个Advanced search隐藏栏
     - 搜索的category现在会随数据库实时变化
@@ -123,5 +123,9 @@
 - 修正了browse.php的一些问题
 - 添加了recommendation，利用**余弦相似度**完成相似度检测。最多展示10条结果
 - 在listing界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
-- *TODO*：添加comments？
-- *TODO*：商品浏览页（browse等）展示status？
+- *TODO*：添加comments？(Tim: 求放过（bushi，但是真的想做的话浅浅规划下，主要是添加新的comment表，独立主键，引入item和buyer的id为外键，最后是comment的具体内容和发布时间)（网页部分则是在listing下加额外div显示对应评论）（除此以外，做了comment之后，recommend可能需要考虑买家发布评论的交易分布作为新的权重）
+- *TODO*：商品浏览页（browse等）展示status？（Tim：老师的utilities里的print函数已经有相关的if判断，不过那是基于结束时间的，我们可以在print函数额外加一个status传进去，把它的if判断基于status属性弄得更复杂些）（同时修改所有相关页面，即mybid，browse等的sql，多搜一个status）
+
+## Commit until 7:19, 27/11/2024 by Tim
+- 修改了send_email.php的函数，实现向多用户发信的功能，email和name可传入数组或名称，具体群发写法可参照我的place_bid.php(如果需要的话)
+- 修改了header和编辑信息的一些逻辑，现在登录时需要额外选择买卖家的身份，与此相对的，email不再严格要求不重复，以在提升观感同时满足3rd normal form条件

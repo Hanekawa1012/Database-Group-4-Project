@@ -10,7 +10,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
 
 <div class="container mt-5">
     <h1 class="mb-4">Your Profile</h1>
-    <div class="card">
+    <div class="card pb-3 mb-5">
         <div class="card-body">
             <h5 class="card-title">Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h5>
             <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['email']); ?></p>
