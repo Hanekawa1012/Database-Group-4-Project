@@ -18,7 +18,7 @@
 - auctions加入status(goingon/canceled/success)，判断可以展示到browse上的商品
   - by Evan: auctions的status我把它默认设成open（在拍），然后可以改成scheduled（计划开拍），cancelled（取消），sold（已售），unsold（未售出，可能是无人竞拍或者没达到reserved price）。
 - 邮件发信范围：
-    - [x]每次buyer添加新的商品到watchlist时，对将该商品添加至watchlist的buyer发送订阅成功邮件；
+    - [x] 每次buyer添加新的商品到watchlist时，对将该商品添加至watchlist的buyer发送订阅成功邮件；
     - 每次buyer向商品发起bid之后，向所有watch该商品的buyer发送价格更新邮件，并在邮件中附带商品信息与最新价格（要不要也向seller发一份变动邮件？）sol：
    - 如果设定了reserveprice，则在bidprice首次超过时向卖家发送邮件
     - 当商品拍卖到期后，商品通过sql cronjob更新auctions status，并向seller与所有watch该商品的buyer发送交易结束邮件，并在邮件中附带商品状态与ending price，若endprice小于reservePrice则流拍，其余情况则交易成功（好像需要一个新的orders table来专门记录endPrice?：大概需要新表？仍然需要思考）
@@ -112,6 +112,7 @@
 
 ## Commit at 1:42, 27/11/2024 by Evan
 - 将所有的文件的缩进、sql语句格式、注释等格式统一调整
+- 修改了部分邮件发送格式
 - 添加新的模拟数据
 - 添加了footer
 - 关于header：
@@ -119,6 +120,7 @@
     - 将搜索栏重做，现在三个搜索选项下拉框被装入了一个Advanced search隐藏栏
     - 搜索的category现在会随数据库实时变化
     - 添加了JavaScript语句，让搜索栏/下拉框和URL中的metadata保持同步
+- 修正了browse.php的一些问题
 - 添加了recommendation，利用**余弦相似度**完成相似度检测。最多展示10条结果
 - 在listing界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
 - *TODO*：添加comments？
