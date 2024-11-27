@@ -35,5 +35,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
     <div class="text-center"> Want to change password? <a href="change_password.php" class="text-primary">Please click
             here.</a></div>
+</div>
 
-    <?php include_once("footer.php") ?>
+<?php include_once("footer.php") ?>
