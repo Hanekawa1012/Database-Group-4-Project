@@ -26,7 +26,7 @@
 
 #### 新的思考：
 - browse或许可以同时进行精准或模糊搜索？（即让sql产生intersect和union的区别）
-  - by Evan: 在做了在做了
+  - [x] by Evan: 在做了在做了
 
 ### 2.关于仍未实现的基本功能的一些提示与个人想法：
 
@@ -109,3 +109,17 @@
 
 ## Commit at 21:00, 26/11/24 by Zhenghao
 - 实现了忘记密码验证邮箱验证码后重置密码，并以类似的机制实现了变更密码功能
+
+## Commit at 1:42, 27/11/2024 by Evan
+- 将所有的文件的缩进、sql语句格式、注释等格式统一调整
+- 添加新的模拟数据
+- 添加了footer
+- 关于header：
+    - 添加模糊搜索选项
+    - 将搜索栏重做，现在三个搜索选项下拉框被装入了一个Advanced search隐藏栏
+    - 搜索的category现在会随数据库实时变化
+    - 添加了JavaScript语句，让搜索栏/下拉框和URL中的metadata保持同步
+- 添加了recommendation，利用**余弦相似度**完成相似度检测。最多展示10条结果
+- 在listing界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
+- *TODO*：添加comments？
+- *TODO*：商品浏览页（browse等）展示status？
