@@ -4,6 +4,10 @@
 <?php // session_start(); ?>
 
 <?php
+// TODO: add tags for switching between:
+// [Details] [Bid history] [Comments]
+
+
 // Get info from the URL:
 if (!isset($_GET['item_id'])) {
     $item_id = $_SESSION['viewing'];
