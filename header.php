@@ -102,6 +102,16 @@ session_start();
                             <input type="password" class="form-control" name="password" id="password"
                                 placeholder="Password">
                         </div>
+                        <div class="form-check form-check-inline">
+                          <!---label for="accountType">Login as:</label--->
+                          <input class="form-check-input" type="radio" name="accountType" id="accountBuyer" value="buyer"
+                        checked>
+                          <label class="form-check-label" for="accountBuyer">Buyer</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="accountType" id="accountSeller" value="seller">
+                            <label class="form-check-label" for="accountSeller">Seller</label>
+                        </div>
                         <button type="submit" class="btn btn-primary form-control">Sign in</button>
                     </form>
                     <div class="text-center">or <a href="register.php">create an account</a></div>

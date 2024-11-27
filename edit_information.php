@@ -11,6 +11,12 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
     <form method="POST" action="process_edit.php">
         <div class="form-group row">
+            <label for="username" class="col-sm-2 col-form-label text-right">Username</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="username" id="username" placeholder=<?php echo htmlspecialchars($_SESSION['username']); ?>>
+            </div>
+        </div>
+        <div class="form-group row">
             <label for="email" class="col-sm-2 col-form-label text-right">Email</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" name="email" id="email" placeholder=<?php echo htmlspecialchars($_SESSION['email']); ?>>

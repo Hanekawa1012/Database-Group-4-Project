@@ -11,7 +11,8 @@
 if ($_POST['email'] != "" && $_POST['password'] != "") {
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $sql = "SELECT * FROM user WHERE email = '$email' AND PASSWORD = '$password';";
+    $accountType = $_POST['accountType'];
+    $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password' AND accountType = '$accountType';";
     $result = mysqli_query($con, $sql);
     $row = mysqli_num_rows($result);
     if (!$row) {

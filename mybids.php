@@ -83,9 +83,9 @@ $result = mysqli_query($con, $sql);
 
 /* For the purposes of pagination, it would also be helpful to know the
    total number of results that satisfy the above query */
-$num_results = mysqli_num_rows($result);
-$results_per_page = 10;
-$max_page = ceil($num_results / $results_per_page);
+   $num_results = mysqli_num_rows($result);
+   $results_per_page = 3;
+   $max_page = ceil($num_results / $results_per_page);
 ?>
 
 <div class="container mt-5">
@@ -105,27 +105,28 @@ $max_page = ceil($num_results / $results_per_page);
             echo "No accessible auctions for now.<a href='browse.php'>Bid in an auction to start your own bidding!</a>";
             exit();
         }
-        if ($curr_page != "") {
-            $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
-        }
         $result = mysqli_query($con, $sql);
         while ($fetch = mysqli_fetch_array($result)) {
             $item_id = $fetch['item_id'];
             $title = $fetch['title'];
             $description = $fetch['details'];
 
-            $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
+            $bid_sql = "SELECT bidPrice, bidTime FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
+            if ($curr_page != "") {
+              $bid_sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
+            }
             $bid_result = mysqli_query($con, $bid_sql);
             $num_bids = mysqli_num_rows($bid_result);
-            if ($num_bids > 0) {
-                $current_price = mysqli_fetch_assoc($bid_result)['bidPrice'];
-            } else {
-                $current_price = $fetch['startPrice'];
-            }
-
             $end_date = $fetch['endDate'];
-            print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+            while($bid_row = mysqli_fetch_assoc($bid_result)){
+              $bidPrice = $bid_row['bidPrice'];
+              $bidTime = $bid_row['bidTime'];
+              print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date);
+            }
         }
+        $num_results = mysqli_num_rows($bid_result);
+        $results_per_page = 3;
+        $max_page = ceil($num_results / $results_per_page);
         ?>
 
     </ul>

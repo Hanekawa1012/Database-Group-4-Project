@@ -6,10 +6,13 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     die("You haven't logged in. Please log in.");
 }
 
+$username = $_SESSION['username'];
 $user_id = $_SESSION['user_id'];
+$accountType = $_SESSION['account_type'];
 
 $errors = [];
 
+$username = isset($_POST['username']) ? trim($_POST['username']) : null;
 $email = isset($_POST['email']) ? trim($_POST['email']) : null;
 $tel = isset($_POST['tel']) ? trim($_POST['tel']) : null;
 $address = isset($_POST['address']) ? trim($_POST['address']) : null;
@@ -18,7 +21,7 @@ if (!empty($email)) {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "The email address you typed in is invalid.";
     } else {
-        $check_email_sql = "SELECT user_id FROM user WHERE email = '$email' AND user_id != '$user_id'";
+        $check_email_sql = "SELECT user_id FROM user WHERE email = '$email' AND user_id != '$user_id' AND accountType = '$accountType'";
         $check_email_result = $con->query($check_email_sql);
         if ($check_email_result->num_rows > 0) {
             $errors[] = "This email address has been registered. Please choose another one.";
@@ -42,6 +45,10 @@ if (!empty($errors)) {
 $sql = "UPDATE user SET ";
 $updates = [];
 
+if (!empty($username) && $username !== $_SESSION['username']) {
+    $updates[] = "username = '$username'";
+    $_SESSION['username'] = $username;
+}
 if (!empty($email) && $email !== $_SESSION['email']) {
     $updates[] = "email = '$email'";
     $_SESSION['email'] = $email;
