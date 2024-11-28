@@ -8,7 +8,8 @@
         <p class="m-0 text-center text-white">Created by Team 4 for CS0178, UCL Computer Science</p>
         <p class="m-0 text-center text-white">Project repository: <a href="https://github.com/Hanekawa1012/Database-Group-4-Project">GitHub</a></p>
     </div>
-    <!-- /.container -->
+</footer>
+<!-- /.container -->
 
 <!-- Bootstrap core JavaScript -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

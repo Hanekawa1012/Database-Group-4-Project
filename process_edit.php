@@ -3,7 +3,10 @@ include_once("header.php");
 require("my_db_connect.php");
 
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    die("You haven't logged in. Please log in.");
+    echo "You haven't logged in. Please log in.";
+    $con->close();
+    header("refresh:$t_refresh;url=browse.php");
+    exit();
 }
 
 $username = $_SESSION['username'];
@@ -74,7 +77,6 @@ if (!empty($updates)) {
         echo "<a href='user_info.php' class='btn btn-primary'>Return Profile</a>";
         echo "</div>";
         header("refresh:3;url=user_info.php");
-
     } else {
         echo "<div class='container my-3'>";
         echo "<div class='alert alert-danger' role='alert'>";
@@ -95,4 +97,3 @@ if (!empty($updates)) {
 
 $con->close();
 include_once("footer.php");
-?>

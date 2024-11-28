@@ -1,9 +1,12 @@
 <?php include_once("header.php") ?>
 <?php require("my_db_connect.php") ?>
+<?php require("config/conf.php") ?>
 
 <?php
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
-    echo 'You are not logged in! Please log in!';
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+    echo 'You have not logged in! Please log in!';
+    $con->close();
+    header("refresh:$t_refresh;url=browse.php");
     exit();
 }
 ?>
@@ -13,9 +16,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
     <div class="card pb-3 mb-5">
         <div class="card-body">
             <h5 class="card-title">Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h5>
-            <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['email']); ?></p>
+            <p class="card-text"><b>Email:</b> <?php echo htmlspecialchars($_SESSION['email']); ?></p>
             <p class="card-text">
-                <strong>Phone:</strong>
+                <b>Phone:</b>
                 <?php
                 if (!empty($_SESSION['tel'])) {
                     echo htmlspecialchars($_SESSION['tel']);
@@ -25,7 +28,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
                 ?>
             </p>
             <p class="card-text">
-                <strong>Address:</strong>
+                <b>Address:</b>
                 <?php
                 if (!empty($_SESSION['address'])) {
                     echo htmlspecialchars($_SESSION['address']);

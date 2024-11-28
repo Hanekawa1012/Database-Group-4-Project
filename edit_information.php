@@ -1,8 +1,11 @@
 <?php include_once("header.php") ?>
+<?php require("config/conf.php") ?>
 
 <?php
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    die("You haven't logged in. Please log in.");
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
+    echo "You have not logged in. Please log in.";
+    header("refresh:$t_refresh;url=browse.php");
+    exit();
 }
 ?>
 
@@ -39,7 +42,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
         </div>
     </form>
 
-    <div class="text-center"> Want to change password? <a href="change_password.php" class="text-primary">Please click
+    <div class="text-center"> Change password? <a href="change_password.php" class="text-primary">Please click
             here.</a></div>
 </div>
 

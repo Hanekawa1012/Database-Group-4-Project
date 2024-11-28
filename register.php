@@ -24,14 +24,14 @@
         <div class="form-group row">
             <label for="email" class="col-sm-2 col-form-label text-right">Email</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="email" id="email" placeholder="Email">
+                <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
                 <small id="emailHelp" class="form-text text-muted"><span class="text-danger">* Required.</span></small>
             </div>
         </div>
         <div class="form-group row">
-            <label for="password" class="col-sm-2 col-form-label text-right">Password</label>
+            <label for="Password" class="col-sm-2 col-form-label text-right">Password</label>
             <div class="col-sm-10">
-                <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+                <input type="password" class="form-control" name="password" id="Password" placeholder="Password" required>
                 <small id="passwordHelp" class="form-text text-muted"><span class="text-danger">*
                         Required.</span></small>
             </div>
@@ -40,7 +40,7 @@
             <label for="passwordConfirmation" class="col-sm-2 col-form-label text-right">Repeat password</label>
             <div class="col-sm-10">
                 <input type="password" class="form-control" name="passwordConfirmation" id="passwordConfirmation"
-                    placeholder="Enter password again">
+                    placeholder="Enter password again" required>
                 <small id="passwordConfirmationHelp" class="form-text text-muted"><span class="text-danger">*
                         Required.</span></small>
             </div>
@@ -53,5 +53,7 @@
     <div class="text-center">Already have an account? <a href="" data-toggle="modal" data-target="#loginModal">Login</a>
 
     </div>
+</div>
 
-    <?php include_once("footer.php") ?>
+<script type="text/javascript" src="js/pw_check.js"></script>
+<?php include_once("footer.php") ?>
