@@ -25,6 +25,7 @@ $fetch = mysqli_fetch_array($result);
 // DELETEME: For now, using placeholder data.
 $title = $fetch['title'];
 $description = $fetch['details'];
+$seller_id = $fetch['seller_id'];
 $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
 $bid_result = mysqli_query($con, $bid_sql);
 $num_bids = mysqli_num_rows($bid_result);
@@ -107,7 +108,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="col-sm-4"> <!-- Right col with bidding info -->
 
             <p>
-                <?php if ($now > $end_time): ?>
+                <?php if ($now > $end_time):?>
                     This auction ended <?php echo (date_format($end_time, 'y-m-d H:i:s')) ?>
                     <!-- TODO: Print the result of the auction here? -->
                 <?php else: ?>
@@ -115,7 +116,9 @@ if (isset($_SESSION['user_id'])) {
                 </p>
                 <p class="lead">Current bid: £<?php echo (number_format($current_price, 2)) ?></p>
 
+                <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer'){?>
                 <!-- Bidding form -->
+                 <?php echo('
                 <form method="POST" action="place_bid.php">
                     <div class="input-group">
                         <div class="input-group-prepend">
@@ -125,6 +128,14 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                     <button type="submit" class="btn btn-primary form-control">Place bid</button>
                 </form>
+                ');?>
+                <?php }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'seller' && $_SESSION['user_id'] == $seller_id){?>
+                    <?php echo('
+                <form method="GET" action="cancel_auction.php">
+                    <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
+                </form>
+                ');?>
+                <?php } ?>
             <?php endif ?>
 
 
@@ -211,27 +222,7 @@ if (isset($_SESSION['user_id'])) {
 
 <div class="container" id = "mybids">
 
-    <h2 class="my-3">My Bidding History</h2>
-
-    <?php
-    // This page is for showing a user the auctions they've bid on.
-    // It will be pretty similar to browse.php, except there is no search bar.
-    // This can be started after browse.php is working with a database.
-    // Feel free to extract out useful functions from browse.php and put them in
-    // the shared "utilities.php" where they can be shared by multiple files.
-    
-
-    // TODO: Check user's credentials (cookie/session).
-
-    // TODO: Perform a query to pull up the auctions they've bidded on.
-    
-    // TODO: Loop through results and print them out as list items.
-    
-    ?>
-
-
 <?php
-
 if (!isset($_GET['page'])) {
     $curr_page = 1;
 } else {
@@ -240,9 +231,8 @@ if (!isset($_GET['page'])) {
 /* TODO: Use above values to construct a query. Use this query to 
    retrieve data from the database. (If there is no form data entered,
    decide on appropriate default value/default query to make. */
-   if (!(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true)) {
-    echo "Not logged in.";
-    }else{
+   if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer') {
+    echo "<h2 class='my-3'>My Bidding History</h2>";
     $buyer_id = $_SESSION['user_id'];
     $sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, b.bidTime, b.bidPrice 
             FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.buyer_id = $buyer_id and bids.item_id = $item_id) as b

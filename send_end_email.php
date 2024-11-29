@@ -6,31 +6,19 @@ require_once 'PHPMailer-6.9.3\src\Exception.php';
 require_once 'PHPMailer-6.9.3\src\PHPMailer.php';
 require_once 'PHPMailer-6.9.3\src\SMTP.php';
 
-// 数据库连接设置
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "db-group4";
+require_once "my_db_connect.php"
 
-// 创建数据库连接
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// 检查连接
-if ($conn->connect_error) {
-    die("Connect failed: " . $conn->connect_error);
-}
-
-// 获取当前时间
+// get current time 
 $currentDate = date('Y-m-d H:i:s');
 
-// 查询过期交易
+// look up for outdated auctions, seller who created it and all buyers watching it
 $sql = "SELECT email, username FROM user WHERE user_id IN
         (SELECT seller_id FROM auctions WHERE endDate <= '$currentDate' AND status = 0)
-        UNION
+        UNION ALL
         SELECT email, username FROM user WHERE user_id IN
         (SELECT buyer_id FROM watchlist WHERE item_id IN
         (SELECT item_id  FROM auctions WHERE endDate <= '$currentDate' AND status = 0))";
-$result = $conn->query($sql);
+$result = $con->query($sql);
 
 // 检查是否有结果
 if ($result->num_rows > 0) {
@@ -70,7 +58,7 @@ if ($result->num_rows > 0) {
 
         // 更新交易记录，标记为已通知
         $updateSql = "UPDATE auctions SET status = 1 WHERE endDate <= '$currentDate' AND status = 0";
-        $conn->query($updateSql);
+        $con->query($updateSql);
 
         echo 'Mail sent success.';
     } catch (Exception $e) {
@@ -79,5 +67,5 @@ if ($result->num_rows > 0) {
 } else {
     echo "No outdated auctions yet.";
 }
-$conn->close();
+$con->close();
 ?>

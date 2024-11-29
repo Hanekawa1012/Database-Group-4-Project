@@ -42,7 +42,8 @@ if ($_POST['bidPrice'] != "") {
         $content = "<h3>Bid Receipt</h3>
                     <p>Bidder name: $username</p>
                     <p>Item name: $itemTitle</p>
-                    <p>Your bid price: $itemTitle</p>";
+                    <p>Your bid price: $bidPrice</p>
+                    <p>Bid time: $bidTime</p>";
         $outline = "You bidded a new item!";
         switch (sendmail::sendemail($email, $username, $title, $content, $outline)) {
             case 'e000':
