@@ -1,20 +1,19 @@
 CREATE TABLE `user`
 (
 `user_id` INT PRIMARY KEY AUTO_INCREMENT,
-`username` VARCHAR(30) NOT NULL ,
 `password` VARCHAR(30), 
 `email` VARCHAR(30) NOT NULL , 
-`accountType` VARCHAR(10) NOT NULL
+`accountType` VARCHAR(10) NOT NULL,
 ) ENGINE = InnoDB;
 
 CREATE TABLE `profile`
 (
 `user_id` INT PRIMARY KEY AUTO_INCREMENT,
 `username` VARCHAR(30) NOT NULL ,
-`tel` VARCHAR(30), 
+`tel` VARCHAR(30), /* tel and address relate to edit_information.php user_info.php */
 `address` VARCHAR(10),
 FOREIGN KEY (user_id) REFERENCES user(user_id)
-) ENGINE = InnoDB;
+)
 
 CREATE TABLE `buyer`
 (
@@ -36,6 +35,7 @@ CREATE TABLE `auctions`
 `category` VARCHAR(20) NOT NULL , 
 `startPrice` INT NOT NULL ,
 `reservePrice` INT, 
+`startDate` DATETIME NOT NULL,//新加的，记得来改
 `endDate` DATETIME NOT NULL,
 `seller_id` INT,
 `status` VARCHAR(10), 
