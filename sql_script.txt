@@ -1,8 +1,7 @@
 CREATE TABLE `user`
 (
 `user_id` INT PRIMARY KEY AUTO_INCREMENT,
-`username` VARCHAR(30) NOT NULL ,
-`password` VARCHAR(30), 
+`password` VARCHAR(100), 
 `email` VARCHAR(30) NOT NULL , 
 `accountType` VARCHAR(10) NOT NULL
 ) ENGINE = InnoDB;
