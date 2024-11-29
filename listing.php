@@ -133,10 +133,6 @@ if (isset($_SESSION['user_id'])) {
     </div> <!-- End of row #2 -->
 
 
-
-    <?php include_once("footer.php") ?>
-
-
     <script>
         // JavaScript functions: addToWatchlist and removeFromWatchlist.
 
@@ -210,3 +206,5 @@ if (isset($_SESSION['user_id'])) {
 
         } // End of addToWatchlist func
     </script>
+</div>
+<?php include_once("footer.php") ?>

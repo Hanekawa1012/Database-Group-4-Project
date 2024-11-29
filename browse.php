@@ -58,6 +58,7 @@ $sql = "SELECT * FROM auctions";
 // 	$sql .= " WHERE LOCATE('$keyword', title) > 0 AND category = '$category'";
 // }
 
+//存疑 回头看
 if (isset($_GET['keyword']) || $keyword != "") {
 	$sql .= " WHERE (title LIKE '%$keyword%' OR details LIKE '%$keyword%')";
 	if ($category != "") {

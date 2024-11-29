@@ -39,6 +39,7 @@ if ($_POST['password'] != $_POST['passwordConfirmation']) { // check if the pass
 $username = "user" . uniqid(); // random name. can be edited in user profile
 
 // send insert request to the database
+// 问题：改成multi_query同时执行并报错
 $sql = "INSERT INTO user (username, password, email, accountType) VALUES ('$username','$password','$email','$accountType');";
 $sql_id = "INSERT INTO $accountType SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType';";
 if ($con->query($sql) == true) {

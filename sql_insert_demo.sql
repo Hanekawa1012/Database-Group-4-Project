@@ -7,7 +7,9 @@ CREATE TABLE `user` (
     `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(50) NOT NULL,
     `email` VARCHAR(100) NOT NULL UNIQUE,
-    `accountType` ENUM('buyer', 'seller') NOT NULL
+    `accountType` ENUM('buyer', 'seller') NOT NULL,
+    `tel` VARCHAR(50) NOT NULL,
+    `address` VARCHAR(100) NOT NULL UNIQUE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `buyer` (
@@ -30,7 +32,7 @@ CREATE TABLE `auctions` (
     `endDate` DATETIME NOT NULL,
     `seller_id` INT NOT NULL,
     `status` ENUM('open', 'sold', 'unsold', 'cancelled') DEFAULT 'open',
-    FOREIGN KEY (`seller_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+    FOREIGN KEY (`seller_id`) REFERENCES `seller` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `watchlist` (

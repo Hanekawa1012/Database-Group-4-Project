@@ -2,7 +2,7 @@
     the bottom of every page, such as helpful links, layout, etc.) here. -->
 
 <!-- Footer -->
-<footer class="py-5 bg-dark">
+<footer class="py-5 bg-dark mt-5">
     <div class="container">
         <p class="m-0 text-center text-white">Auction website &copy; 2024</p>
         <p class="m-0 text-center text-white">Created by Team 4 for CS0178, UCL Computer Science</p>

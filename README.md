@@ -19,10 +19,10 @@
   - by Evan: auctions的status我把它默认设成open（在拍），然后可以改成scheduled（计划开拍），cancelled（取消），sold（已售），unsold（未售出，可能是无人竞拍或者没达到reserved price）。
 - 邮件发信范围：
     - [x] 每次buyer添加新的商品到watchlist时，对将该商品添加至watchlist的buyer发送订阅成功邮件；
-    - 每次buyer向商品发起bid之后，向所有watch该商品的buyer发送价格更新邮件，并在邮件中附带商品信息与最新价格（要不要也向seller发一份变动邮件？）sol：
+    - [x] 每次buyer向商品发起bid之后，向所有watch该商品的buyer发送价格更新邮件，并在邮件中附带商品信息与最新价格（要不要也向seller发一份变动邮件？）sol：
    - 如果设定了reserveprice，则在bidprice首次超过时向卖家发送邮件
-    - 当商品拍卖到期后，商品通过sql cronjob更新auctions status，并向seller与所有watch该商品的buyer发送交易结束邮件，并在邮件中附带商品状态与ending price，若endprice小于reservePrice则流拍，其余情况则交易成功（好像需要一个新的orders table来专门记录endPrice?：大概需要新表？仍然需要思考）
-    - 验证码邮件
+    - [x] 当商品拍卖到期后，商品通过sql cronjob更新auctions status，并向seller与所有watch该商品的buyer发送交易结束邮件，并在邮件中附带商品状态与ending price，若endprice小于reservePrice则流拍，其余情况则交易成功（好像需要一个新的orders table来专门记录endPrice?：大概需要新表？仍然需要思考）
+    - [x] 验证码邮件
 
 #### 新的思考：
 - browse或许可以同时进行精准或模糊搜索？（即让sql产生intersect和union的区别）
