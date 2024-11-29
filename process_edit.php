@@ -42,31 +42,63 @@ if (!empty($errors)) {
     exit;
 }
 
-$sql = "UPDATE user SET ";
-$updates = [];
+$sql_info_before_edit = "SELECT * FROM profile WHERE user_id = '$user_id';";
+$result_before_edit = mysqli_query($con, $sql_info_before_edit);
+$fetch_before_edit = mysqli_fetch_array($result_before_edit);
+$tel_before = $fetch_before_edit['tel'];
+$address_before = $fetch_before_edit['address'];
+
+$sql_user = "UPDATE user SET ";
+$sql_profile = "UPDATE profile SET ";
+$updates_user = [];
+$updates_profile = [];
+$result_edit_user = false;
+$result_edit_profile = false;
+
 
 if (!empty($username) && $username !== $_SESSION['username']) {
-    $updates[] = "username = '$username'";
+    $updates_user[] = "username = '$username'";
+    $updates_profile[] = "username = '$username'";
     $_SESSION['username'] = $username;
 }
 if (!empty($email) && $email !== $_SESSION['email']) {
-    $updates[] = "email = '$email'";
+    $updates_user[] = "email = '$email'";
     $_SESSION['email'] = $email;
 }
-if (!empty($tel) && $tel !== $_SESSION['tel']) {
-    $updates[] = "tel = '$tel'";
+if (!empty($tel) && $tel !== $tel_before) {
+    $updates_profile[] = "tel = '$tel'";
     $_SESSION['tel'] = $tel;
 }
-if (!empty($address) && $address !== $_SESSION['address']) {
-    $updates[] = "address = '$address'";
+if (!empty($address) && $address !== $tel_before) {
+    $updates_profile[] = "address = '$address'";
     $_SESSION['address'] = $address;
 }
 
-if (!empty($updates)) {
-    $sql .= implode(", ", $updates);
-    $sql .= " WHERE user_id = '$user_id'";
+if (empty($updates_user) and empty($updates_profile)) {
+    echo "<div class='container my-3'>";
+    echo "<div class='alert alert-info' role='alert'>";
+    echo "<p>You didn't make any change.</p>";
+    echo "</div>";
+    echo "<a href='user_info.php' class='btn btn-primary'>Return Profile</a>";
+    echo "</div>";
+    header("refresh:3;url=user_info.php");
+    
 
-    if ($con->query($sql) === TRUE) {
+    
+} else {
+    if (!empty($updates_user)) {
+        $sql_user .= implode(", ", $updates_user);
+        $sql_user .= " WHERE user_id = '$user_id'";
+        $result_edit_user = $con->query($sql_user);
+    }
+
+    if (!empty($updates_profile)) {
+        $sql_profile .= implode(", ", $updates_profile);
+        $sql_profile .= " WHERE user_id = '$user_id'";
+        $result_edit_profile = $con->query($sql_profile);
+    }
+
+    if ($result_edit_user === TRUE or $result_edit_profile === TRUE) {
         echo "<div class='container my-3'>";
         echo "<div class='alert alert-success' role='alert'>";
         echo "<p>Your profile has been updated</p>";
@@ -83,14 +115,6 @@ if (!empty($updates)) {
         echo "<a href='user_info.php' class='btn btn-primary'>Try again</a>";
         echo "</div>";
     }
-} else {
-    echo "<div class='container my-3'>";
-    echo "<div class='alert alert-info' role='alert'>";
-    echo "<p>You didn't make any change.</p>";
-    echo "</div>";
-    echo "<a href='user_info.php' class='btn btn-primary'>Return Profile</a>";
-    echo "</div>";
-    header("refresh:3;url=user_info.php");
 }
 
 $con->close();
