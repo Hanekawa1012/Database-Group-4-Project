@@ -41,19 +41,14 @@ $username = "user" . uniqid(); // random name. can be edited in user profile
 // send insert request to the database
 // 问题：改成multi_query同时执行并报错
 $sql = "INSERT INTO user (username, password, email, accountType) VALUES ('$username','$password','$email','$accountType');";
-$sql_id = "INSERT INTO $accountType SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType';";
-if ($con->query($sql) == true) {
+$sql .= "INSERT INTO $accountType SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType';";
+$sql .= "INSERT INTO userinfo(user_id, username) values ((SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType'), '$username');"
+if ($con->multi_query($sql) == true) {
     echo "User data insert succeed.\n";
-    if ($con->query($sql_id) == true) {
-        echo "account type data insert success.\n";
-        header("refresh:3;url=browse.php");
-    } else {
-        echo "account type data insert fail.\n";
-    }
-} else {
-    echo "data insert failed.\n" . "<br/>" . $con->error;
+}else {
+    echo "User data insert fail.\n";
 }
 $con->close();
 
-header("refresh:10;url=browse.php");
+header("refresh:3;url=browse.php");
 ?>
