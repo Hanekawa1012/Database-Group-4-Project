@@ -1,9 +1,19 @@
 <?php include_once("header.php") ?>
+<?php require("my_db_connect.php") ?>
 
 <?php
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     die("You haven't logged in. Please log in.");
 }
+?>
+
+<?php
+$user_id = $_SESSION['user_id'];
+$sql = "SELECT * FROM profile WHERE user_id = '$user_id';";
+$result = mysqli_query($con, $sql);
+$fetch = mysqli_fetch_array($result);
+$tel = $fetch['tel'];
+$address = $fetch['address']
 ?>
 
 <div class="container">
@@ -25,13 +35,13 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
         <div class="form-group row">
             <label for="tel" class="col-sm-2 col-form-label text-right">Telephone</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="tel" placeholder=<?php echo htmlspecialchars($_SESSION['tel']); ?>>
+                <input type="text" class="form-control" name="tel" placeholder=<?php echo !empty($tel) ? htmlspecialchars($tel) : ''; ?>>
             </div>
         </div>
         <div class="form-group row">
             <label for="address" class="col-sm-2 col-form-label text-right">Address</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="address" placeholder=<?php echo htmlspecialchars($_SESSION['address']); ?>>
+                <input type="text" class="form-control" name="address" placeholder=<?php echo !empty($address) ? htmlspecialchars($address) : ''; ?>>
             </div>
         </div>
         <div class="form-group row">

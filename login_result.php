@@ -32,8 +32,6 @@ $_SESSION['user_id'] = $fetch['user_id'];
 $_SESSION['username'] = $fetch['username'];
 $_SESSION['email'] = $fetch['email'];
 $_SESSION['account_type'] = $fetch['accountType'];
-$_SESSION['tel'] = $fetch['tel'];
-$_SESSION['address'] = $fetch['address'];
 echo ('<div class="text-center">You are now logged in! You will be redirected shortly.</div>');
 
 // Redirect to browse after 5 seconds
