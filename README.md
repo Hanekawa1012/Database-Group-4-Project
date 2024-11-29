@@ -122,9 +122,38 @@
     - 添加了JavaScript语句，让搜索栏/下拉框和URL中的metadata保持同步
 - 修正了browse.php的一些问题
 - 添加了recommendation，利用**余弦相似度**完成相似度检测。最多展示10条结果
+
+  (*TODO*: by Evan 大样本量测试推荐系统的正确性。现在的状况，只能说“看起来”是正确的)
 - 在listing界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
-- *TODO*：添加comments？(Tim: 求放过（bushi，但是真的想做的话浅浅规划下，主要是添加新的comment表，独立主键，引入item和buyer的id为外键，最后是comment的具体内容和发布时间)（网页部分则是在listing下加额外div显示对应评论）（除此以外，做了comment之后，recommend可能需要考虑买家发布评论的交易分布作为新的权重）
-- *TODO*：商品浏览页（browse等）展示status？（Tim：老师的utilities里的print函数已经有相关的if判断，不过那是基于结束时间的，我们可以在print函数额外加一个status传进去，把它的if判断基于status属性弄得更复杂些）（同时修改所有相关页面，即mybid，browse等的sql，多搜一个status）
+- *TODO*：添加comments？(Tim: 求放过（bushi，但是真的想做的话浅浅规划下，主要是添加新的comment表，独立主键，引入item和buyer的id为外键，最后是comment的具体内容和发布时间)（网页部分则是在listing下加额外div显示对应评论）
+
+  (Evan: 我感觉其实还有时间。我现在的思路是，comment表应该包含发送时间，点赞数和子评论，schema大概应该是如下。)
+```sql
+CREATE TABLE `comments` (
+  `comment_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `item_id` INT NOT NULL,
+  `commenter_id` INT NOT NULL,
+  `time` DATETIME NOT NULL,
+  `content` VARCHAR(1023) NOT NULL,
+  `parent_comment_id` INT,
+
+  FOREIGN KEY (`item_id`) REFERENCES `auction` (`item_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`commenter_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `comment_likes` (
+  `comment_id` INT NOT NULL,
+  `buyer_id` INT NOT NULL,
+
+  FOREIGN KEY (`comment_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`buyer_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+);
+```
+
+（Tim: 除此以外，做了comment之后，recommend可能需要考虑买家发布评论的交易分布作为新的权重）(Evan: 我觉得合理，不过推荐就会超级复杂，到时候再说)
+
+- *TODO*：商品浏览页（browse等）展示status？（Tim：老师的utilities里的print函数已经有相关的if判断，不过那是基于结束时间的，我们可以在print函数额外加一个status传进去，把它的if判断基于status属性弄得更复杂些）（同时修改所有相关页面，即mybid，browse等的sql，多搜一个status）（Evan: EXACTLY! 就是这个意思)
 
 ## Commit until 7:19, 27/11/2024 by Tim
 - 修改了send_email.php的函数，实现向多用户发信的功能，email和name可传入数组或名称，具体群发写法可参照我的place_bid.php(如果需要的话)
