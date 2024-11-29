@@ -113,7 +113,7 @@ $max_page = ceil($num_results / $results_per_page);
 				$bid_result = mysqli_query($con, $bid_sql);
 				$num_bids = mysqli_num_rows($bid_result);
 				if ($num_bids > 0) {
-					$current_price = mysqli_fetch_assoc($bid_result)['bidPrice'];
+					$current_price = mysqli_fetch_array($bid_result)[0];
 				} else {
 					$current_price = $fetch['startPrice'];
 				}

@@ -50,5 +50,5 @@ if ($con->multi_query($sql)) {
 }
 $con->close();
 
-header("refresh:10;url=browse.php");
+header("refresh:3;url=browse.php");
 ?>
