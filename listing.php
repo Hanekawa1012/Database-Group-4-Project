@@ -24,6 +24,7 @@ $fetch = mysqli_fetch_array($result);
 
 // DELETEME: For now, using placeholder data.
 $title = $fetch['title'];
+$status = $fetch['status'];
 $description = $fetch['details'];
 $seller_id = $fetch['seller_id'];
 $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
@@ -108,34 +109,37 @@ if (isset($_SESSION['user_id'])) {
         <div class="col-sm-4"> <!-- Right col with bidding info -->
 
             <p>
-                <?php if ($now > $end_time):?>
-                    This auction ended <?php echo (date_format($end_time, 'y-m-d H:i:s')) ?>
-                    <!-- TODO: Print the result of the auction here? -->
-                <?php else: ?>
-                    Auction ends <?php echo (date_format($end_time, 'y-m-d H:i:s') . $time_remaining) ?>
-                </p>
-                <p class="lead">Current bid: £<?php echo (number_format($current_price, 2)) ?></p>
+            <?php if ($status == 3){?>
+                This auction was cancelled by its owner.
+                <!-- TODO: Print the result of the auction here? -->
+            <?php }else if ($now > $end_time):?>
+                This auction ended <?php echo (date_format($end_time, 'y-m-d H:i:s')) ?>
+                <!-- TODO: Print the result of the auction here? -->
+            <?php else: ?>
+                Auction ends <?php echo (date_format($end_time, 'y-m-d H:i:s') . $time_remaining) ?>
+            </p>
+            <p class="lead">Current bid: £<?php echo (number_format($current_price, 2)) ?></p>
 
-                <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer'){?>
-                <!-- Bidding form -->
-                 <?php echo('
-                <form method="POST" action="place_bid.php">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">£</span>
-                        </div>
-                        <input type="number" class="form-control" name="bidPrice" id="bid">
+            <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer'){?>
+            <!-- Bidding form -->
+                <?php echo('
+            <form method="POST" action="place_bid.php">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">£</span>
                     </div>
-                    <button type="submit" class="btn btn-primary form-control">Place bid</button>
-                </form>
-                ');?>
-                <?php }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'seller' && $_SESSION['user_id'] == $seller_id){?>
-                    <?php echo('
-                <form method="GET" action="cancel_auction.php">
-                    <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
-                </form>
-                ');?>
-                <?php } ?>
+                    <input type="number" class="form-control" name="bidPrice" id="bid">
+                </div>
+                <button type="submit" class="btn btn-primary form-control">Place bid</button>
+            </form>
+            ');?>
+            <?php }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'seller' && $_SESSION['user_id'] == $seller_id){?>
+                <?php echo('
+            <form method="GET" action="cancel_auction.php">
+                <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
+            </form>
+            ');?>
+            <?php } ?>
             <?php endif ?>
 
 
