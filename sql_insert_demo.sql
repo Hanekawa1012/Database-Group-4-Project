@@ -4,13 +4,19 @@ USE `db-group4`;
 
 CREATE TABLE `user` (
     `user_id` INT PRIMARY KEY AUTO_INCREMENT,
-    `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(50) NOT NULL,
     `email` VARCHAR(100) NOT NULL UNIQUE,
-    `accountType` ENUM('buyer', 'seller') NOT NULL,
-    `tel` VARCHAR(50) NOT NULL,
-    `address` VARCHAR(100) NOT NULL UNIQUE
+    `accountType` ENUM('buyer', 'seller') NOT NULL
 ) ENGINE = InnoDB;
+
+CREATE TABLE `profile`
+(
+    `user_id` INT PRIMARY KEY AUTO_INCREMENT,
+    `username` VARCHAR(30) NOT NULL,
+    `tel` VARCHAR(30), 
+    `address` VARCHAR(10),
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+)
 
 CREATE TABLE `buyer` (
     `user_id` INT PRIMARY KEY,
@@ -24,15 +30,15 @@ CREATE TABLE `seller` (
 
 CREATE TABLE `auctions` (
     `item_id` INT PRIMARY KEY AUTO_INCREMENT,
-    `title` VARCHAR(50) NOT NULL,
+    `title` VARCHAR(50)  UNIQUE NOT NULL,
     `details` TEXT,
     `category` VARCHAR(30) NOT NULL,
     `startPrice` DECIMAL(10, 2) NOT NULL,
     `reservePrice` DECIMAL(10, 2),
     `endDate` DATETIME NOT NULL,
     `seller_id` INT NOT NULL,
-    `status` ENUM('open', 'sold', 'unsold', 'cancelled') DEFAULT 'open',
-    FOREIGN KEY (`seller_id`) REFERENCES `seller` (`user_id`) ON DELETE CASCADE
+    `status` INT DEFAULT 0,
+    FOREIGN KEY (`seller_id`) REFERENCES `seller` (`user_id`) ON DELETE CASCADE,
 ) ENGINE = InnoDB;
 
 CREATE TABLE `watchlist` (
