@@ -14,12 +14,12 @@
                 $POST['auctionDetails'], etc. Perform checking on the data to
                 make sure it can be inserted into the database. If there is an
                 issue, give some semi-helpful feedback to user. */
-    $auctionTitle = $_POST['auctionTitle'];
-    $auctionDetails = $_POST['auctionDetails'];
-    $auctionCategory = $_POST['auctionCategory'];
-    $auctionStartPrice = $_POST['auctionStartPrice'];
-    $auctionReservePrice = $_POST['auctionReservePrice'];
-    $auctionEndDate = $_POST['auctionEndDate'];
+    $auctionTitle = mysqli_real_escape_string($con, $_POST['auctionTitle']);
+    $auctionDetails = mysqli_real_escape_string($con, $_POST['auctionDetails']);
+    $auctionCategory = mysqli_real_escape_string($con, $_POST['auctionCategory']);
+    $auctionStartPrice = mysqli_real_escape_string($con, $_POST['auctionStartPrice']);
+    $auctionReservePrice = mysqli_real_escape_string($con, $_POST['auctionReservePrice']);
+    $auctionEndDate = mysqli_real_escape_string($con, $_POST['auctionEndDate']);
     $auctionSellerID = $_SESSION['user_id'];
 
     if ($auctionTitle == "") {

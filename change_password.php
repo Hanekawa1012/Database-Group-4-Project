@@ -28,7 +28,7 @@ if ($step == 1) {
 
 if ($step == 2) {
     if (isset($_POST['verify_code'])) {
-        $entered_code = $_POST['verification_code'];
+        $entered_code = (int)$_POST['verification_code'];
         $code_generated_time = isset($_SESSION['code_generated_time']) ? $_SESSION['code_generated_time'] : 0;
 
         if ($entered_code == $_SESSION['verification_code'] && (time() - $code_generated_time) < 600) {
@@ -52,7 +52,7 @@ if ($step == 3) {
         $confirm_password = $_POST['confirm_password'];
 
         if ($new_password === $confirm_password) {
-            $sql = "UPDATE user SET password = '$new_password' WHERE user_id = '$user_id'";
+            $sql = "UPDATE user SET password = SHA('$new_password') WHERE user_id = '$user_id'";
             if ($con->query($sql) === TRUE) {
                 $success_message = "Password was changed successfully.";
                 header("refresh:3;url=user_info.php");
