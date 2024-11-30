@@ -13,7 +13,7 @@
     - **Entities:**
     - User:
     | Attributes | Type | Definition | Notes|
-    |------------|------|------------|------|
+    | :--- | :------ | :--- | :--- |
     |user_id     |int   |unique id for each user|PK|
     
 
