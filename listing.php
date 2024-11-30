@@ -111,7 +111,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="col-sm-4"> <!-- Right col with bidding info -->
 
             <p>
-                <?php if ($status == 3): ?>
+                <?php if ($status == 'cancelled'): ?>
                     This auction was cancelled by its owner.
                     <!-- TODO: Print the result of the auction here? -->
                 <?php elseif ($now > $end_time): ?>
@@ -247,10 +247,10 @@ if (isset($_SESSION['user_id'])) {
        retrieve data from the database. (If there is no form data entered,
        decide on appropriate default value/default query to make. */
     if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer') {
-        echo "<h2 class='my-3'>My Bidding History</h2>";
+        echo "<h2 class='my-3'>Bidding History</h2>";
         $buyer_id = $_SESSION['user_id'];
-        $sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, b.bidTime, b.bidPrice 
-            FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.buyer_id = $buyer_id and bids.item_id = $item_id) as b
+        $sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, auctions.status, b.bidTime, b.bidPrice 
+            FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.item_id = $item_id) as b
             INNER JOIN auctions
             ON b.item_id = auctions.item_id
             ORDER BY bidPrice DESC";
@@ -292,7 +292,8 @@ if (isset($_SESSION['user_id'])) {
                     $end_date = $fetch['endDate'];
                     $bidPrice = $fetch['bidPrice'];
                     $bidTime = $fetch['bidTime'];
-                    print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date);
+                    $status = $fetch['status'];
+                    print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date, $status);
                 }
                 ?>
 

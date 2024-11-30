@@ -70,7 +70,7 @@ if (!isset($_GET['page'])) {
    retrieve data from the database. (If there is no form data entered,
    decide on appropriate default value/default query to make. */
 $buyer_id = $_SESSION['user_id'];
-$sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, b.bidTime, b.bidPrice 
+$sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, auctions.status, b.bidTime, b.bidPrice 
         FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.buyer_id = $buyer_id) as b
         INNER JOIN auctions
         ON b.item_id = auctions.item_id";
@@ -97,7 +97,7 @@ $result = mysqli_query($con, $sql);
 /* For the purposes of pagination, it would also be helpful to know the
    total number of results that satisfy the above query */
 $num_results = mysqli_num_rows($result);
-$results_per_page = 3;
+$results_per_page = 10;
 $max_page = ceil($num_results / $results_per_page);
 ?>
 
@@ -128,7 +128,8 @@ $max_page = ceil($num_results / $results_per_page);
             $end_date = $fetch['endDate'];
             $bidPrice = $fetch['bidPrice'];
             $bidTime = $fetch['bidTime'];
-            print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date);
+            $status = $fetch['status'];
+            print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date, $status);
         }
         ?>
 
