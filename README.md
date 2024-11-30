@@ -1,6 +1,27 @@
-# Database Project Group 4 
+# Requirement Ticklists:
 
-## Report (该部分内容在typora或overleaf内单独生成pdf)
+- Users can 
+  - register with the system 
+  - and create accounts. 
+- Users have roles of seller or buyer with different privileges. 
+- Sellers can 
+  - create auctions for particular items, 
+  - setting suitable conditions and features of the items including the item description, categorisation, starting price, reserve price and end date. 
+- Buyers can 
+  - search the system for particular kinds of item being auctioned and can 
+  - browse and visually re-arrange listings of items within categories. 
+- Buyers can bid for items and see the bids other users make as they are received. The system will manage the auction until the set end time and award the item to the highest bidder. The system should confirm to both the winner and seller of an auction its outcome. 
+- Extra functionality related to core features requiring usage of a database.
+- Buyers can 
+  - watch auctions on items and 
+  - receive emailed updates on bids on those items including notifications when they are outbid.
+- Buyers can 
+  - receive recommendations for items to bid on based on collaborative filtering (i.e., ‘you might want to bid on the sorts of things other people, who have also bid on the sorts of things you have previously bid on, are currently bidding on). 
+
+
+
+
+# Database Project Group 4 Report (该部分内容在typora或overleaf内单独生成pdf)
 
 - URL for your Youtube video
 - Your ERD, giving any assumptions that it makes about the processes that uses the data.
@@ -9,12 +30,177 @@
 - A listing and explanation of your database queries
 - Other individual submission: 1) a self-assessment 2) peer assessment
 
-- Schema Listing:
-    - **Entities:**
-    - User:
-    | Attributes | Type | Definition | Notes|
-    | :--- | :------ | :--- | :--- |
-    |user_id     |int   |unique id for each user|PK|
+## Youtube Link for Demo Video:
+
+## ER Diagram and Assumptions
+
+## Schema Listing:
+
+### Entities:
+
+### User Table
+| Attribute    | Data Type         | Note                | Definition                     |
+|--------------|-------------------|---------------------|--------------------------------|
+| `user_id`    | INT               | PK, AUTO_INCREMENT  | User ID                        |
+| `password`   | VARCHAR(100)      | NOT NULL            | User password                  |
+| `email`      | VARCHAR(100)      | NOT NULL, UNIQUE    | User email                     |
+| `accountType`| ENUM('buyer', 'seller') | NOT NULL       | Type of account (buyer/seller) |
+
+### Profile Table
+| Attribute    | Data Type         | Note                | Definition                     |
+|--------------|-------------------|---------------------|--------------------------------|
+| `user_id`    | INT               | PK, FK              | User ID                        |
+| `username`   | VARCHAR(50)       | NOT NULL            | Username                       |
+| `tel`        | VARCHAR(15)       | NOT NULL            | Telephone number               |
+| `address`    | VARCHAR(100)      | NOT NULL, UNIQUE    | Address                        |
+
+### Buyer Table
+| Attribute    | Data Type         | Note                | Definition                     |
+|--------------|-------------------|---------------------|--------------------------------|
+| `user_id`    | INT               | PK, FK              | User ID                        |
+
+### Seller Table
+| Attribute    | Data Type         | Note                | Definition                     |
+|--------------|-------------------|---------------------|--------------------------------|
+| `user_id`    | INT               | PK, FK              | User ID                        |             
+
+### Auctions Table
+| Attribute      | Data Type         | Note                | Definition                     |
+|----------------|-------------------|---------------------|--------------------------------|
+| `item_id`      | INT               | PK, AUTO_INCREMENT  | Item ID                        |
+| `title`        | VARCHAR(50)       | CK, UNIQUE    | Auction title                  |
+| `details`      | TEXT              | NOT NULL                    | Auction details                |
+| `category`     | VARCHAR(30)       | NOT NULL            | Auction category               |
+| `startPrice`   | DECIMAL(10, 2)    | NOT NULL            | Starting price                 |
+| `reservePrice` | DECIMAL(10, 2)    | CHECK (reservePrice IS NULL OR reservePrice >= startPrice) | Reserve price                  |
+| `startDate`    | DATETIME          | NOT NULL            | Auction start date             |
+| `endDate`      | DATETIME          | NOT NULL            | Auction end date               |
+| `seller_id`    | INT               | NOT NULL, FK        | Seller ID                      |
+| `status`       | ENUM('active', 'closed', 'cancelled') | NOT NULL | Auction status        |
+
+### Watchlist Table
+| Attribute    | Data Type         | Note                | Definition                     |
+|--------------|-------------------|---------------------|--------------------------------|
+| `list_id`    | INT               | PK, AUTO_INCREMENT  | List ID                        |
+| `buyer_id`   | INT               | NOT NULL, FK        | Buyer ID                       |
+| `item_id`    | INT               | NOT NULL, FK        | Item ID                        |
+
+### Bids Table
+| Attribute    | Data Type         | Note                | Definition                     |
+|--------------|-------------------|---------------------|--------------------------------|
+| `bid_id`     | INT               | PK, AUTO_INCREMENT  | Bid ID                         |
+| `buyer_id`   | INT               | NOT NULL, FK        | Buyer ID                       |
+| `item_id`    | INT               | NOT NULL, FK        | Item ID                        |
+| `bidPrice`   | DECIMAL(10, 2)    | NOT NULL            | Bid price                      |
+| `bidTime`    | DATETIME          | NOT NULL            | Bid time                       |
+
+### Comments Table
+| Attribute          | Data Type         | Note                | Definition                     |
+|--------------------|-------------------|---------------------|--------------------------------|
+| `comment_id`       | INT               | PK, AUTO_INCREMENT  | Comment ID                     |
+| `item_id`          | INT               | NOT NULL, FK        | Item ID                        |
+| `buyer_id`         | INT               | NOT NULL, FK        | Buyer ID                       |
+| `time`             | DATETIME          | NOT NULL            | Comment time                   |
+| `content`          | VARCHAR(1023)     | NOT NULL            | Comment content                |
+| `parent_comment_id`| INT               | FK                  | Parent comment ID              |
+
+### Comment Likes Table
+| Attribute    | Data Type         | Note                | Definition                     |
+|--------------|-------------------|---------------------|--------------------------------|
+| `comment_id` | INT               | FK              | Comment ID                     |
+| `buyer_id`   | INT               | FK              | Buyer ID                       |
+
+## All SQL Query Listings Sorted by PHP Files:
+
+### browse.php as example, and logically same as mybids.php, mylistings.php, mywatchlist.php:
+
+1. **SQL Statement:**
+   ```sql
+   $sql = "SELECT * FROM auctions";
+   ```
+   **Explanation:** This query selects all columns from the `auctions` table. It serves as the base query for retrieving auction listings.
+
+2. **SQL Statement:**
+   ```sql
+   if (isset($_GET['keyword']) || $keyword != "") {
+       $sql .= " WHERE (title LIKE '%$keyword%' OR details LIKE '%$keyword%')";
+       if ($category != "") {
+           if ($search_type == "union") {
+               $sql .= " UNION SELECT * FROM auctions WHERE category = '$category'";
+           } else {
+               $sql .= " AND category = '$category'";
+           }
+       }
+   } else if ($category != "") {
+       $sql .= " WHERE category = '$category'";
+   }
+   ```
+   **Explanation:** This block modifies the base query to filter results based on the `keyword` and `category` parameters from the URL. If a keyword is provided, it searches for auctions where the title or details contain the keyword. If a category is also provided, it either adds it to the existing filter (for intersection search) or performs a union with another query filtering by category (for union search).
+
+3. **SQL Statement:**
+   ```sql
+   if ($ordering != "") {
+       $sql .= " ORDER BY $ordering";
+   }
+   ```
+   **Explanation:** This adds an `ORDER BY` clause to the query to sort the results based on the `order_by` parameter from the URL.
+
+4. **SQL Statement:**
+   ```sql
+   $result_q = mysqli_query($con, $sql);
+   ```
+   **Explanation:** This executes the constructed SQL query and stores the result set in `$result_q`.
+
+5. **SQL Statement:**
+   ```sql
+   $num_results = mysqli_num_rows($result_q);
+   ```
+   **Explanation:** This retrieves the number of rows in the result set, which is used for pagination.
+
+6. **SQL Statement:**
+   ```sql
+   if ($curr_page != "") {
+       $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
+   }
+   $result_q = mysqli_query($con, $sql);
+   ```
+   **Explanation:** This adds a `LIMIT` clause to the query to paginate the results, fetching only a subset of rows based on the current page number. The query is then re-executed with the limit applied.
+
+7. **SQL Statement:**
+   ```sql
+   $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
+   $bid_result = mysqli_query($con, $bid_sql);
+   ```
+   **Explanation:** This query retrieves the highest bid price for a specific auction item from the `bids` table, ordered in descending order by bid price.
+
+8. **SQL Statement:**
+   ```sql
+   $num_bids = mysqli_num_rows($bid_result);
+   ```
+   **Explanation:** This retrieves the number of bids for the specific auction item.
+
+These SQL statements are used to dynamically construct and execute queries based on user input from the URL parameters, allowing for flexible searching, filtering, and pagination of auction listings. 
+
+### Account Management Related 
+**FUNCTIONS: register, login, edit peronal profile, send verification code**
+
+### Auctions Related (create, cancel, update status of an auction)
+
+### cancel_auction.php:
+
+1. **SQL Statement:**
+   ```sql
+   $sql = "UPDATE auctions SET status = 3 WHERE item_id = $item_id;";
+   ```
+   **Explanation:** This query updates the `auctions` table, setting the `status` column to `3` (which likely represents a cancelled status) for the auction with the specified `item_id`.
+
+2. **SQL Statement:**
+   ```sql
+   $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
+   ```
+   **Explanation:** This query selects the `title`, `details`, `category`, and `endDate` columns from the `auctions` table for the auction with the specified `item_id`. This information is used to provide details about the cancelled auction.
+
+These SQL statements are used to update the status of an auction to cancelled and to retrieve the details of the auction for confirmation and notification purposes. 
     
 
 ## Notice(最后提交时以下内容全部删除)

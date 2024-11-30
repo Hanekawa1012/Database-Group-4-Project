@@ -16,7 +16,7 @@ $success_message = '';
 
 if ($step == 1) {
     if (isset($_POST['send_code'])) {
-        $result = send_verification_code($email, $username);
+        $result = send_verification_code($email, $email);
         if ($result == "e000") {
             $success_message = "Verification code has been sent to your email. Please go to your email to check.";
             $step = 2;

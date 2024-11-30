@@ -5,10 +5,12 @@
 // Notify user of success/failure and redirect/give navigation options.
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
     echo 'You are not logged in! <a href="" data-toggle="modal" data-target="#loginModal">Login</a>';
+    header('refresh:3;browse.php');
     exit();
 }
 if (!isset($_SESSION['account_type']) || $_SESSION['account_type'] == 'seller') {
     echo 'Only buyer-type account can join bidding. If you want to bid for an item, please register a buyer account.';
+    header('refresh:3;browse.php');
     exit();
 }
 
@@ -58,14 +60,12 @@ if ($_POST['bidPrice'] != "") {
         }
 
         //email sending to all user watching this auction
-        $sql_watching = "SELECT email, username FROM user WHERE user_id IN
+        $sql_watching = "SELECT email FROM user WHERE user_id IN
                    (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
         $result_watching = mysqli_query($con, $sql_watching);
         $email_list = [];
-        $username_list = [];
         while($fetch = mysqli_fetch_array($result_watching)){
             $email_list[] = $fetch['email'];
-            $username_list[] = $fetch['username'];
         }
         $itemTitle = $fetch_item['title'];
         $title = "One of your watching auction has new bid update!";
@@ -75,7 +75,7 @@ if ($_POST['bidPrice'] != "") {
                     <p>New bid price: $bidPrice</p>
                     <p>Update time: $bidTime</p>";
         $outline = "You bidded a new item!";
-        switch (sendmail::sendemail($email_list, $username_list, $title, $content, $outline)) {
+        switch (sendmail::sendemail($email_list, $email_list, $title, $content, $outline)) {
             case 'e000':
                 echo "A receipt email sent to your email. Please check.";
                 break;

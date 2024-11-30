@@ -17,6 +17,7 @@ if ($_POST['email'] != "" && $_POST['password'] != "") {
     $row = mysqli_num_rows($result);
     if (!$row) {
         echo ('<div class="text-center">Error:User does not exists.</div>');
+        header('refresh:3;url=browse.php');
         exit();
     }
 } else {

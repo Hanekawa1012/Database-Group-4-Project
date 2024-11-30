@@ -48,8 +48,8 @@ if ($result->num_rows > 0) {
 
             // 内容
             $mail->isHTML(true);                                  // 设置邮件格式为HTML
-            $mail->Subject = '交易结束通知';
-            $mail->Body    = '您的交易已结束。感谢您的使用！';
+            $mail->Subject = 'One auction/bid of yours has ended.';
+            $mail->Body    = '<h3>One auction/bid of yours has ended.</h3>';
             $mail->AltBody = '您的交易已结束。感谢您的使用！';
 
             $mail->send();
