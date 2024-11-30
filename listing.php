@@ -109,7 +109,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="col-sm-4"> <!-- Right col with bidding info -->
 
             <p>
-                <?php if ($status == 3) { ?>
+                <?php if ($status == 'cancelled') { ?>
                     This auction was cancelled by its owner.
                     <!-- TODO: Print the result of the auction here? -->
                 <?php } else if ($now > $end_time): ?>
