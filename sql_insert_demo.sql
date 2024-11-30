@@ -5,7 +5,7 @@ USE `db-group4`;
 -- User Table
 CREATE TABLE `user` (
     `user_id` INT PRIMARY KEY AUTO_INCREMENT,
-    `password` VARCHAR(64) NOT NULL,
+    `password` VARCHAR(100) NOT NULL,
     `email` VARCHAR(100) NOT NULL UNIQUE,
     `accountType` ENUM('buyer', 'seller') NOT NULL
 ) ENGINE = InnoDB;
@@ -96,16 +96,16 @@ CREATE TABLE `comment_likes` (
 INSERT INTO
     `user` (`password`, `email`, `accountType`)
 VALUES
-    ('password123', 'buyer1@example.com', 'buyer'),
-    ('password123', 'buyer2@example.com', 'buyer'),
-    ('password123', 'buyer3@example.com', 'buyer'),
-    ('password123', 'buyer4@example.com', 'buyer'),
-    ('password123', 'buyer5@example.com', 'buyer'),
-    ('password123', 'seller1@example.com', 'seller'),
-    ('password123', 'seller2@example.com', 'seller'),
-    ('password123', 'seller3@example.com', 'seller'),
-    ('password123', 'seller4@example.com', 'seller'),
-    ('password123', 'seller5@example.com', 'seller');
+    (SHA('password123'), 'cdzhj1012@163.com', 'buyer'),
+    (SHA('password123'), 'buyer2@example.com', 'buyer'),
+    (SHA('password123'), 'buyer3@example.com', 'buyer'),
+    (SHA('password123'), 'buyer4@example.com', 'buyer'),
+    (SHA('password123'), 'buyer5@example.com', 'buyer'),
+    (SHA('password123'), 'c2393963926@qq.com', 'seller'),
+    (SHA('password123'), 'seller2@example.com', 'seller'),
+    (SHA('password123'), 'seller3@example.com', 'seller'),
+    (SHA('password123'), 'seller4@example.com', 'seller'),
+    (SHA('password123'), 'seller5@example.com', 'seller');
 
 -- Inserting profiles
 INSERT INTO
