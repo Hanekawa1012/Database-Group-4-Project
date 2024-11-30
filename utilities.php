@@ -69,7 +69,7 @@ function print_bid_listing_li($item_id, $title, $desc, $bidPrice, $bidTime, $end
         $desc_shortened = $desc;
     }
 
-    if ($status == 3){
+    if ($status == "cancelled"){
         $time_remaining = "This auction is cancelled";
     }else{
         // Calculate time to auction end

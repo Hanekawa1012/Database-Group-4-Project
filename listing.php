@@ -236,10 +236,10 @@ if (isset($_SESSION['user_id'])) {
        retrieve data from the database. (If there is no form data entered,
        decide on appropriate default value/default query to make. */
     if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer') {
-        echo "<h2 class='my-3'>My Bidding History</h2>";
+        echo "<h2 class='my-3'>Bidding History</h2>";
         $buyer_id = $_SESSION['user_id'];
-        $sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, b.bidTime, b.bidPrice 
-            FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.buyer_id = $buyer_id and bids.item_id = $item_id) as b
+        $sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, auctions.status, b.bidTime, b.bidPrice 
+            FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.item_id = $item_id) as b
             INNER JOIN auctions
             ON b.item_id = auctions.item_id
             ORDER BY bidPrice DESC";
@@ -271,18 +271,19 @@ if (isset($_SESSION['user_id'])) {
                     echo "No accessible auctions for now.<a href='browse.php'>Bid in an auction to start your own bidding!</a>";
                     exit();
                 }
-                $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
-                $result = mysqli_query($con, $sql);
-                while ($fetch = mysqli_fetch_array($result)) {
-                    $item_id = $fetch['item_id'];
-                    $title = $fetch['title'];
-                    $description = $fetch['details'];
+                    $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
+                    $result = mysqli_query($con, $sql);
+                    while ($fetch = mysqli_fetch_array($result)) {
+                        $item_id = $fetch['item_id'];
+                        $title = $fetch['title'];
+                        $description = $fetch['details'];
 
-                    $end_date = $fetch['endDate'];
-                    $bidPrice = $fetch['bidPrice'];
-                    $bidTime = $fetch['bidTime'];
-                    print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date);
-                }
+                        $end_date = $fetch['endDate'];
+                        $bidPrice = $fetch['bidPrice'];
+                        $bidTime = $fetch['bidTime'];
+                        $status = $fetch['status'];
+                        print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date, $status);
+                    }
                 ?>
 
             </ul>
