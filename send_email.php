@@ -2,10 +2,15 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
 class sendmail
 {
     static function sendemail($toEmail, $toName, $emailTitle, $emailContent, $emailOutline, $sendTime = null)
     {
+        // TODO: remove after bug fixed
+        return 'e000';
+        exit();
+        // TODO: remove after bug fixed
         require_once 'PHPMailer-6.9.3\src\Exception.php';
         require_once 'PHPMailer-6.9.3\src\PHPMailer.php';
         require_once 'PHPMailer-6.9.3\src\SMTP.php';
@@ -27,13 +32,13 @@ class sendmail
                 $length = min(count($toEmail), count($toName));
                 for ($i = 0; $i < $length; $i++) {
                     echo $toEmail[$i];
-                    $mail->addAddress($toEmail[$i], $toName[$i]);                   
+                    $mail->addAddress($toEmail[$i], $toName[$i]);
                 }
             } else if (is_array($toEmail) || is_array($toName)) {
                 echo "Unknown message sending error. Please check your variables are of same length and type.";
                 return 1;
             } else {
-                $mail->addAddress($toEmail, $toName);    
+                $mail->addAddress($toEmail, $toName);
             }
             //$mail->addAddress('ellen@example.com');// 可添加多个收件人
             $mail->addReplyTo($mailconfig->Username, 'DB-group4');        //回复的时候回复给哪个邮箱 建议和发件人一致
@@ -43,7 +48,7 @@ class sendmail
             //发送附件
             // $mail->addAttachment('../xy.zip');// 添加附件
             // $mail->addAttachment('../thumb-1.jpg', 'new.jpg');// 发送附件并且重命名
-            
+
             // Send email at specific time
             if (!is_null($sendTime)) {
                 $mail->sendDate = $sendDate;
@@ -63,5 +68,3 @@ class sendmail
         }
     }
 }
-
-?>

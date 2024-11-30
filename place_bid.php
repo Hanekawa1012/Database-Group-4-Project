@@ -1,12 +1,15 @@
+<?php session_start(); ?>
 <?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false): ?>
     <?php require_once "header.php" ?>
     <div>You are not logged in! <a href="" data-toggle="modal" data-target="#loginModal">Login</a></div>
     <?php require_once "footer.php" ?>
+    <?php exit(); ?>
 
 <?php elseif (!isset($_SESSION['account_type']) || $_SESSION['account_type'] == 'seller'): ?>
     <?php require_once "header.php" ?>
     <div>Only buyer-type account can join bidding. If you want to bid for an item, please register a buyer account.</div>
     <?php require_once "footer.php" ?>
+    <?php exit(); ?>
 
 <?php else: ?>
     <?php require_once "listing.php" ?>
@@ -16,7 +19,7 @@
 <?php endif; ?>
 
 <?php
-// TODO: Extract $_POST variables, check they're OK, and attempt to make a bid.
+// Extract $_POST variables, check they're OK, and attempt to make a bid.
 // Notify user of success/failure and redirect/give navigation options.
 
 if ($_POST['bidPrice'] != "" && is_numeric($_POST['bidPrice'])) {
@@ -26,7 +29,7 @@ if ($_POST['bidPrice'] != "" && is_numeric($_POST['bidPrice'])) {
     $bidTime = $bidTime->format('y-m-d H:i:s');
     $item_id = intval($_SESSION['viewing']);
 
-    if ($bidPrice < $current_price) {
+    if ($bidPrice <= $current_price) {
         echo ('Error: Bid price shold be greater than current one.');
         exit();
     }

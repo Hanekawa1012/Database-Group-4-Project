@@ -31,9 +31,8 @@ if ($_POST['functionname'] == "add_to_watchlist") {
         $content = "<h3>You added a new item!</h3>";
         $outline = "You added a new item!";
 
-        // TODO: The issue is due to the function below(sendemail): 
-        // $state = sendmail::sendemail($email, $username, $title, $content, $outline);
-        // switch (state)) {
+        $state = sendmail::sendemail($email, $username, $title, $content, $outline);
+        // switch ($state) {
         //     case 'e000':
         //         $res = "success";
         //         break;
@@ -48,8 +47,6 @@ if ($_POST['functionname'] == "add_to_watchlist") {
         $res = "error";
     }
 } else if ($_POST['functionname'] == "remove_from_watchlist") {
-    // TODO: Update database and return success/failure.
-    //NEEDS FIXING!!! I CAN'T FIND WHAT'S WRONG!!! -- TIM
     $sql = "DELETE FROM watchlist WHERE buyer_id = $buyer_id AND item_id = $item_id;";
     if (mysqli_query($con, $sql)) {
         $res = "success";

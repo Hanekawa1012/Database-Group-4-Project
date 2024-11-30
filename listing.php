@@ -119,26 +119,27 @@ if (isset($_SESSION['user_id'])) {
                     <!-- TODO: Print the result of the auction here? -->
                 <?php else: ?>
                     Auction ends <?php echo (date_format($end_time, 'y-m-d H:i:s') . $time_remaining) ?>
+                <?php endif; ?>
             </p>
-        <?php endif; ?>
-        <p class="lead">Current bid: £<?php echo (number_format($current_price, 2)) ?></p>
 
-        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer'): ?>
-            <!-- Bidding form -->
-            <form method="POST" action="place_bid.php">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">£</span>
+            <p class="lead">Current bid: £<?php echo (number_format($current_price, 2)) ?></p>
+
+            <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer'): ?>
+                <!-- Bidding form -->
+                <form method="POST" action="place_bid.php">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">£</span>
+                        </div>
+                        <input type="number" class="form-control" name="bidPrice" id="bid" required>
                     </div>
-                    <input type="number" class="form-control" name="bidPrice" id="bid">
-                </div>
-                <button type="submit" class="btn btn-primary form-control">Place bid</button>
-            </form>
-        <?php elseif (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'seller' && $_SESSION['user_id'] == $seller_id): ?>
-            <form method="GET" action="cancel_auction.php">
-                <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
-            </form>
-        <?php endif ?>
+                    <button type="submit" class="btn btn-primary form-control">Place bid</button>
+                </form>
+            <?php elseif (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'seller' && $_SESSION['user_id'] == $seller_id): ?>
+                <form method="GET" action="cancel_auction.php">
+                    <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
+                </form>
+            <?php endif ?>
 
 
         </div> <!-- End of right col with bidding info -->
@@ -148,8 +149,6 @@ if (isset($_SESSION['user_id'])) {
 
 </div>
 
-<?php $con->close(); ?>
-<?php include_once("footer.php") ?>
 
 
 <script>
@@ -185,7 +184,7 @@ if (isset($_SESSION['user_id'])) {
                         alarm_text.setAttribute("class", "sm-button-alm");
                         alarm_text.setAttribute("id", "error_add_text");
                         mydiv.appendChild(alarm_text);
-                        alarm_text.appendChild(document.createTextNode("Add failed. "));
+                        alarm_text.appendChild(document.createTextNode("Add failed. Please try again later."));
                     }
                 }
             },
@@ -238,50 +237,45 @@ if (isset($_SESSION['user_id'])) {
 <div class="container" id="mybids">
 
     <?php
-    if (!isset($_GET['page'])) {
+    if (!isset($_GET['page']) || !is_numeric($_GET['page'])) {
         $curr_page = 1;
     } else {
         $curr_page = $_GET['page'];
     }
-    /* TODO: Use above values to construct a query. Use this query to 
-       retrieve data from the database. (If there is no form data entered,
-       decide on appropriate default value/default query to make. */
+    /* Use above values to construct a query. Use this query to 
+            retrieve data from the database. (If there is no form data entered,
+            decide on appropriate default value/default query to make. */
     if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer') {
         echo "<h2 class='my-3'>Bidding History</h2>";
         $buyer_id = $_SESSION['user_id'];
         $sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, auctions.status, b.bidTime, b.bidPrice 
-            FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.item_id = $item_id) as b
-            INNER JOIN auctions
-            ON b.item_id = auctions.item_id
-            ORDER BY bidPrice DESC";
-
+                FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.item_id = $item_id) as b
+                INNER JOIN auctions
+                ON b.item_id = auctions.item_id
+                ORDER BY bidPrice DESC";
 
         $result = mysqli_query($con, $sql);
 
         /* For the purposes of pagination, it would also be helpful to know the
-           total number of results that satisfy the above query */
+                    total number of results that satisfy the above query */
         $num_results = mysqli_num_rows($result);
         $results_per_page = 3;
         $max_page = ceil($num_results / $results_per_page);
+    }
     ?>
 
-        <div class="container mt-5" id="mybids">
+    <div class="container mt-5" id="mybids">
 
 
 
-            <!-- TODO: If result set is empty, print an informative message. Otherwise... -->
+        <!-- If result set is empty, print an informative message. Otherwise...
+                   Use a while loop to print a list item for each auction listing retrieved from the query -->
 
-            <ul class="list-group">
-
-                <!-- TODO: Use a while loop to print a list item for each auction listing
-     retrieved from the query -->
-
-
+        <ul class="list-group">
+            <?php if ($result->num_rows <= 0): ?>
+                No accessible auctions for now.<a href='browse.php'>Bid in an auction to start your own bidding!</a>
+            <?php else: ?>
                 <?php
-                if ($result->num_rows <= 0) {
-                    echo "No accessible auctions for now.<a href='browse.php'>Bid in an auction to start your own bidding!</a>";
-                    exit();
-                }
                 $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
                 $result = mysqli_query($con, $sql);
                 while ($fetch = mysqli_fetch_array($result)) {
@@ -296,70 +290,70 @@ if (isset($_SESSION['user_id'])) {
                     print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date, $status);
                 }
                 ?>
+            <?php endif; ?>
+        </ul>
 
-            </ul>
-
+        <?php if ($result->num_rows > 0): ?>
             <!-- Pagination for results listings -->
             <nav aria-label="Search results pages" class="mt-5">
                 <ul class="pagination justify-content-center">
 
-                <?php
+                    <?php
 
-                // Copy any currently-set GET variables to the URL.
-                $querystring = "";
-                foreach ($_GET as $key => $value) {
-                    if ($key != "page") {
-                        $querystring .= "$key=$value&amp;";
-                    }
-                }
-
-                $high_page_boost = max(3 - $curr_page, 0);
-                $low_page_boost = max(2 - ($max_page - $curr_page), 0);
-                $low_page = max(1, $curr_page - 2 - $low_page_boost);
-                $high_page = min($max_page, $curr_page + 2 + $high_page_boost);
-
-                if ($curr_page != 1) {
-                    echo ('
-    <li class="page-item">
-      <a class="page-link" href="listing.php?' . $querystring . 'page=' . ($curr_page - 1) . '" aria-label="Previous">
-        <span aria-hidden="true"><i class="fa fa-arrow-left"></i></span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>');
-                }
-
-                for ($i = $low_page; $i <= $high_page; $i++) {
-                    if ($i == $curr_page) {
-                        // Highlight the link
-                        echo ('
-    <li class="page-item active">');
-                    } else {
-                        // Non-highlighted link
-                        echo ('
-    <li class="page-item">');
+                    // Copy any currently-set GET variables to the URL.
+                    $querystring = "";
+                    foreach ($_GET as $key => $value) {
+                        if ($key != "page") {
+                            $querystring .= "$key=$value&amp;";
+                        }
                     }
 
-                    // Do this in any case
-                    echo ('
-      <a class="page-link" href="listing.php?' . $querystring . 'page=' . $i . '">' . $i . '</a>
-    </li>');
-                }
+                    $high_page_boost = max(3 - $curr_page, 0);
+                    $low_page_boost = max(2 - ($max_page - $curr_page), 0);
+                    $low_page = max(1, $curr_page - 2 - $low_page_boost);
+                    $high_page = min($max_page, $curr_page + 2 + $high_page_boost);
 
-                if ($curr_page != $max_page) {
-                    echo ('
-    <li class="page-item">
-      <a class="page-link" href="listing.php?' . $querystring . 'page=' . ($curr_page + 1) . '" aria-label="Next">
-        <span aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>');
-                }
-            }
-                ?>
+                    if ($curr_page != 1) {
+                        echo ('
+                                    <li class="page-item">
+                                    <a class="page-link" href="listing.php?' . $querystring . 'page=' . ($curr_page - 1) . '" aria-label="Previous">
+                                        <span aria-hidden="true"><i class="fa fa-arrow-left"></i></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    </li>');
+                    }
 
+                    for ($i = $low_page; $i <= $high_page; $i++) {
+                        if ($i == $curr_page) {
+                            // Highlight the link
+                            echo ('
+                                    <li class="page-item active">');
+                        } else {
+                            // Non-highlighted link
+                            echo ('
+                                    <li class="page-item">');
+                        }
+
+                        // Do this in any case
+                        echo ('
+                                    <a class="page-link" href="listing.php?' . $querystring . 'page=' . $i . '">' . $i . '</a>
+                                    </li>');
+                    }
+
+                    if ($curr_page != $max_page) {
+                        echo ('
+                                    <li class="page-item">
+                                    <a class="page-link" href="listing.php?' . $querystring . 'page=' . ($curr_page + 1) . '" aria-label="Next">
+                                        <span aria-hidden="true"><i class="fa fa-arrow-right"></i></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                    </li>');
+                    }
+                    ?>
                 </ul>
             </nav>
-        </div>
+        <?php endif; ?>
+    </div>
 
 </div>
 
@@ -468,3 +462,6 @@ $comments_result = mysqli_query($con, $comments_sql);
         });
     }
 </script>
+
+<?php $con->close(); ?>
+<?php include_once("footer.php") ?>
