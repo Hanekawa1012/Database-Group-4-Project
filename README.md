@@ -19,14 +19,11 @@
 
 ## Notice(最后提交时以下内容全部删除)
 ### 1.ToDoList：(自用，今天做完)
-- 0）报告，优先级最高，完成草稿后给朋友们看下
-- 1）密码加密功能(已完成)
-- 2）以及防sql注入函数(已完成)
-- 3）mybid的错误输出需要修复（已完成），再加添加额外按钮以两种形式展示
-- 4）listing下的评论区与bid history(已完成)
-- 5）类型搜索栏好像还有问题，看看怎么个事
-- 6）status搜索需要额外加入搜索栏
-*check以下may那边的进度：表单验证以及Multi_query（已完成）
+- 报告，优先级最高，完成草稿后给朋友们看下
+- 添加额外按钮以两种形式展示bid/auctions history
+- 类型搜索栏好像还有问题，看看怎么个事
+- status搜索需要额外加入搜索栏
+- 表单验证
 
 #### 仍需实现：
 - mybid, mylisting, my watchlist 的每一栏是否需要改动？将bid history和auction history放在对应的商品页的下方，还是直接输出在mybid/mylisting 里面？（还是两个都做？：两个都做，而且多做两个按钮供用户选择）
@@ -42,6 +39,66 @@
       - by Evan: 要做！！！我觉得应该直接在显示剩余时间的位置
 
 ## Commits
+
+## Commit until 7:19, 27/11/2024 by Tim
+- 修改了send_email.php的函数，实现向多用户发信的功能，email和name可传入数组或名称，具体群发写法可参照我的place_bid.php(如果需要的话)
+- 修改了header和编辑信息的一些逻辑，现在登录时需要额外选择买卖家的身份，与此相对的，email不再严格要求不重复，以在提升观感同时满足3rd normal form条件
+
+## Commit at 1:42, 27/11/2024 by Evan
+- 将所有的文件的缩进、sql语句格式、注释等格式统一调整
+- 修改了部分邮件发送格式
+- 添加新的模拟数据
+- 添加了footer
+- 关于header：（Tim：WELL DONE 帮大忙 质感一下就上来了）
+    - 添加模糊搜索选项
+    - 将搜索栏重做，现在三个搜索选项下拉框被装入了一个Advanced search隐藏栏
+    - 搜索的category现在会随数据库实时变化
+    - 添加了JavaScript语句，让搜索栏/下拉框和URL中的metadata保持同步
+- 修正了browse.php的一些问题
+- 添加了recommendation，利用**余弦相似度**完成相似度检测。最多展示10条结果
+
+  (*TODO*: by Evan 大样本量测试推荐系统的正确性。现在的状况，只能说“看起来”是正确的)
+- 在listing界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
+- *TODO*：添加comments？(Tim: 求放过（bushi，但是真的想做的话浅浅规划下，主要是添加新的comment表，独立主键，引入item和buyer的id为外键，最后是comment的具体内容和发布时间)（网页部分则是在listing下加额外div显示对应评论）
+
+  (Evan: 我感觉其实还有时间。我现在的思路是，comment表应该包含发送时间，点赞数和子评论，schema大概应该是如下。)
+```sql
+CREATE TABLE `comments` (
+  `comment_id` INT PRIMARY KEY AUTO_INCREMENT,
+  `item_id` INT NOT NULL,
+  `commenter_id` INT NOT NULL,
+  `time` DATETIME NOT NULL,
+  `content` VARCHAR(1023) NOT NULL,
+  `parent_comment_id` INT,
+
+  FOREIGN KEY (`item_id`) REFERENCES `auction` (`item_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`commenter_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `comment_likes` (
+  `comment_id` INT NOT NULL,
+  `buyer_id` INT NOT NULL,
+
+  FOREIGN KEY (`comment_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`buyer_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+);
+```
+
+（Tim: 除此以外，做了comment之后，recommend可能需要考虑买家发布评论的交易分布作为新的权重）(Evan: 我觉得合理，不过推荐就会超级复杂，到时候再说)
+
+- *TODO*：商品浏览页（browse等）展示status？（Tim：老师的utilities里的print函数已经有相关的if判断，不过那是基于结束时间的，我们可以在print函数额外加一个status传进去，把它的if判断基于status属性弄得更复杂些）（同时修改所有相关页面，即mybid，browse等的sql，多搜一个status）（Evan: EXACTLY! 就是这个意思)
+
+## Commit at 21:00, 26/11/24 by Zhenghao
+- 实现了忘记密码验证邮箱验证码后重置密码，并以类似的机制实现了变更密码功能（Tim：GOOD JOB，还缺了一些组件，我添加上来）
+
+## Commit at 10:06, 26/11/24 by Evan
+- 添加模拟测试数据，正在和新版的sql_script比对...
+- 要不要新增comments？评论区还可以添加点赞之类的功能
+- browse.php修改进行中...
+
+## Commit at 2:30, 26/11/24 by Zhenghao
+- 写了下个人信息编辑，耶！
 
 ## Commit at 23:23, 25/11/2024 by TIM
 - 不装了，让我们说中文
@@ -104,63 +161,3 @@
 ## First commit
 
 - Added starter code
-
-## Commit at 2:30, 26/11/24 by Zhenghao
-- 写了下个人信息编辑，耶！
-
-## Commit at 10:06, 26/11/24 by Evan
-- 添加模拟测试数据，正在和新版的sql_script比对...
-- 要不要新增comments？评论区还可以添加点赞之类的功能
-- browse.php修改进行中...
-
-## Commit at 21:00, 26/11/24 by Zhenghao
-- 实现了忘记密码验证邮箱验证码后重置密码，并以类似的机制实现了变更密码功能（Tim：GOOD JOB，还缺了一些组件，我添加上来）
-
-## Commit at 1:42, 27/11/2024 by Evan
-- 将所有的文件的缩进、sql语句格式、注释等格式统一调整
-- 修改了部分邮件发送格式
-- 添加新的模拟数据
-- 添加了footer
-- 关于header：（Tim：WELL DONE 帮大忙 质感一下就上来了）
-    - 添加模糊搜索选项
-    - 将搜索栏重做，现在三个搜索选项下拉框被装入了一个Advanced search隐藏栏
-    - 搜索的category现在会随数据库实时变化
-    - 添加了JavaScript语句，让搜索栏/下拉框和URL中的metadata保持同步
-- 修正了browse.php的一些问题
-- 添加了recommendation，利用**余弦相似度**完成相似度检测。最多展示10条结果
-
-  (*TODO*: by Evan 大样本量测试推荐系统的正确性。现在的状况，只能说“看起来”是正确的)
-- 在listing界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
-- *TODO*：添加comments？(Tim: 求放过（bushi，但是真的想做的话浅浅规划下，主要是添加新的comment表，独立主键，引入item和buyer的id为外键，最后是comment的具体内容和发布时间)（网页部分则是在listing下加额外div显示对应评论）
-
-  (Evan: 我感觉其实还有时间。我现在的思路是，comment表应该包含发送时间，点赞数和子评论，schema大概应该是如下。)
-```sql
-CREATE TABLE `comments` (
-  `comment_id` INT PRIMARY KEY AUTO_INCREMENT,
-  `item_id` INT NOT NULL,
-  `commenter_id` INT NOT NULL,
-  `time` DATETIME NOT NULL,
-  `content` VARCHAR(1023) NOT NULL,
-  `parent_comment_id` INT,
-
-  FOREIGN KEY (`item_id`) REFERENCES `auction` (`item_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`commenter_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE
-);
-
-CREATE TABLE `comment_likes` (
-  `comment_id` INT NOT NULL,
-  `buyer_id` INT NOT NULL,
-
-  FOREIGN KEY (`comment_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`buyer_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
-);
-```
-
-（Tim: 除此以外，做了comment之后，recommend可能需要考虑买家发布评论的交易分布作为新的权重）(Evan: 我觉得合理，不过推荐就会超级复杂，到时候再说)
-
-- *TODO*：商品浏览页（browse等）展示status？（Tim：老师的utilities里的print函数已经有相关的if判断，不过那是基于结束时间的，我们可以在print函数额外加一个status传进去，把它的if判断基于status属性弄得更复杂些）（同时修改所有相关页面，即mybid，browse等的sql，多搜一个status）（Evan: EXACTLY! 就是这个意思)
-
-## Commit until 7:19, 27/11/2024 by Tim
-- 修改了send_email.php的函数，实现向多用户发信的功能，email和name可传入数组或名称，具体群发写法可参照我的place_bid.php(如果需要的话)
-- 修改了header和编辑信息的一些逻辑，现在登录时需要额外选择买卖家的身份，与此相对的，email不再严格要求不重复，以在提升观感同时满足3rd normal form条件
