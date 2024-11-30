@@ -20,7 +20,7 @@
 
     if ($_POST['bidPrice'] != "" && is_numeric($_POST['bidPrice'])) {
         $user_id = intval($_SESSION['user_id']);
-        $bidPrice = $_POST['bidPrice'];
+        $bidPrice = mysqli_real_escape_string($con, $_POST['bidPrice']);
         $bidTime = new DateTime();
         $bidTime = $bidTime->format('y-m-d H:i:s');
         $item_id = intval($_SESSION['viewing']);
