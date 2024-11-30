@@ -101,7 +101,7 @@ VALUES
     (SHA('password123'), 'buyer3@example.com', 'buyer'),
     (SHA('password123'), 'buyer4@example.com', 'buyer'),
     (SHA('password123'), 'buyer5@example.com', 'buyer'),
-    (SHA('password123'), 'c2393963926@qq.com', 'seller'),
+    (SHA('password123'), '2393963926@qq.com', 'seller'),
     (SHA('password123'), 'seller2@example.com', 'seller'),
     (SHA('password123'), 'seller3@example.com', 'seller'),
     (SHA('password123'), 'seller4@example.com', 'seller'),
