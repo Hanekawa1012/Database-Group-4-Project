@@ -9,7 +9,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 <?php
 $user_id = $_SESSION['user_id'];
-$sql = "SELECT * FROM user WHERE user_id = '$user_id';";
+$sql = "SELECT * FROM profile WHERE user_id = '$user_id';";
 $result = mysqli_query($con, $sql);
 $fetch = mysqli_fetch_array($result);
 $tel = $fetch['tel'];
