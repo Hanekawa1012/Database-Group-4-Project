@@ -9,8 +9,8 @@ $success_message = '';
 
 if ($step == 1) {
     if (isset($_POST['send_code'])) {
-        $email = $_POST['email'];
-        $sql = "SELECT user_id, username FROM user WHERE email = '$email'";
+        $email = mysqli_real_escape_string($con, $_POST['email']);
+        $sql = "SELECT user_id FROM user WHERE email = '$email'";
         $user_record = mysqli_query($con, $sql);
         $row = mysqli_num_rows($user_record);
         if (!$row) {
@@ -18,9 +18,12 @@ if ($step == 1) {
             exit();
         }
         $fetch = mysqli_fetch_array($user_record);
-        $username = $fetch['username'];
         $user_id = $fetch['user_id'];
         $_SESSION['user_id'] = $user_id;
+        $sql_username = "SELECT username FROM profile WHERE user_id = '$user_id';";
+        $result_profile = mysqli_query($con, $sql_username);
+        $fetch_username = mysqli_fetch_array($result_profile);
+        $username = $fetch_username['username'];
         $result = send_verification_code($email, $username);
         if ($result == "e000") {
             $success_message = "Verification code has been sent to your email. Please go to your email to check.";
@@ -33,7 +36,7 @@ if ($step == 1) {
 
 if ($step == 2) {
     if (isset($_POST['verify_code'])) {
-        $entered_code = $_POST['verification_code'];
+        $entered_code = (int)$_POST['verification_code'];
         $code_generated_time = isset($_SESSION['code_generated_time']) ? $_SESSION['code_generated_time'] : 0;
 
         if ($entered_code == $_SESSION['verification_code'] && (time() - $code_generated_time) < 600) {
@@ -58,7 +61,7 @@ if ($step == 3) {
         $user_id = $_SESSION['user_id'];
 
         if ($new_password === $confirm_password) {
-            $sql_update_password = "UPDATE user SET password = '$new_password' WHERE user_id = $user_id";
+            $sql_update_password = "UPDATE user SET password = SHA('$new_password') WHERE user_id = $user_id";
             if ($con->query($sql_update_password) === TRUE) {
                 $success_message = "Password was changed successfully.";
                 header("refresh:3;url=browse.php");

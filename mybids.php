@@ -37,34 +37,34 @@ if (!isset($_GET['keyword'])) {
     // TODO: Define behavior if a keyword has not been specified.
     $keyword = "";
 } else {
-    $keyword = $_GET['keyword'];
+    $keyword = mysqli_real_escape_string($con,$_GET['keyword']);
 }
 
 if (!isset($_GET['cat'])) {
     // TODO: Define behavior if a category has not been specified.
     $category = "";
 } else {
-    $category = $_GET['cat'];
+    $category = mysqli_real_escape_string($con,$_GET['cat']);
 }
 
 if (!isset($_GET['order_by'])) {
     // TODO: Define behavior if an order_by value has not been specified.
     $ordering = "";
 } else {
-    $ordering = $_GET['order_by'];
+    $ordering = mysqli_real_escape_string($con,$_GET['order_by']);
 }
 
 if (!isset($_GET['search_type'])) {
 	// TODO: Define behavior if a search_type has not been specified; in union/intersection search
 	$search_type = "intersection";
 } else {
-	$search_type = $_GET['search_type'];
+	$search_type = mysqli_real_escape_string($con,$_GET['search_type']);
 }
 
 if (!isset($_GET['page'])) {
     $curr_page = 1;
 } else {
-    $curr_page = $_GET['page'];
+    $curr_page = (int)$_GET['page'];
 }
 /* TODO: Use above values to construct a query. Use this query to 
    retrieve data from the database. (If there is no form data entered,

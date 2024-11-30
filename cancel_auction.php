@@ -15,7 +15,7 @@
                 $POST['auctionDetails'], etc. Perform checking on the data to
                 make sure it can be inserted into the database. If there is an
                 issue, give some semi-helpful feedback to user. */
-    $item_id = $_SESSION['viewing'];
+    $item_id = (int)$_SESSION['viewing'];
 
     $sql = "UPDATE auctions SET status = 3 WHERE item_id = $item_id;";
 
@@ -27,11 +27,11 @@
     $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
     $fetch_item = mysqli_fetch_array(mysqli_query($con, $sql_item));
     $email = $_SESSION['email'];
-    $username = $_SESSION['username'];
-    $item_title = $fetch_item['title'];
-    $item_details = $fetch_item['details'];
-    $item_cat = $fetch_item['category'];
-    $item_endDate = $fetch_item['endDate'];
+    $username = htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8');
+    $item_title = htmlspecialchars($fetch_item['title'], ENT_QUOTES, 'UTF-8');
+    $item_details = htmlspecialchars($fetch_item['details'], ENT_QUOTES, 'UTF-8');
+    $item_cat = htmlspecialchars($fetch_item['category'], ENT_QUOTES, 'UTF-8');
+    $item_endDate = htmlspecialchars($fetch_item['endDate'], ENT_QUOTES, 'UTF-8');
 
     $title = "You deleted an auction.";
     $content = "<h3>Auction Receipt</h3>

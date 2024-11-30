@@ -12,9 +12,9 @@
 if ($_POST["email"] == "") {//check if the email is not filled in
     die("Error: Email needed.");
 } else {
-    $email = $_POST["email"];
-    $accountType = $_POST['accountType'];
-    if (!preg_match("/([\w\-]+\@[\w\-]+\.[\w\-]+)/", $email)) { // check if the format is valid.
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $accountType = mysqli_real_escape_string($con, $_POST['accountType']);
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { // check if the format is valid.
         die("Error: Email address invalid.");
     }
     $sql = "SELECT * FROM user WHERE email = '$email' AND accountType = '$accountType';"; // check if the email is already registered
@@ -40,7 +40,7 @@ $username = "user" . uniqid(); // random name. can be edited in user profile
 
 // send insert request to the database
 // 问题：改成multi_query同时执行并报错
-$sql = "INSERT INTO user (username, password, email, accountType) VALUES ('$username','$password','$email','$accountType');";
+$sql = "INSERT INTO user (password, email, accountType) VALUES (SHA('$password'),'$email','$accountType');";
 $sql .= "INSERT INTO $accountType SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType';";
 $sql .= "INSERT INTO profile (user_id, username) SELECT user_id, username FROM user WHERE email = '$email' ;";
 if ($con->multi_query($sql)) {
