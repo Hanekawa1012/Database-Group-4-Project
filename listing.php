@@ -18,12 +18,11 @@ if (!isset($_GET['item_id'])) {
 
 $_SESSION['viewing'] = $item_id;
 
-// TODO: Use item_id to make a query to the database.
+// Use item_id to make a query to the database.
 $sql = "SELECT * FROM auctions WHERE item_id = '$item_id';";
 $result = mysqli_query($con, $sql);
 $fetch = mysqli_fetch_array($result);
 
-// DELETEME: For now, using placeholder data.
 $title = $fetch['title'];
 $description = $fetch['details'];
 $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
@@ -36,7 +35,7 @@ if ($num_bids > 0) {
 }
 $end_time = new DateTime($fetch['endDate']);
 
-// TODO: Note: Auctions that have ended may pull a different set of data,
+//       Note: Auctions that have ended may pull a different set of data,
 //       like whether the auction ended in a sale or was cancelled due
 //       to lack of high-enough bids. Or maybe not.
 
@@ -80,18 +79,20 @@ if (isset($_SESSION['user_id'])) {
                just as easily use PHP as in other places in the code */
             if ($now < $end_time):
             ?>
-                <?php if ($has_session && $watching): ?>
-                    <div id="watch_watching">
-                        <!-- <button type="button" class="btn btn-success btn-sm" disabled>Watching</button> -->
-                        <button type="button" class="btn btn-danger btn-sm" onclick="removeFromWatchlist()">Remove
-                            watch</button>
-                    </div>
-                <?php else: ?>
-                    <div id="watch_nowatch">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addToWatchlist()">+ Add to
-                            watchlist</button>
-                    </div>
-                <?php endif ?>
+                <div id="watch_nowatch" <?php if ($has_session && $watching) {
+                                            echo 'style="display:none"';
+                                        } ?>>
+                    <!-- <button type="button" class="btn btn-success btn-sm" disabled>Watching</button> -->
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addToWatchlist()">+ Add to
+                        watchlist</button>
+                </div>
+                <div id="watch_watching" <?php if (!($has_session && $watching)) {
+                                                echo 'style="display:none"';
+                                            } ?>>
+
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeFromWatchlist()">Remove
+                        watch</button>
+                </div>
             <?php endif/* Print nothing otherwise */ ?>
         </div>
     </div>
@@ -135,6 +136,8 @@ if (isset($_SESSION['user_id'])) {
 
 
 </div>
+
+<?php $con->close(); ?>
 <?php include_once("footer.php") ?>
 
 
@@ -164,9 +167,15 @@ if (isset($_SESSION['user_id'])) {
                     $("#watch_nowatch").hide();
                     $("#watch_watching").show();
                 } else {
-                    var mydiv = document.getElementById("watch_nowatch");
-                    mydiv.appendChild(document.createElement("br"));
-                    mydiv.appendChild(document.createTextNode("Add to watch failed. Try again later."));
+                    if (document.getElementById("error_add_text") == null) {
+                        var mydiv = document.getElementById("watch_nowatch");
+                        // mydiv.appendChild(document.createElement("br"));
+                        alarm_text = document.createElement("small");
+                        alarm_text.setAttribute("class", "sm-button-alm");
+                        alarm_text.setAttribute("id", "error_add_text");
+                        mydiv.appendChild(alarm_text);
+                        alarm_text.appendChild(document.createTextNode("Add failed. "));
+                    }
                 }
             },
 
@@ -198,9 +207,15 @@ if (isset($_SESSION['user_id'])) {
                     $("#watch_watching").hide();
                     $("#watch_nowatch").show();
                 } else {
-                    var mydiv = document.getElementById("watch_watching");
-                    mydiv.appendChild(document.createElement("br"));
-                    mydiv.appendChild(document.createTextNode("Watch removal failed. Try again later."));
+                    if (document.getElementById("error_remove_text") == null) {
+                        var mydiv = document.getElementById("watch_watching");
+                        // mydiv.appendChild(document.createElement("br"));
+                        alarm_text = document.createElement("small");
+                        alarm_text.setAttribute("class", "sm-button-alm");
+                        alarm_text.setAttribute("id", "error_remove_text");
+                        mydiv.appendChild(alarm_text);
+                        alarm_text.appendChild(document.createTextNode("Removal failed. "));
+                    }
                 }
             },
 

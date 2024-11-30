@@ -172,3 +172,10 @@ CREATE TABLE `comment_likes` (
 - 修复了注册、登陆等页面的跳转问题
 - 添加注册、登陆输入的前端表单验证
 - 更改部分代码写法，保持原有功能的情况下提高可读性
+
+## Commit until 0:15, 30/11/2024 by May
+
+- 添加 bid 的前端表单验证
+- 修复 watching 数据库表格查询/删除错误时，提示语句重复出现的 bug
+- 查找到 add to watch 按钮无法正常切换的问题（出在邮件发送上，详见 trello）；现暂时注释掉了 watchlist_funcs.php 中的相关代码
+- 修复部分 bug
