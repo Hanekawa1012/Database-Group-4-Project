@@ -55,7 +55,7 @@ $updates_profile = [];
 $result_edit_user = false;
 $result_edit_profile = false;
 
-
+//TODO
 if (!empty($username) && $username !== $_SESSION['username']) {
     $updates_user[] = "username = '$username'";
     $updates_profile[] = "username = '$username'";

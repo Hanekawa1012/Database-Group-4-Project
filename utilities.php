@@ -60,7 +60,7 @@ function print_listing_li($item_id, $title, $desc, $price, $num_bids, $end_time)
 
 // print_listing_li:
 // This function prints an HTML <li> element containing an auction listing
-function print_bid_listing_li($item_id, $title, $desc, $bidPrice, $bidTime, $end_time)
+function print_bid_listing_li($item_id, $title, $desc, $bidPrice, $bidTime, $end_time,$status)
 {
     // Truncate long descriptions
     if (strlen($desc) > 250) {
@@ -69,16 +69,19 @@ function print_bid_listing_li($item_id, $title, $desc, $bidPrice, $bidTime, $end
         $desc_shortened = $desc;
     }
 
-
-    // Calculate time to auction end
-    $end_time = new DateTime($end_time);
-    $now = new DateTime();
-    if ($now > $end_time) {
-        $time_remaining = 'This auction has ended';
-    } else {
-        // Get interval:
-        $time_to_end = date_diff($now, $end_time);
-        $time_remaining = display_time_remaining($time_to_end) . ' remaining';
+    if ($status == 3){
+        $time_remaining = "This auction is cancelled";
+    }else{
+        // Calculate time to auction end
+        $end_time = new DateTime($end_time);
+        $now = new DateTime();
+        if ($now > $end_time) {
+            $time_remaining = 'This auction has ended';
+        } else {
+            // Get interval:
+            $time_to_end = date_diff($now, $end_time);
+            $time_remaining = display_time_remaining($time_to_end) . ' remaining';
+        }
     }
 
     // Print HTML

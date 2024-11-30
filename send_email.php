@@ -13,8 +13,8 @@ class sendmail
         try {
             //服务器配置
             $mailconfig = json_decode('{"Host":"smtp.163.com","Username":"cdzhj1012@163.com","Password":"WZbdaNUUc9NKqDTx","SMTPSecure":"ssl","Port":465}');
-            $mail->CharSet = "UTF-8";                                // 设定邮件编码
-            $mail->SMTPDebug = 0;                                   // 调试模式输出
+            $mail->CharSet = "UTF-8";                                // Mail Charset
+            $mail->SMTPDebug = 0;                                   // Debug mode input
             $mail->isSMTP();                                        // 使用SMTP
             $mail->Host = $mailconfig->Host;                        // SMTP服务器
             $mail->SMTPAuth = true;                                 // 允许 SMTP 认证

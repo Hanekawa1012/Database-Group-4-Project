@@ -97,7 +97,7 @@ $result = mysqli_query($con, $sql);
 /* For the purposes of pagination, it would also be helpful to know the
    total number of results that satisfy the above query */
    $num_results = mysqli_num_rows($result);
-   $results_per_page = 3;
+   $results_per_page = 10;
    $max_page = ceil($num_results / $results_per_page);
 ?>
 

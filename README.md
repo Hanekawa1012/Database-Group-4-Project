@@ -9,10 +9,18 @@
 - A listing and explanation of your database queries
 - Other individual submission: 1) a self-assessment 2) peer assessment
 
+- Schema Listing:
+    - **Entities:**
+    - User:
+    | Attributes | Type | Definition | Notes|
+    |------------|------|------------|------|
+    |user_id     |int   |unique id for each user|PK|
+    
+
 ## Notice(最后提交时以下内容全部删除)
 ### 1.ToDoList：(自用，今天做完)
 - 0）报告，优先级最高，完成草稿后给朋友们看下
-- 1）密码加密功能
+- 1）密码加密功能(已完成)
 - 2）以及防sql注入函数
 - 3）mybid的错误输出需要修复（已完成），再加添加额外按钮以两种形式展示
 - 4）listing下的评论区与bid history(已完成)
@@ -35,31 +43,31 @@
 
 ## Commits
 
-## First commit
+## Commit at 23:23, 25/11/2024 by TIM
+- 不装了，让我们说中文
+- 几乎重构了整个数据库，添加了buyer和seller的约束表格，并将其他相关的表都从user外键转移到了buyer和seller上，同时auctions还增删了一些属性（比如auctions里删除了currentPrice（想了一下不符合3nf就删了）以及添加了status，方便用于筛选已结束的auction来发邮件）所以，请记得看我更新的sql_script（笑）
 
-- Added starter code
+## Commit at 6:11, 22/11/2024 by TIM
 
-## Commits till 3:07, 16/11/2024 by TIM
+- Modified... a lot of things
+    - In conclusion the item pages including mybids, mylistings, mywatchlist, browse are all accomplished basically, including showing items, filtering ans searching, and showing remaining time
+- But after that a lot of other problems come out, so maybe you could check my thoughts below.
 
-- Modified process_registration, register, header
-    - accomplished registration confirmation, input validity check
-    - added a sign-up botton in the header
-- All modified versions are in branch Tim
+## Commit at 6:14, 18/11/2024 by TIM
 
-## Commit at 19:51, 17/11/2024 by TIM
+- Modified listing, place_bid
+    - accomplished bidding items
+    - created table bids, updated in sql_script
 
-- Modified login_results, header
-    - accomplished login request, session data setting, checking login info validity
-- Fixed error that new accounts will be detected existing in database
-- Modified in branch Tim
+## Commit at 6:14, 18/11/2024 by TIM
 
-## Commit at 22:46, 17/11/2024 by TIM
+- Modified browse, create_auction_result, listing, login_result, logout, my_db_connect, process_registration, watchlist_funcs
+    - About the files modified above, the point is that the database is kind of applicated foreign key constraint and I added watchlist table to store new data of watchlist relationship between user and auctions.
+    - Accomplished smooth watchlist adding/removing, added foreign key seller_id to auctions, added recording user_id to sessions
+- Added pdo_db_connect, sql_script
+    - These are for you to get along with different database connection and database initializations. If you just right to get started with the project, make use of them.:)
+- All changes in branch Tim. Maybe it's time to merge my things since I have to look at PythonIntro. Don't hesitate to ask me if there are any problems in my code. =)
 
-- Modified logout, login_result, process_registration, header
-    - finished session setting and unsetting in login/logout, now the website must go smoothly with them.
-    - deleted FIXME given by doctor since it no more works for main page test
-- might look back later, but now start working on item pages
-- All changes in branch Tim, as usual.
 
 ## Commit at 2:12, 17/11/2024 by TIM
 
@@ -71,30 +79,31 @@
 - All changes in branch Tim.
 - *Maybe I will upload my sql script for creating tables needed in index.php tomorrow morning, stay tuned guys...(zzz)
 
-## Commit at 6:14, 18/11/2024 by TIM
+## Commit at 22:46, 17/11/2024 by TIM
 
-- Modified browse, create_auction_result, listing, login_result, logout, my_db_connect, process_registration, watchlist_funcs
-    - About the files modified above, the point is that the database is kind of applicated foreign key constraint and I added watchlist table to store new data of watchlist relationship between user and auctions.
-    - Accomplished smooth watchlist adding/removing, added foreign key seller_id to auctions, added recording user_id to sessions
-- Added pdo_db_connect, sql_script
-    - These are for you to get along with different database connection and database initializations. If you just right to get started with the project, make use of them.:)
-- All changes in branch Tim. Maybe it's time to merge my things since I have to look at PythonIntro. Don't hesitate to ask me if there are any problems in my code. =)
+- Modified logout, login_result, process_registration, header
+    - finished session setting and unsetting in login/logout, now the website must go smoothly with them.
+    - deleted FIXME given by doctor since it no more works for main page test
+- might look back later, but now start working on item pages
+- All changes in branch Tim, as usual.
 
-## Commit at 6:14, 18/11/2024 by TIM
+## Commit at 19:51, 17/11/2024 by TIM
 
-- Modified listing, place_bid
-    - accomplished bidding items
-    - created table bids, updated in sql_script
+- Modified login_results, header
+    - accomplished login request, session data setting, checking login info validity
+- Fixed error that new accounts will be detected existing in database
+- Modified in branch Tim
 
-## Commit at 6:11, 22/11/2024 by TIM
+## Commits till 3:07, 16/11/2024 by TIM
 
-- Modified... a lot of things
-    - In conclusion the item pages including mybids, mylistings, mywatchlist, browse are all accomplished basically, including showing items, filtering ans searching, and showing remaining time
-- But after that a lot of other problems come out, so maybe you could check my thoughts below.
+- Modified process_registration, register, header
+    - accomplished registration confirmation, input validity check
+    - added a sign-up botton in the header
+- All modified versions are in branch Tim
 
-## Commit at 23:23, 25/11/2024 by TIM
-- 不装了，让我们说中文
-- 几乎重构了整个数据库，添加了buyer和seller的约束表格，并将其他相关的表都从user外键转移到了buyer和seller上，同时auctions还增删了一些属性（比如auctions里删除了currentPrice（想了一下不符合3nf就删了）以及添加了status，方便用于筛选已结束的auction来发邮件）所以，请记得看我更新的sql_script（笑）
+## First commit
+
+- Added starter code
 
 ## Commit at 2:30, 26/11/24 by Zhenghao
 - 写了下个人信息编辑，耶！
