@@ -11,7 +11,16 @@
 
 ## Notice(最后提交时以下内容全部删除)
 
-### 1.ToDoList：
+### 1.ToDoList：(自用，今天做完)
+
+- 0）报告，优先级最高，完成草稿后给朋友们看下
+- 1）密码加密功能
+- 2）以及防 sql 注入函数
+- 3）mybid 的错误输出需要修复（已完成），再加添加额外按钮以两种形式展示
+- 4）listing 下的评论区与 bid history(已完成)
+- 5）类型搜索栏好像还有问题，看看怎么个事
+- 6）status 搜索需要额外加入搜索栏
+  \*check 以下 may 那边的进度：表单验证以及 Multi_query（已完成）
 
 #### 仍需实现：
 
@@ -19,17 +28,6 @@
   - by Evan: 我觉得是应该都做的，my bid 只显示自己的竞价吧，而且应该有一个“是否是最高竞价者”的显示；商品页下面应该有关于对应商品的所有 bid history（没理解错问题吧？
 - auctions 加入 status(goingon/canceled/success)，判断可以展示到 browse 上的商品
   - by Evan: auctions 的 status 我把它默认设成 open（在拍），然后可以改成 scheduled（计划开拍），cancelled（取消），sold（已售），unsold（未售出，可能是无人竞拍或者没达到 reserved price）。
-- 邮件发信范围：
-  - [x] 每次 buyer 添加新的商品到 watchlist 时，对将该商品添加至 watchlist 的 buyer 发送订阅成功邮件；
-  - 每次 buyer 向商品发起 bid 之后，向所有 watch 该商品的 buyer 发送价格更新邮件，并在邮件中附带商品信息与最新价格（要不要也向 seller 发一份变动邮件？）sol：
-  - 如果设定了 reserveprice，则在 bidprice 首次超过时向卖家发送邮件
-  - 当商品拍卖到期后，商品通过 sql cronjob 更新 auctions status，并向 seller 与所有 watch 该商品的 buyer 发送交易结束邮件，并在邮件中附带商品状态与 ending price，若 endprice 小于 reservePrice 则流拍，其余情况则交易成功（好像需要一个新的 orders table 来专门记录 endPrice?：大概需要新表？仍然需要思考）
-  - 验证码邮件
-
-#### 新的思考：
-
-- browse 或许可以同时进行精准或模糊搜索？（即让 sql 产生 intersect 和 union 的区别）
-  - [x] by Evan: 在做了在做了
 
 ### 2.关于仍未实现的基本功能的一些提示与个人想法：
 

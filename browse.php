@@ -50,7 +50,7 @@ $keyword = mysqli_real_escape_string($con, $keyword);
 $category = mysqli_real_escape_string($con, $category);
 $ordering = mysqli_real_escape_string($con, $ordering);
 $search_type = mysqli_real_escape_string($con, $search_type);
-$curr_page = (int)$curr_page; 
+$curr_page = (int)$curr_page;
 
 /* Use above values to construct a query. Use this query to 
    retrieve data from the database. (If there is no form data entered,
@@ -63,6 +63,7 @@ $sql = "SELECT * FROM auctions";
 // 	$sql .= " WHERE LOCATE('$keyword', title) > 0 AND category = '$category'";
 // }
 
+//存疑 回头看
 if (isset($_GET['keyword']) || $keyword != "") {
 	$sql .= " WHERE (title LIKE '%$keyword%' OR details LIKE '%$keyword%')";
 	if ($category != "") {

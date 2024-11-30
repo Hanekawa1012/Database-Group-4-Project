@@ -13,7 +13,6 @@
         // session_start();
         if (!isset($_SESSION['user_id'])) {
             echo "<p>Please log in to see recommendations.</p>";
-            exit;
         }
 
         // Step 2: Get the current user ID from the session

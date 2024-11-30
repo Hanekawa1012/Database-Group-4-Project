@@ -70,23 +70,28 @@ if (!isset($_GET['page'])) {
    retrieve data from the database. (If there is no form data entered,
    decide on appropriate default value/default query to make. */
 $buyer_id = $_SESSION['user_id'];
-$sql = "SELECT * FROM (
-            SELECT * FROM auctions 
-            WHERE item_id IN (
-                SELECT item_id FROM bids WHERE buyer_id = $buyer_id
-            )
-        ) AS B";
+$sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, b.bidTime, b.bidPrice 
+        FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.buyer_id = $buyer_id) as b
+        INNER JOIN auctions
+        ON b.item_id = auctions.item_id";
+
 if (isset($_GET['keyword']) || $keyword != "") {
-    $sql .= " WHERE LOCATE('$keyword', title) > 0";
+    $sql .= " WHERE (auctions.title LIKE '%$keyword%' OR auctions.details LIKE '%$keyword%')";
     if ($category != "") {
-        $sql .= " UNION SELECT * FROM auctions WHERE category = '$category'";
+        if ($search_type == "union") {
+            $sql .= " OR auctions.category = '$category'";
+        } else {
+            $sql .= " AND auctions.category = '$category'";
+        }
     }
 } else if ($category != "") {
-    $sql .= " WHERE category = '$category'";
+    $sql .= " WHERE auctions.category = '$category'";
 }
 if ($ordering != "") {
     $sql .= " ORDER BY $ordering";
 }
+
+
 $result = mysqli_query($con, $sql);
 
 /* For the purposes of pagination, it would also be helpful to know the
@@ -113,28 +118,18 @@ $max_page = ceil($num_results / $results_per_page);
             echo "No accessible auctions for now.<a href='browse.php'>Bid in an auction to start your own bidding!</a>";
             exit();
         }
+        $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
         $result = mysqli_query($con, $sql);
         while ($fetch = mysqli_fetch_array($result)) {
             $item_id = $fetch['item_id'];
             $title = $fetch['title'];
             $description = $fetch['details'];
 
-            $bid_sql = "SELECT bidPrice, bidTime FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
-            if ($curr_page != "") {
-                $bid_sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
-            }
-            $bid_result = mysqli_query($con, $bid_sql);
-            $num_bids = mysqli_num_rows($bid_result);
             $end_date = $fetch['endDate'];
-            while ($bid_row = mysqli_fetch_assoc($bid_result)) {
-                $bidPrice = $bid_row['bidPrice'];
-                $bidTime = $bid_row['bidTime'];
-                print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date);
-            }
+            $bidPrice = $fetch['bidPrice'];
+            $bidTime = $fetch['bidTime'];
+            print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date);
         }
-        $num_results = mysqli_num_rows($bid_result);
-        $results_per_page = 3;
-        $max_page = ceil($num_results / $results_per_page);
         ?>
 
     </ul>

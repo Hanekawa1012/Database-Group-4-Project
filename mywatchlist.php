@@ -4,7 +4,7 @@
 
 <div class="container">
 
-    <h2 class="my-3">My watchlists</h2>
+    <h2 class="my-3">My Watchlist</h2>
 
     <?php
     // This page is for showing a user the auction listings they've made.

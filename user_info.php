@@ -11,6 +11,15 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
 }
 ?>
 
+<?php
+$user_id = $_SESSION['user_id'];
+$sql = "SELECT * FROM profile WHERE user_id = '$user_id';";
+$result = mysqli_query($con, $sql);
+$fetch = mysqli_fetch_array($result);
+$tel = $fetch['tel'];
+$address = $fetch['address']
+?>
+
 <div class="container mt-5">
     <h1 class="mb-4">Your Profile</h1>
     <div class="card pb-3 mb-5">
@@ -20,8 +29,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
             <p class="card-text">
                 <b>Phone:</b>
                 <?php
-                if (!empty($_SESSION['tel'])) {
-                    echo htmlspecialchars($_SESSION['tel']);
+                if (!empty($tel)) {
+                    echo htmlspecialchars($tel);
                 } else {
                     echo "Haven't set yet. Please click the below button to edit.";
                 }
@@ -30,8 +39,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] != true) {
             <p class="card-text">
                 <b>Address:</b>
                 <?php
-                if (!empty($_SESSION['address'])) {
-                    echo htmlspecialchars($_SESSION['address']);
+                if (!empty($address)) {
+                    echo htmlspecialchars($address);
                 } else {
                     echo "Haven't set yet. Please click the below button to edit.";
                 }

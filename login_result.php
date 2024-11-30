@@ -42,8 +42,6 @@ $fetch_profile = mysqli_fetch_array($result_profile);
 $_SESSION['username'] = $fetch_profile['username'];
 $_SESSION['email'] = $fetch['email'];
 $_SESSION['account_type'] = $fetch['accountType'];
-$_SESSION['tel'] = $fetch['tel'];
-$_SESSION['address'] = $fetch['address'];
 echo ('<div class="text-center">You are now logged in! You will be redirected shortly.</div>');
 
 // Redirect to browse after n seconds
