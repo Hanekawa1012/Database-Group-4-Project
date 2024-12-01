@@ -386,7 +386,7 @@ mysqli_data_seek($comments_result, 0);
             </div>
             <input type="hidden" name="buyer_id" value="<?php echo $_SESSION['user_id']; ?>">
             <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
-            <input type="hidden" name="parent_comment_id" value="NULL">
+            <input type="hidden" name="parent_comment_id" value="">
             <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>
     <?php else: ?>

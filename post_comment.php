@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['content']) && !empty(t
     $item_id = mysqli_real_escape_string($con, $_POST['item_id']);
     $content = mysqli_real_escape_string($con, $_POST['content']);
     $buyer_id = $_SESSION['user_id']; // Assuming user ID is stored in the session
-    $parent_comment_id = isset($_POST['parent_comment_id']) or !empty($_POST['parent_comment_id'])
+    $parent_comment_id = (isset($_POST['parent_comment_id']) and !empty($_POST['parent_comment_id']))
      ? mysqli_real_escape_string($con, $_POST['parent_comment_id']) : 'NULL';
 
     // Insert comment into the database
