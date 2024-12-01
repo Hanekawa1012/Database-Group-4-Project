@@ -355,8 +355,9 @@ if (isset($_SESSION['user_id'])) {
 <?php
 // Displaying comments for the auction:
 $comments_sql = "SELECT c.comment_id, c.buyer_id, c.time, c.content, u.username, c.parent_comment_id
-                 FROM comments c
-                 JOIN profile u ON c.buyer_id = u.user_id
+                 FROM user
+                 JOIN comments c ON user.user_id = c.buyer_id
+                 JOIN profile u ON user.email = u.email
                  WHERE c.item_id = $item_id
                  ORDER BY c.time DESC";
 
