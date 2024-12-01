@@ -9,7 +9,6 @@ class sendmail
     {
         // TODO: remove after bug fixed
         return 'e000';
-        exit();
         // TODO: remove after bug fixed
         require_once 'PHPMailer-6.9.3\src\Exception.php';
         require_once 'PHPMailer-6.9.3\src\PHPMailer.php';
