@@ -8,6 +8,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 
 $username = $_SESSION['username'];
 $user_id = $_SESSION['user_id'];
+$user_email = $_SESSION['email'];
 $accountType = $_SESSION['account_type'];
 
 $errors = [];
@@ -42,11 +43,19 @@ if (!empty($errors)) {
     exit;
 }
 
-$sql_info_before_edit = "SELECT * FROM profile WHERE user_id = '$user_id';";
+$sql_info_before_edit = "SELECT * FROM `profile` WHERE email = '$user_email';";
 $result_before_edit = mysqli_query($con, $sql_info_before_edit);
 $fetch_before_edit = mysqli_fetch_array($result_before_edit);
-$tel_before = $fetch_before_edit['tel'];
-$address_before = $fetch_before_edit['address'];
+if (!is_null($fetch_before_edit['tel'])){
+    $tel_before = $fetch_before_edit['tel'];
+}else{
+    $tel_before = "";
+}
+if (!is_null($fetch_before_edit['address'])){
+    $address_before = $fetch_before_edit['address'];
+}else{
+    $address_before = "";
+}
 
 $sql_user = "UPDATE user SET ";
 $sql_profile = "UPDATE profile SET ";
@@ -68,7 +77,7 @@ if (!empty($tel) && $tel !== $tel_before) {
     $updates_profile[] = "tel = '$tel'";
     $_SESSION['tel'] = $tel;
 }
-if (!empty($address) && $address !== $tel_before) {
+if (!empty($address) && $address !== $address_before) {
     $updates_profile[] = "address = '$address'";
     $_SESSION['address'] = $address;
 }
@@ -81,8 +90,7 @@ if (empty($updates_user) and empty($updates_profile)) {
     echo "<a href='user_info.php' class='btn btn-primary'>Return Profile</a>";
     echo "</div>";
     header("refresh:3;url=user_info.php");
-    
-
+    exit();
     
 } else {
     if (!empty($updates_user)) {
@@ -93,7 +101,7 @@ if (empty($updates_user) and empty($updates_profile)) {
 
     if (!empty($updates_profile)) {
         $sql_profile .= implode(", ", $updates_profile);
-        $sql_profile .= " WHERE user_id = '$user_id'";
+        $sql_profile .= " WHERE email = '$email'";
         $result_edit_profile = $con->query($sql_profile);
     }
 
@@ -104,8 +112,6 @@ if (empty($updates_user) and empty($updates_profile)) {
         echo "</div>";
         echo "<a href='user_info.php' class='btn btn-primary'>Return Profile</a>";
         echo "</div>";
-        header("refresh:3;url=user_info.php");
-
     } else {
         echo "<div class='container my-3'>";
         echo "<div class='alert alert-danger' role='alert'>";

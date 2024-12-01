@@ -11,12 +11,13 @@ CREATE TABLE `user` (
 ) ENGINE = InnoDB;
 
 -- Profile Table
+-- Function Not done yet, change related functions
 CREATE TABLE `profile` (
-    `user_id` INT PRIMARY KEY,
+    `email`  VARCHAR(100) PRIMARY KEY,
     `username` VARCHAR(50) NOT NULL,
     `tel` VARCHAR(15) NOT NULL,
     `address` VARCHAR(100) NOT NULL UNIQUE,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+    FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Buyer Table
@@ -109,64 +110,64 @@ VALUES
 
 -- Inserting profiles
 INSERT INTO
-    `profile` (`user_id`, `username`, `tel`, `address`)
+    `profile` (`email`, `username`, `tel`, `address`)
 VALUES
     (
-        1,
+        'cdzhj1012@163.com',
         'BuyerOne',
         '1234567890',
         '123 Buyer St, London'
     ),
     (
-        2,
+        'buyer2@example.com',
         'BuyerTwo',
         '2345678901',
         '234 Buyer Rd, London'
     ),
     (
-        3,
+        'buyer3@example.com',
         'BuyerThree',
         '3456789012',
         '345 Buyer Ave, London'
     ),
     (
-        4,
+        'buyer4@example.com',
         'BuyerFour',
         '4567890123',
         '456 Buyer Blvd, London'
     ),
     (
-        5,
+        'buyer5@example.com',
         'BuyerFive',
         '5678901234',
         '567 Buyer Ln, London'
     ),
     (
-        6,
+        '2393963926@qq.com',
         'SellerOne',
         '6789012345',
         '678 Seller St, London'
     ),
     (
-        7,
+        'seller2@example.com',
         'SellerTwo',
         '7890123456',
         '789 Seller Rd, London'
     ),
     (
-        8,
+        'seller3@example.com',
         'SellerThree',
         '8901234567',
         '890 Seller Ave, London'
     ),
     (
-        9,
+        'seller4@example.com',
         'SellerFour',
         '9012345678',
         '901 Seller Blvd, London'
     ),
     (
-        10,
+        'seller5@example.com',
         'SellerFive',
         '0123456789',
         '012 Seller Ln, London'
