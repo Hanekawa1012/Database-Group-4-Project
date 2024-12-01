@@ -75,12 +75,12 @@ CREATE TABLE `bids` (
 CREATE TABLE `comments` (
     `comment_id` INT PRIMARY KEY AUTO_INCREMENT,
     `item_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
+    `buyer_id` INT NOT NULL,
     `time` DATETIME NOT NULL,
     `content` VARCHAR(1023) NOT NULL,
     `parent_comment_id` INT,
     FOREIGN KEY (`item_id`) REFERENCES `auctions` (`item_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`buyer_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 

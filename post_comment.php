@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['content']) && !empty(t
      ? mysqli_real_escape_string($con, $_POST['parent_comment_id']) : 'NULL';
 
     // Insert comment into the database
-    $sql = "INSERT INTO comments (item_id, user_id, time, content, parent_comment_id) 
+    $sql = "INSERT INTO comments (item_id, buyer_id, time, content, parent_comment_id) 
             VALUES ($item_id, $user_id, NOW(), '$content', $parent_comment_id)";
 
     echo ($sql);
