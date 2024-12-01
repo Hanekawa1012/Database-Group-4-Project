@@ -6,7 +6,7 @@ require_once 'PHPMailer-6.9.3\src\Exception.php';
 require_once 'PHPMailer-6.9.3\src\PHPMailer.php';
 require_once 'PHPMailer-6.9.3\src\SMTP.php';
 
-require_once "my_db_connect.php"
+require_once "my_db_connect.php";
 
 // get current time 
 $currentDate = date('Y-m-d H:i:s');
@@ -14,11 +14,11 @@ $currentDate = date('Y-m-d H:i:s');
 // look up for outdated auctions, seller who created it and all buyers watching it
 
 $sql = "SELECT email FROM user WHERE user_id IN
-        (SELECT seller_id FROM auctions WHERE endDate <= '$currentDate' AND status = 0)
+        (SELECT seller_id FROM auctions WHERE endDate <= '$currentDate' AND status = 'active')
         UNION ALL
         SELECT email FROM user WHERE user_id IN
         (SELECT buyer_id FROM watchlist WHERE item_id IN
-        (SELECT item_id  FROM auctions WHERE endDate <= '$currentDate' AND status = 0))";
+        (SELECT item_id  FROM auctions WHERE endDate <= '$currentDate' AND status = 'active'))";
 $result = $con->query($sql);
 
 // 检查是否有结果
@@ -58,7 +58,7 @@ if ($result->num_rows > 0) {
         }
 
         // 更新交易记录，标记为已通知
-        $updateSql = "UPDATE auctions SET status = 1 WHERE endDate <= '$currentDate' AND status = 0";
+        $updateSql = "UPDATE auctions SET status = 'closed' WHERE endDate <= '$currentDate' AND status = 'active'";
         $con->query($updateSql);
 
         echo 'Mail sent success.';
