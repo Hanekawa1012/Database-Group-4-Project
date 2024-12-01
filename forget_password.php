@@ -20,7 +20,7 @@ if ($step == 1) {
         $fetch = mysqli_fetch_array($user_record);
         $user_id = $fetch['user_id'];
         $_SESSION['user_id'] = $user_id;
-        $sql_username = "SELECT username FROM profile WHERE user_id = '$user_id';";
+        $sql_username = "SELECT username FROM profile WHERE email = '$email';";
         $result_profile = mysqli_query($con, $sql_username);
         $fetch_username = mysqli_fetch_array($result_profile);
         $username = $fetch_username['username'];

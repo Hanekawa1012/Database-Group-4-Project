@@ -32,7 +32,7 @@ session_start();
 $_SESSION['logged_in'] = true;
 $_SESSION['user_id'] = $fetch['user_id'];
 $user_id = $_SESSION['user_id'];
-$sql_profile = "SELECT * FROM profile WHERE user_id = '$user_id';";
+$sql_profile = "SELECT * FROM profile WHERE email = '$email';";
 $result_profile = mysqli_query($con, $sql_profile);
 $fetch_profile = mysqli_fetch_array($result_profile);
 $_SESSION['username'] = $fetch_profile['username'];
