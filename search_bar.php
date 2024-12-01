@@ -63,7 +63,8 @@
                         <select class="form-control" name="order_by" id="order_by">
                             <option selected value="startPrice">Starting price (low to high)</option>
                             <option value="startPrice DESC">Starting price (high to low)</option>
-                            <option value="endDate DESC">Ending date</option>
+                            <option value="endDate DESC">Latest Expiry</option>
+                            <option value="endDate">Soonest Expiry</option>
                         </select>
                         <small class="form-text text-muted">Choose how to sort the results.</small>
                     </div>

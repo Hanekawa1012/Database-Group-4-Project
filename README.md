@@ -112,6 +112,9 @@
 
 ## All SQL Query Listings Sorted by PHP Files:
 
+### Search Bar Related
+**MAIN FUNCTIONS: collaborate with search bar form input to show items in customized ways**
+
 ### browse.php as example, and logically same as mybids.php, mylistings.php, mywatchlist.php:
 
 1. **SQL Statement:**
@@ -182,9 +185,14 @@
 These SQL statements are used to dynamically construct and execute queries based on user input from the URL parameters, allowing for flexible searching, filtering, and pagination of auction listings. 
 
 ### Account Management Related 
-**FUNCTIONS: register, login, edit peronal profile, send verification code**
+**FILES:**
+**MAIN FUNCTIONS: register, login, edit peronal profile, send verification code**
 
-### Auctions Related (create, cancel, update status of an auction)
+### Buyer/Bids Related
+**MAIN FUNCTIONS: watch, bid for an item, receive outbid or status update notifications of bidded/watching items**
+
+### Seller/Auctions Related
+**MAIN FUNCTIONS: create, cancel, update status of auctions**
 
 ### cancel_auction.php:
 
