@@ -21,43 +21,44 @@ $sql = "SELECT email FROM user WHERE user_id IN
         (SELECT item_id  FROM auctions WHERE endDate <= '$currentDate' AND status = 'active'))";
 $result = $con->query($sql);
 
-// 检查是否有结果
+// Check if there is outcome
 if ($result->num_rows > 0) {
-    // 使用PHPMailer发送邮件
+    // send email by PHPMailer
     $mail = new PHPMailer(true);
     try {
-        // 服务器设置
+        // Server setting
         $mailconfig = json_decode('{"Host":"smtp.163.com","Username":"cdzhj1012@163.com","Password":"WZbdaNUUc9NKqDTx","SMTPSecure":"ssl","Port":465}');
-        $mail->CharSet = "UTF-8";                                // 设定邮件编码
-        $mail->SMTPDebug = 0;                                   // 调试模式输出
-        $mail->isSMTP();                                        // 使用SMTP
-        $mail->Host = $mailconfig->Host;                        // SMTP服务器
-        $mail->SMTPAuth = true;                                 // 允许 SMTP 认证
-        $mail->Username = $mailconfig->Username;                // SMTP 用户名  即邮箱的用户名
-        $mail->Password = $mailconfig->Password;                // SMTP 密码  部分邮箱是授权码(例如163邮箱)
-        $mail->SMTPSecure = $mailconfig->SMTPSecure;            // 允许 TLS 或者ssl协议
+        $mail->CharSet = "UTF-8";                              
+        $mail->SMTPDebug = 0;                                   
+        $mail->isSMTP();                                        
+        $mail->Host = $mailconfig->Host;                       
+        $mail->SMTPAuth = true;                                 
+        $mail->Username = $mailconfig->Username;                
+        $mail->Password = $mailconfig->Password;               
+        $mail->SMTPSecure = $mailconfig->SMTPSecure;            
         $mail->Port = $mailconfig->Port;  
 
-        // 发件人信息
+        
         $mail->setFrom($mailconfig->Username, 'DB-group4');
 
-        // 发送邮件给每个卖家
+        // send to every related buyers and sellers
         while ($row = $result->fetch_assoc()) {
             $userEmail = $row['email'];
             $username = $row['email'];
             $mail->addAddress($userEmail);
 
-            // 内容
-            $mail->isHTML(true);                                  // 设置邮件格式为HTML
+            
+            $mail->isHTML(true);                                  
             $mail->Subject = 'One auction/bid of yours has ended.';
-            $mail->Body    = '<h3>One auction/bid of yours has ended.</h3>';
+            $mail->Body    = '<h3>One auction/bid of yours has ended.</h3>
+                                <p>Please check your bid history to check.</p>';
             $mail->AltBody = 'One auction/bid of yours has ended.';
 
             $mail->send();
             $mail->clearAddresses();
         }
 
-        // 更新交易记录，标记为已通知
+       
         $updateSql = "UPDATE auctions SET status = 'closed' WHERE endDate <= '$currentDate' AND status = 'active'";
         $con->query($updateSql);
 

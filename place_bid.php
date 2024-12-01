@@ -74,7 +74,7 @@ if ($_POST['bidPrice'] != "") {
                     <p>Item name: $itemTitle</p>
                     <p>New bid price: $bidPrice</p>
                     <p>Update time: $bidTime</p>";
-        $outline = "You bidded a new item!";
+        $outline = "One of your watching auction has new bid update!";
         switch (sendmail::sendemail($email_list, $email_list, $title, $content, $outline)) {
             case 'e000':
                 echo "A receipt email sent to your email. Please check.";
