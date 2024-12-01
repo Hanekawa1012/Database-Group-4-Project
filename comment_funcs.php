@@ -1,10 +1,10 @@
-
 <?php
 // comment_funcs.php
 
 require_once 'db_connect.php'; // Include your database connection
 
-function addComment($item_id, $buyer_id, $content, $parent_comment_id = null) {
+function addComment($item_id, $buyer_id, $content, $parent_comment_id = null)
+{
     global $con;
     $time = date('Y-m-d H:i:s');
 
@@ -21,7 +21,8 @@ function addComment($item_id, $buyer_id, $content, $parent_comment_id = null) {
     return mysqli_query($con, $query);
 }
 
-function likeComment($comment_id, $buyer_id) {
+function likeComment($comment_id, $buyer_id)
+{
     global $con;
 
     $query = sprintf(
@@ -33,7 +34,8 @@ function likeComment($comment_id, $buyer_id) {
     return mysqli_query($con, $query);
 }
 
-function getComments($item_id, $limit, $offset) {
+function getComments($item_id, $limit, $offset)
+{
     global $con;
 
     $query = sprintf(
