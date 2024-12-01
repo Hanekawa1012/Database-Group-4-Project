@@ -1,58 +1,36 @@
 <?php
-// post_comment.php
+session_start();
+include('my_db_connect.php'); // Assuming this file connects to the database
 
-require_once 'my_db_connect.php'; // Include your database connection
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    if ($action === 'add_comment') {
-        $item_id = intval($_POST['item_id']);
-        $buyer_id = intval($_POST['buyer_id']);
-        $content = trim($_POST['content']);
-        $parent_comment_id = isset($_POST['parent_comment_id']) ? intval($_POST['parent_comment_id']) : null;
-        $time = date('Y-m-d H:i:s');
-
-        if (!empty($content)) {
-            $query = sprintf(
-                "INSERT INTO comments (item_id, buyer_id, time, content, parent_comment_id) 
-                 VALUES ('%d', '%d', '%s', '%s', %s)",
-                $item_id,
-                $buyer_id,
-                $con->real_escape_string($time),
-                $con->real_escape_string($content),
-                $parent_comment_id === null ? 'NULL' : $parent_comment_id
-            );
-
-            if (mysqli_query($con, $query)) {
-                echo json_encode(["success" => true, "message" => "Comment added successfully."]);
-            } else {
-                echo json_encode(["success" => false, "message" => "Failed to add comment."]);
-            }
-        } else {
-            echo json_encode(["success" => false, "message" => "Comment content cannot be empty."]);
-        }
-
-    } elseif ($action === 'like_comment') {
-        $comment_id = intval($_POST['comment_id']);
-        $buyer_id = intval($_POST['buyer_id']);
-
-        $query = sprintf(
-            "INSERT INTO comment_likes (comment_id, buyer_id) VALUES ('%d', '%d')",
-            $comment_id,
-            $buyer_id
-        );
-
-        if (mysqli_query($con, $query)) {
-            echo json_encode(["success" => true, "message" => "Comment liked successfully."]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Failed to like comment."]);
-        }
-    } else {
-        echo json_encode(["success" => false, "message" => "Invalid action."]);
-    }
+// Check if the user is logged in
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    die("You must be logged in to post a comment.");
 }
 
-$con->close();
+// Check if content is provided and item ID is valid
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['content']) && !empty(trim($_POST['content']))) {
+    $item_id = mysqli_real_escape_string($con, $_POST['item_id']);
+    $content = mysqli_real_escape_string($con, $_POST['content']);
+    $user_id = $_SESSION['user_id']; // Assuming user ID is stored in the session
+    $parent_comment_id = (isset($_POST['parent_comment_id']) and !empty($_POST['parent_comment_id']))
+     ? mysqli_real_escape_string($con, $_POST['parent_comment_id']) : 'NULL';
 
+    // Insert comment into the database
+    $sql = "INSERT INTO comments (item_id, buyer_id, time, content, parent_comment_id) 
+            VALUES ($item_id, $user_id, NOW(), '$content', $parent_comment_id)";
+
+    echo ($sql);
+
+    if (mysqli_query($con, $sql)) {
+        // Redirect back to the item page after posting the comment
+        header("Location: listing.php?item_id=" . $item_id);
+    } else {
+        echo "Error: " . mysqli_error($con);
+    }
+} else {
+    echo "Comment content is required.";
+}
+
+// Close the database connection
+mysqli_close($con);
 ?>

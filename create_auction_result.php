@@ -53,9 +53,9 @@
     /* TODO #3: If everything looks good, make the appropriate call to insert
                 data into the database. */
 
-    $sql = "INSERT INTO auctions(title, details, category, startPrice, reservePrice, endDate, seller_id) 
+    $sql = "INSERT INTO auctions(title, details, category, startPrice, reservePrice, startDate, endDate, seller_id) 
             VALUES ('$auctionTitle', '$auctionDetails', '$auctionCategory', '$auctionStartPrice', 
-                    '$auctionReservePrice', '$auctionEndDate', '$auctionSellerID');";
+                    '$auctionReservePrice', NOW(), '$auctionEndDate', '$auctionSellerID');";
 
     if (mysqli_query($con, $sql)) {
         echo "Data insert succeed.\n";

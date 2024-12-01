@@ -11,12 +11,13 @@ CREATE TABLE `user` (
 ) ENGINE = InnoDB;
 
 -- Profile Table
+-- Function Not done yet, change related functions
 CREATE TABLE `profile` (
-    `user_id` INT PRIMARY KEY,
+    `email`  VARCHAR(100) PRIMARY KEY,
     `username` VARCHAR(50) NOT NULL,
     `tel` VARCHAR(15) NOT NULL,
     `address` VARCHAR(100) NOT NULL UNIQUE,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+    FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Buyer Table
@@ -34,7 +35,7 @@ CREATE TABLE `seller` (
 -- Auctions Table
 CREATE TABLE `auctions` (
     `item_id` INT PRIMARY KEY AUTO_INCREMENT,
-    `title` VARCHAR(50)  UNIQUE NOT NULL,
+    `title` VARCHAR(50) UNIQUE NOT NULL,
     `details` TEXT,
     `category` VARCHAR(30) NOT NULL,
     `startPrice` DECIMAL(10, 2) NOT NULL,
@@ -79,17 +80,17 @@ CREATE TABLE `comments` (
     `content` VARCHAR(1023) NOT NULL,
     `parent_comment_id` INT,
     FOREIGN KEY (`item_id`) REFERENCES `auctions` (`item_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`buyer_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Comment Likes Table
 CREATE TABLE `comment_likes` (
     `comment_id` INT NOT NULL,
-    `buyer_id` INT NOT NULL,
-    PRIMARY KEY (`comment_id`, `buyer_id`),
+    `user_id` INT NOT NULL,
+    PRIMARY KEY (`comment_id`, `user_id`),
     FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`buyer_id`) REFERENCES `buyer` (`user_id`) ON DELETE CASCADE
+    FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Inserting users
@@ -97,76 +98,112 @@ INSERT INTO
     `user` (`password`, `email`, `accountType`)
 VALUES
     (SHA('password123'), 'cdzhj1012@163.com', 'buyer'),
-    (SHA('password123'), 'buyer2@example.com', 'buyer'),
-    (SHA('password123'), 'buyer3@example.com', 'buyer'),
-    (SHA('password123'), 'buyer4@example.com', 'buyer'),
-    (SHA('password123'), 'buyer5@example.com', 'buyer'),
-    (SHA('password123'), 'c2393963926@qq.com', 'seller'),
-    (SHA('password123'), 'seller2@example.com', 'seller'),
-    (SHA('password123'), 'seller3@example.com', 'seller'),
-    (SHA('password123'), 'seller4@example.com', 'seller'),
-    (SHA('password123'), 'seller5@example.com', 'seller');
+    (
+        SHA('password123'),
+        'buyer2@example.com',
+        'buyer'
+    ),
+    (
+        SHA('password123'),
+        'buyer3@example.com',
+        'buyer'
+    ),
+    (
+        SHA('password123'),
+        'buyer4@example.com',
+        'buyer'
+    ),
+    (
+        SHA('password123'),
+        'buyer5@example.com',
+        'buyer'
+    ),
+    (
+        SHA('password123'),
+        '2393963926@qq.com',
+        'seller'
+    ),
+    (
+        SHA('password123'),
+        'seller2@example.com',
+        'seller'
+    ),
+    (
+        SHA('password123'),
+        'seller3@example.com',
+        'seller'
+    ),
+    (
+        SHA('password123'),
+        'seller4@example.com',
+        'seller'
+    ),
+    (
+        SHA('password123'),
+        'seller5@example.com',
+        'seller'
+    );
 
 -- Inserting profiles
 INSERT INTO
-    `profile` (`user_id`, `username`, `tel`, `address`)
+    `profile` (`email`, `username`, `tel`, `address`)
 VALUES
     (
-        1,
+        'cdzhj1012@163.com',
         'BuyerOne',
         '1234567890',
         '123 Buyer St, London'
     ),
     (
-        2,
+        'buyer2@example.com',
         'BuyerTwo',
         '2345678901',
         '234 Buyer Rd, London'
     ),
     (
-        3,
+        'buyer3@example.com',
         'BuyerThree',
         '3456789012',
         '345 Buyer Ave, London'
     ),
     (
-        4,
+        'buyer4@example.com',
         'BuyerFour',
         '4567890123',
         '456 Buyer Blvd, London'
     ),
     (
-        5,
+        'buyer5@example.com',
         'BuyerFive',
         '5678901234',
         '567 Buyer Ln, London'
     ),
     (
-        6,
+        '2393963926@qq.com',
         'SellerOne',
         '6789012345',
         '678 Seller St, London'
     ),
     (
-        7,
+        'seller2@example.com',
         'SellerTwo',
         '7890123456',
         '789 Seller Rd, London'
     ),
     (
-        8,
+        'seller3@example.com',
         'SellerThree',
         '8901234567',
         '890 Seller Ave, London'
     ),
     (
-        9,
+        'seller4@example.com',
         'SellerFour',
         '9012345678',
         '901 Seller Blvd, London'
     ),
     (
-        10,
+        'seller5@example.com',
         'SellerFive',
         '0123456789',
         '012 Seller Ln, London'
@@ -431,15 +468,15 @@ VALUES
 INSERT INTO
     `bids` (`item_id`, `buyer_id`, `bidPrice`, `bidTime`)
 VALUES
-    (1, 1, 550.00, '2024-11-20 10:00:00'),
-    (1, 2, 580.00, '2024-11-20 11:00:00'),
-    (2, 3, 320.00, '2024-11-20 12:00:00'),
-    (2, 4, 350.00, '2024-11-20 13:00:00'),
-    (3, 5, 220.00, '2024-11-21 10:00:00'),
-    (3, 1, 250.00, '2024-11-21 11:00:00'),
-    (4, 2, 160.00, '2024-11-21 12:00:00'),
-    (5, 3, 420.00, '2024-11-21 13:00:00'),
-    (5, 4, 450.00, '2024-11-22 10:00:00'),
+    -- (1, 1, 550.00, '2024-11-20 10:00:00'),
+    -- (1, 2, 580.00, '2024-11-20 11:00:00'),
+    -- (2, 3, 320.00, '2024-11-20 12:00:00'),
+    -- (2, 4, 350.00, '2024-11-20 13:00:00'),
+    -- (3, 5, 220.00, '2024-11-21 10:00:00'),
+    -- (3, 1, 250.00, '2024-11-21 11:00:00'),
+    -- (4, 2, 160.00, '2024-11-21 12:00:00'),
+    -- (5, 3, 420.00, '2024-11-21 13:00:00'),
+    -- (5, 4, 450.00, '2024-11-22 10:00:00'),
     (6, 5, 150.00, '2024-11-22 11:00:00'),
     (7, 1, 60.00, '2024-11-22 12:00:00'),
     (8, 2, 310.00, '2024-11-22 13:00:00'),
@@ -452,9 +489,73 @@ VALUES
     (15, 4, 110.00, '2024-11-25 10:00:00'),
     (16, 5, 60.00, '2024-11-25 11:00:00');
 
+INSERT INTO
+    `bids` (`buyer_id`, `item_id`, `bidPrice`, `bidTime`)
+VALUES
+    (1, 1, 510.00, '2024-11-15 10:00:00'),
+    -- Buyer 1 bids on Laptop
+    (2, 1, 520.00, '2024-11-15 11:00:00'),
+    -- Buyer 2 raises the bid
+    (1, 1, 530.00, '2024-11-15 12:00:00'),
+    -- Buyer 1 raises again
+    (3, 2, 310.00, '2024-11-16 09:00:00'),
+    -- Buyer 3 bids on Smartphone
+    (4, 2, 320.00, '2024-11-16 10:00:00'),
+    -- Buyer 4 raises
+    (3, 2, 330.00, '2024-11-16 11:00:00'),
+    -- Buyer 3 raises again
+    (5, 3, 220.00, '2024-11-17 08:00:00'),
+    -- Buyer 5 bids on Tablet
+    (2, 3, 230.00, '2024-11-17 09:00:00'),
+    -- Buyer 2 raises
+    (5, 3, 240.00, '2024-11-17 10:00:00'),
+    -- Buyer 5 raises again
+    (1, 4, 160.00, '2024-11-18 11:00:00'),
+    -- Buyer 1 bids on Headphones
+    (4, 4, 170.00, '2024-11-18 12:00:00'),
+    -- Buyer 4 raises
+    (1, 4, 180.00, '2024-11-18 13:00:00'),
+    -- Buyer 1 raises again
+    (2, 5, 410.00, '2024-11-19 09:00:00'),
+    -- Buyer 2 bids on Camera
+    (3, 5, 420.00, '2024-11-19 10:00:00'),
+    -- Buyer 3 raises
+    (2, 5, 430.00, '2024-11-19 11:00:00'),
+    -- Buyer 2 raises again
+    (4, 6, 110.00, '2024-11-20 08:00:00'),
+    -- Buyer 4 bids on Desk
+    (5, 6, 120.00, '2024-11-20 09:00:00'),
+    -- Buyer 5 raises
+    (4, 6, 130.00, '2024-11-20 10:00:00'),
+    -- Buyer 4 raises again
+    (3, 7, 55.00, '2024-11-21 10:00:00'),
+    -- Buyer 3 bids on Chair
+    (5, 7, 60.00, '2024-11-21 11:00:00'),
+    -- Buyer 5 raises
+    (3, 7, 65.00, '2024-11-21 12:00:00'),
+    -- Buyer 3 raises again
+    (1, 8, 75.00, '2024-11-22 09:00:00'),
+    -- Buyer 1 bids on Lamp
+    (4, 8, 80.00, '2024-11-22 10:00:00'),
+    -- Buyer 4 raises
+    (1, 8, 85.00, '2024-11-22 11:00:00'),
+    -- Buyer 1 raises again
+    (5, 9, 305.00, '2024-11-23 14:00:00'),
+    -- Buyer 5 bids on Phone
+    (2, 9, 315.00, '2024-11-23 15:00:00'),
+    -- Buyer 2 raises
+    (5, 9, 325.00, '2024-11-23 16:00:00'),
+    -- Buyer 5 raises again
+    (3, 10, 205.00, '2024-11-24 09:00:00'),
+    -- Buyer 3 bids on Gadget
+    (4, 10, 215.00, '2024-11-24 10:00:00'),
+    -- Buyer 4 raises
+    (3, 10, 225.00, '2024-11-24 11:00:00');
+
+-- Buyer 3 raises again
 -- Inserting comments
 INSERT INTO
-    `comments` (`item_id`, `buyer_id`, `content`, `time`)
+    `comments` (`item_id`, `user_id`, `content`, `time`)
 VALUES
     (
         1,
@@ -585,7 +686,7 @@ VALUES
 
 -- Inserting comment likes (without time field)
 INSERT INTO
-    `comment_likes` (`comment_id`, `buyer_id`)
+    `comment_likes` (`comment_id`, `user_id`)
 VALUES
     (1, 2),
     (1, 3),

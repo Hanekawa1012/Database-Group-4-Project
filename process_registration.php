@@ -54,7 +54,7 @@ $username = "user" . uniqid(); // random name. can be edited in user profile
 // 问题：改成multi_query同时执行并报错
 $sql = "INSERT INTO user (password, email, accountType) VALUES (SHA('$password'),'$email','$accountType');";
 $sql .= "INSERT INTO $accountType SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType';";
-$sql .= "INSERT INTO profile (user_id, username) SELECT user_id, username FROM user WHERE email = '$email' ;";
+$sql .= "INSERT INTO profile (email, username) VALUES ('$email', '$username');";
 if ($con->multi_query($sql)) {
     echo "User data insert succeed.\n";
 } else {

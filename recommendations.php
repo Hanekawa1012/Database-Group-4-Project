@@ -19,36 +19,52 @@
         $user_id = $_SESSION['user_id'];
 
         // Step 3: Create the SQL query to retrieve recommended items based on cosine similarity
-        $sql = "
-            SELECT
-                a.item_id,
-                a.title,
-                a.details,
-                a.startPrice,
-                a.endDate
-            FROM
-                auctions a
-            JOIN
-                (
-                    SELECT
-                        b1.item_id,
-                        SUM(b1.bidPrice * b2.bidPrice) / 
-                        (SQRT(SUM(POWER(b1.bidPrice, 2))) * SQRT(SUM(POWER(b2.bidPrice, 2)))) AS cosine_similarity
-                    FROM
-                        bids b1
-                    JOIN
-                        bids b2 ON b1.buyer_id = b2.buyer_id AND b1.item_id != b2.item_id
-                    WHERE
-                        b1.buyer_id = $user_id
-                    GROUP BY
-                        b1.item_id, b2.item_id
-                    HAVING
-                        cosine_similarity > 0.5
-                    ORDER BY
-                        cosine_similarity DESC
-                    LIMIT 10
-                ) AS recommended_items ON a.item_id = recommended_items.item_id
-        ";
+        $sql = "SELECT
+            b1.item_id,
+            a.title,
+            a.details,
+            a.startPrice,
+            a.endDate,
+            SUM(CASE WHEN b1.present = 1 AND b2.present = 1 THEN 1 ELSE 0 END) / 
+            (SQRT(SUM(POWER(b1.present, 2))) * SQRT(SUM(POWER(b2.present, 2)))) AS cosine_similarity
+        FROM
+            (
+                SELECT 
+                    u.user_id,
+                    a.item_id,
+                    IF(b.bid_id IS NOT NULL, 1, 0) AS present
+                FROM 
+                    user u
+                CROSS JOIN 
+                    auctions a
+                LEFT JOIN 
+                    bids b ON u.user_id = b.buyer_id AND a.item_id = b.item_id
+            ) AS b1
+        JOIN
+            (
+                SELECT 
+                    u.user_id,
+                    a.item_id,
+                    IF(b.bid_id IS NOT NULL, 1, 0) AS present
+                FROM 
+                    user u
+                CROSS JOIN 
+                    auctions a
+                LEFT JOIN 
+                    bids b ON u.user_id = b.buyer_id AND a.item_id = b.item_id
+            ) AS b2 ON b1.item_id = b2.item_id AND b1.user_id != b2.user_id
+        JOIN
+            auctions a ON b1.item_id = a.item_id
+        WHERE
+            b1.user_id = $user_id AND b2.user_id != $user_id AND a.endDate > NOW()
+        GROUP BY
+            b1.item_id, a.title, a.details, a.startPrice, a.endDate
+        HAVING
+            cosine_similarity > 0.3333333
+        ORDER BY
+            cosine_similarity DESC
+        LIMIT 10;";
+
 
         // Step 4: Execute the query
         $result_q = mysqli_query($con, $sql);

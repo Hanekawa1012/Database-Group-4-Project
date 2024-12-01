@@ -358,29 +358,44 @@ if (isset($_SESSION['user_id'])) {
 </div>
 
 <?php
-// Displaying comments for the auction:
+// Displaying comments for the auction, sorted by time in ascending order:
 $comments_sql = "SELECT c.comment_id, c.buyer_id, c.time, c.content, u.username, c.parent_comment_id
-                 FROM comments c
-                 JOIN profile u ON c.buyer_id = u.user_id
+                 FROM user
+                 JOIN comments c ON user.user_id = c.buyer_id
+                 JOIN profile u ON user.email = u.email
                  WHERE c.item_id = $item_id
-                 ORDER BY c.time DESC";
+                 ORDER BY c.time ASC";
 
 $comments_result = mysqli_query($con, $comments_sql);
+$comment_count = 0;
+$comment_order = []; // Array to track comment order
+
+// Count the total number of comments for generating response IDs.
+while ($comment = mysqli_fetch_assoc($comments_result)) {
+    $comment_count++;
+    $comment_order[$comment['comment_id']] = $comment_count;
+}
+
+// Reset the result pointer to loop through again for displaying.
+mysqli_data_seek($comments_result, 0);
 ?>
 
 <div class="container mt-5" id="comments-section">
     <h2>Comments</h2>
 
     <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true): ?>
-        <!-- Comment submission form -->
+        <?php if ($_SESSION['account_type'] == 'buyer'): ?>
+            <!-- Comment submission form -->
         <form method="POST" action="post_comment.php">
             <div class="form-group">
-                <!-- <label for="commentContent">Write a comment:</label> -->
                 <textarea class="form-control" id="commentContent" name="content" placeholder="Write a comment..." required></textarea>
             </div>
+            <input type="hidden" name="user_id" value="<?php echo $_SESSION["user_id"]; ?>">
             <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
+            <input type="hidden" name="parent_comment_id" value="">
             <button type="submit" class="btn btn-primary">Post Comment</button>
         </form>
+        <?php endif; ?>
     <?php else: ?>
         <p>Please log in to post a comment.</p>
     <?php endif; ?>
@@ -392,13 +407,22 @@ $comments_result = mysqli_query($con, $comments_sql);
                 <li class="list-group-item">
                     <strong><?php echo htmlspecialchars($comment['username']); ?></strong>
                     <span class="text-muted"><?php echo date("Y-m-d H:i:s", strtotime($comment['time'])); ?></span>
+                    
+                    <!-- Display comment ID as response number -->
+                    <span class="text-muted">#<?php echo $comment_order[$comment['comment_id']]; ?></span>
+
+                    <!-- Display 'Reply to #x' if it.s a reply -->
+                    <?php if ($comment['parent_comment_id'] !== NULL): ?>
+                        <p class="text-muted">Reply to #<?php echo $comment_order[$comment['parent_comment_id']]; ?>:</p>
+                    <?php endif; ?>
+
                     <p><?php echo nl2br(htmlspecialchars($comment['content'])); ?></p>
 
                     <div class="comment-actions">
                         <!-- Star-based rating (with placeholder logic) -->
                         <button class="btn btn-link" onclick="likeComment(<?php echo $comment['comment_id']; ?>)">Like</button>
                         <?php
-                        // search in comment_likes table to see how many likes this comment has
+                        // Search in comment_likes table to see how many likes this comment has
                         $sql = 'SELECT COUNT(*) AS likes FROM comment_likes WHERE comment_id = ' . $comment['comment_id'];
                         $result = mysqli_query($con, $sql);
                         $row = mysqli_fetch_assoc($result);
@@ -406,16 +430,28 @@ $comments_result = mysqli_query($con, $comments_sql);
                         ?>
                         <span><?php echo $comment['likes'] . " like(s)"; ?></span>
                         <!-- Reply functionality -->
-                        <button class="btn btn-link" onclick="showReplyForm(<?php echo $comment['comment_id']; ?>)">Reply</button>
+                         <?php
+                         if ($_SESSION['account_type'] == 'seller'){
+                            echo '<button class="btn btn-link disabled" onclick="">Reply</button>';
+                         }else{?>
+                            <button class="btn btn-link" onclick="showReplyForm(<?php echo $comment['comment_id']; ?>)">Reply</button>
+                        <?php
+                         }
+
+                        ?>
                     </div>
 
                     <!-- Reply form (hidden by default) -->
                     <div id="replyForm-<?php echo $comment['comment_id']; ?>" style="display:none;">
                         <form method="POST" action="post_comment.php">
+                            <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true): ?>
+                                <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
+                            <?php else: ?>
+                                <p>Please log in to post a reply.</p>
+                            <?php endif; ?>
                             <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
                             <input type="hidden" name="parent_comment_id" value="<?php echo $comment['comment_id']; ?>">
                             <div class="form-group">
-                                <!-- <label for="replyContent-<?php echo $comment['comment_id']; ?>">Write a reply:</label> -->
                                 <textarea class="form-control" id="replyContent-<?php echo $comment['comment_id']; ?>" name="content" placeholder="Reply..." required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary">Post Reply</button>

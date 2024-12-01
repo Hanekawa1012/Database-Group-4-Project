@@ -89,14 +89,12 @@ if ($_POST['bidPrice'] != "" && is_numeric($_POST['bidPrice'])) {
         }
 
         //email sending to all user watching this auction
-        $sql_watching = "SELECT email, username FROM user WHERE user_id IN
-                    (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
+        $sql_watching = "SELECT email FROM user WHERE user_id IN
+                   (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
         $result_watching = mysqli_query($con, $sql_watching);
         $email_list = [];
-        $username_list = [];
         while ($fetch = mysqli_fetch_array($result_watching)) {
             $email_list[] = $fetch['email'];
-            $username_list[] = $fetch['username'];
         }
         $itemTitle = $fetch_item['title'];
         $title = "One of your watching auction has new bid update!";
@@ -106,7 +104,7 @@ if ($_POST['bidPrice'] != "" && is_numeric($_POST['bidPrice'])) {
                         <p>New bid price: $bidPrice</p>
                         <p>Update time: $bidTime</p>";
         $outline = "You bidded a new item!";
-        switch (sendmail::sendemail($email_list, $username_list, $title, $content, $outline)) {
+        switch (sendmail::sendemail($email_list, $email_list, $title, $content, $outline)) {
             case 'e000':
                 echo "A receipt email sent to your email. Please check.";
                 break;
