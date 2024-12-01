@@ -40,8 +40,11 @@
 
 ### Assumptions:
 User Roles: Users can be either buyers or sellers, but not both simultaneously.
+
 Profile Information: Each user has a profile containing their contact information.
+
 Auctions: Sellers create auctions, and buyers can add items to their watchlist or place bids.
+
 Comments and Likes: Buyers can comment on auction items and like comments
 
 ## Schema Listing and Analysis of 3rd Normal Form:
@@ -357,7 +360,7 @@ These SQL statements are used to insert a new bid into the database, retrieve au
 #### user_info.php
 
 1. **Fetching user profile information:**
-   ```php
+   ```sql
    $sql = "SELECT * FROM profile WHERE user_id = '$user_id';";
    ```
    - **Purpose:** This query retrieves all the profile information for the user with the specified `user_id`. It is used to fetch the user's telephone number and address, which are then displayed on the profile page.
@@ -395,7 +398,7 @@ These SQL statements are used to add a new auction listing to the database, ensu
    ```sql
    $sql = "UPDATE auctions SET status = 3 WHERE item_id = $item_id;";
    ```
-   **Explanation:** This query updates the `auctions` table, setting the `status` column to `3` (which likely represents a cancelled status) for the auction with the specified `item_id`.
+   **Explanation:** This query updates the `auctions` table, setting the `status` column to `3` (which represents a cancelled status) for the auction with the specified `item_id`.
 
 2. **SQL Statement:**
    ```sql
