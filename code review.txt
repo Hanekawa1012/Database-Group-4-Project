@@ -1,0 +1,27 @@
+1. 游客/buyer进入保护：cancel_auction.php / create_auction_result.php / create_auction.php / logout.php
+2. buyer进入保护：cancel_auction.php / login_result.php / mylistings.php
+3. buyer/seller进入保护：register.php
+4. seller进入保护：recommendations.php
+5. 游客进入跳转：change_password.php / post_comment.php
+6. create_auction_result.php：游客进入时会自动跳转到create_auction.php;buyer进入时则留在该网页不会跳转
+7. guest_error.php / mybids.php ：You are not logged in!文字太大了（可以改成place_bid.php里那种）
+8. mywatchlist.php：My Watchlist文字太大了
+9. mywatchlist.php文字打错了：Page not accessible for guests. If you want to watch an ==itemm==, please register
+10. 游客在listing.php / mywatchlist.php / recommendations.php页面无法登陆
+11. 注册仍然没有成功插入到profile表中；在user_info.php更改的用户信息，注销重新登录后会消失
+12. edit_information.php电话和地址无法更改(应该也是profile写入的问题）
+13. buyer/seller没有更改密码的链接（但可以手工输入change_password.php到url来更改）
+14. bid页面在bid成功后不会自动刷新新的bid价格
+15. create_auction.php选择category时的选项是classA / classB / classC
+16. mylisting.php会显示出查询语句
+17. lsiting.php在seller时提示仍然显示Bid in an auction to start your own bidding!
+18. cancel的auction仍然可以关注
+19. create_auction.php没有前端表单验证
+20. create_auction_result.php的时间判断有问题：例当前时间为22:36,输入结束时间22:40，会报Error:end date should be later than present time.错
+21. 因为以上原因，功能award the item to the highest bidder after end time和award the item to the highest bidder无法测试
+22. 商品介绍detail等没有限制长度
+23. 余弦相似度推荐算法可能存在问题（当相似度阈值为0时仍然无法看到bid了相同物品的其他用户的其它bid）
+
+* PS：邮件相关功能未检查
+* PS: debug分支版本的send_email.php有bug，默认返回'e000'，修复这个函数完成后再移除相关绕过代码
+

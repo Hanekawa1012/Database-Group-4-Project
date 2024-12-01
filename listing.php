@@ -119,8 +119,6 @@ if (isset($_SESSION['user_id'])) {
                     <!-- TODO: Print the result of the auction here? -->
                 <?php else: ?>
                     Auction ends <?php echo (date_format($end_time, 'y-m-d H:i:s') . $time_remaining) ?>
-                <?php endif; ?>
-            </p>
 
             <p class="lead">Current bid: £<?php echo (number_format($current_price, 2)) ?></p>
 
@@ -140,6 +138,8 @@ if (isset($_SESSION['user_id'])) {
                     <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
                 </form>
             <?php endif ?>
+        <?php endif; ?>
+        </p>
 
 
         </div> <!-- End of right col with bidding info -->
@@ -276,19 +276,6 @@ if (isset($_SESSION['user_id'])) {
                 No accessible auctions for now.<a href='browse.php'>Bid in an auction to start your own bidding!</a>
             <?php else: ?>
                 <?php
-                $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
-                $result = mysqli_query($con, $sql);
-                while ($fetch = mysqli_fetch_array($result)) {
-                    $item_id = $fetch['item_id'];
-                    $title = $fetch['title'];
-                    $description = $fetch['details'];
-
-                    $end_date = $fetch['endDate'];
-                    $bidPrice = $fetch['bidPrice'];
-                    $bidTime = $fetch['bidTime'];
-                    $status = $fetch['status'];
-                    print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date, $status);
-                }
                 $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
                 $result = mysqli_query($con, $sql);
                 while ($fetch = mysqli_fetch_array($result)) {
@@ -492,7 +479,6 @@ mysqli_data_seek($comments_result, 0);
             })
             .catch(error => console.error('Error:', error));
     }
-</script>
 </script>
 
 <?php $con->close(); ?>
