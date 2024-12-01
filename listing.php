@@ -354,9 +354,9 @@ if (isset($_SESSION['user_id'])) {
 
 <?php
 // Displaying comments for the auction, sorted by time in ascending order:
-$comments_sql = "SELECT c.comment_id, c.buyer_id, c.time, c.content, u.username, c.parent_comment_id
+$comments_sql = "SELECT c.comment_id, c.user_id, c.time, c.content, u.username, c.parent_comment_id
                  FROM user
-                 JOIN comments c ON user.user_id = c.buyer_id
+                 JOIN comments c ON user.user_id = c.user_id
                  JOIN profile u ON user.email = u.email
                  WHERE c.item_id = $item_id
                  ORDER BY c.time ASC";
@@ -384,7 +384,7 @@ mysqli_data_seek($comments_result, 0);
             <div class="form-group">
                 <textarea class="form-control" id="commentContent" name="content" placeholder="Write a comment..." required></textarea>
             </div>
-            <input type="hidden" name="buyer_id" value="<?php echo $_SESSION['user_id']; ?>">
+            <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
             <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
             <input type="hidden" name="parent_comment_id" value="">
             <button type="submit" class="btn btn-primary">Post Comment</button>
@@ -430,7 +430,7 @@ mysqli_data_seek($comments_result, 0);
                     <div id="replyForm-<?php echo $comment['comment_id']; ?>" style="display:none;">
                         <form method="POST" action="post_comment.php">
                             <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true): ?>
-                                <input type="hidden" name="buyer_id" value="<?php echo $_SESSION['user_id']; ?>">
+                                <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
                             <?php else: ?>
                                 <p>Please log in to post a reply.</p>
                             <?php endif; ?>

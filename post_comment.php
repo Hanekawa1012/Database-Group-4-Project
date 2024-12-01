@@ -11,13 +11,13 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['content']) && !empty(trim($_POST['content']))) {
     $item_id = mysqli_real_escape_string($con, $_POST['item_id']);
     $content = mysqli_real_escape_string($con, $_POST['content']);
-    $buyer_id = $_SESSION['user_id']; // Assuming user ID is stored in the session
+    $user_id = $_SESSION['user_id']; // Assuming user ID is stored in the session
     $parent_comment_id = (isset($_POST['parent_comment_id']) and !empty($_POST['parent_comment_id']))
      ? mysqli_real_escape_string($con, $_POST['parent_comment_id']) : 'NULL';
 
     // Insert comment into the database
-    $sql = "INSERT INTO comments (item_id, buyer_id, time, content, parent_comment_id) 
-            VALUES ($item_id, $buyer_id, NOW(), '$content', $parent_comment_id)";
+    $sql = "INSERT INTO comments (item_id, user_id, time, content, parent_comment_id) 
+            VALUES ($item_id, $user_id, NOW(), '$content', $parent_comment_id)";
 
     echo ($sql);
 
