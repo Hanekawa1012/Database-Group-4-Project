@@ -224,6 +224,50 @@ These SQL statements are used to authenticate the user by checking their email, 
 
 These SQL statements are used to verify the existence of a user by email, retrieve the username associated with the user ID, and update the user's password in the database after verification.
 
+#### process_edit.php
+
+1. **Checking for existing email:**
+   ```php
+   $check_email_sql = "SELECT user_id FROM user WHERE email = '$email' AND user_id != '$user_id' AND accountType = '$accountType'";
+   ```
+   - **Purpose:** This query checks if the provided email address is already registered to another user with the same account type. If it finds a match, it prevents the email from being used again.
+
+2. **Fetching user profile information before editing:**
+   ```php
+   $sql_info_before_edit = "SELECT * FROM profile WHERE user_id = '$user_id';";
+   ```
+   - **Purpose:** This query retrieves the current profile information (telephone and address) of the user before any updates are made. This is used to compare and determine if any changes have been made.
+
+3. **Updating user information:**
+   ```php
+   $sql_user = "UPDATE user SET ";
+   ```
+   - **Purpose:** This is the base of the SQL update statement for the `user` table. It will be appended with specific fields to update if there are any changes.
+
+4. **Updating profile information:**
+   ```php
+   $sql_profile = "UPDATE profile SET ";
+   ```
+   - **Purpose:** This is the base of the SQL update statement for the `profile` table. It will be appended with specific fields to update if there are any changes.
+
+5. **Executing the update for user table:**
+   ```php
+   $sql_user .= implode(", ", $updates_user);
+   $sql_user .= " WHERE user_id = '$user_id'";
+   $result_edit_user = $con->query($sql_user);
+   ```
+   - **Purpose:** This query updates the `user` table with the new email if it has been changed. It constructs the full SQL statement by appending the changes and executes it.
+
+6. **Executing the update for profile table:**
+   ```php
+   $sql_profile .= implode(", ", $updates_profile);
+   $sql_profile .= " WHERE user_id = '$user_id'";
+   $result_edit_profile = $con->query($sql_profile);
+   ```
+   - **Purpose:** This query updates the `profile` table with the new username, telephone, and address if they have been changed. It constructs the full SQL statement by appending the changes and executes it.
+
+These SQL statements are used to ensure that the user's profile information is correctly updated in the database while checking for any conflicts, such as duplicate email addresses. If no changes are detected, the script informs the user that no updates were made.
+
 #### change_password.php
 
 1. **SQL Statement:**
@@ -260,6 +304,16 @@ These SQL statements are used to update the user's password in the database afte
    **Explanation:** This query selects the `email` addresses from the `user` table for users who have the specified `item_id` in their `watchlist`. This is used to notify all users watching the auction about the new bid.
 
 These SQL statements are used to insert a new bid into the database, retrieve auction item details for email notifications, and get the email addresses of users watching the auction to notify them of the new bid.
+
+#### user_info.php
+
+1. **Fetching user profile information:**
+   ```php
+   $sql = "SELECT * FROM profile WHERE user_id = '$user_id';";
+   ```
+   - **Purpose:** This query retrieves all the profile information for the user with the specified `user_id`. It is used to fetch the user's telephone number and address, which are then displayed on the profile page.
+
+This SQL statement ensures that the user's profile information is correctly retrieved from the database and displayed on the profile page. If the user has not set their telephone number or address, the page will prompt them to update their profile.
 
 ### Seller/Auctions Related
 **MAIN FUNCTIONS: create, cancel, update status of auctions**
@@ -301,7 +355,53 @@ These SQL statements are used to add a new auction listing to the database, ensu
    **Explanation:** This query selects the `title`, `details`, `category`, and `endDate` columns from the `auctions` table for the auction with the specified `item_id`. This information is used to provide details about the cancelled auction.
 
 These SQL statements are used to update the status of an auction to cancelled and to retrieve the details of the auction for confirmation and notification purposes. 
-    
+
+### Daily Notification/ Watchlist Related
+
+#### watchlist_func.php
+
+1. **Adding an item to the watchlist:**
+   ```php
+   $sql = "INSERT INTO watchlist (buyer_id, item_id) VALUES ($buyer_id, $item_id);";
+   ```
+   - **Purpose:** This query inserts a new record into the `watchlist` table, associating the current user (`buyer_id`) with the specified item (`item_id`). It adds the item to the user's watchlist.
+
+2. **Fetching item details:**
+   ```php
+   $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
+   ```
+   - **Purpose:** This query retrieves the details of the specified item from the `auctions` table. It fetches the title, details, category, and end date of the item that has been added to the watchlist.
+
+3. **Removing an item from the watchlist:**
+   ```php
+   $sql = "DELETE FROM watchlist WHERE buyer_id = $buyer_id AND item_id = $item_id;";
+   ```
+   - **Purpose:** This query deletes the record from the `watchlist` table where the `buyer_id` and `item_id` match the specified values. It removes the item from the user's watchlist.
+
+These SQL statements are used to manage the user's watchlist by adding or removing items and fetching item details for notifications. If there are any issues with these operations, the script returns an error message.
+
+#### send_end_email.php
+
+1. **Selecting emails of sellers and buyers for outdated auctions:**
+   ```php
+   $sql = "SELECT email FROM user WHERE user_id IN
+           (SELECT seller_id FROM auctions WHERE endDate <= '$currentDate' AND status = 'active')
+           UNION ALL
+           SELECT email FROM user WHERE user_id IN
+           (SELECT buyer_id FROM watchlist WHERE item_id IN
+           (SELECT item_id FROM auctions WHERE endDate <= '$currentDate' AND status = 'active'))";
+   ```
+   - **Purpose:** This query retrieves the email addresses of users who are either sellers of auctions that have ended or buyers who are watching these auctions. It uses a `UNION ALL` to combine the results from two subqueries:
+     - The first subquery selects emails of sellers whose auctions have ended.
+     - The second subquery selects emails of buyers who are watching items in auctions that have ended.
+
+2. **Updating the status of outdated auctions:**
+   ```php
+   $updateSql = "UPDATE auctions SET status = 'closed' WHERE endDate <= '$currentDate' AND status = 'active'";
+   ```
+   - **Purpose:** This query updates the status of auctions that have ended by setting their status to 'closed'. It ensures that these auctions are marked as no longer active.
+
+These SQL statements are used to identify users who need to be notified about the end of auctions and to update the auction status accordingly. If there are any outdated auctions, the script sends notification emails to the relevant users and updates the auction status in the database.
 
 ## Notice(最后提交时以下内容全部删除)
 ### 1.ToDoList：(自用，今天做完)
