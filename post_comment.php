@@ -12,15 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['content']) && !empty(t
     $item_id = mysqli_real_escape_string($con, $_POST['item_id']);
     $content = mysqli_real_escape_string($con, $_POST['content']);
     $buyer_id = $_SESSION['user_id']; // Assuming user ID is stored in the session
-    $parent_comment_id = isset($_POST['parent_comment_id']) ? mysqli_real_escape_string($con, $_POST['parent_comment_id']) : NULL;
+    $parent_comment_id = isset($_POST['parent_comment_id']) or !empty($_POST['parent_comment_id'])
+     ? mysqli_real_escape_string($con, $_POST['parent_comment_id']) : 'NULL';
 
     // Insert comment into the database
     $sql = "INSERT INTO comments (item_id, buyer_id, time, content, parent_comment_id) 
-            VALUES ('$item_id', '$buyer_id', NOW(), '$content', '$parent_comment_id')";
+            VALUES ($item_id, $buyer_id, NOW(), '$content', $parent_comment_id)";
+
+    echo ($sql);
 
     if (mysqli_query($con, $sql)) {
         // Redirect back to the item page after posting the comment
-        header("Location: item_page.php?item_id=" . $item_id);
+        header("Location: listing.php?item_id=" . $item_id);
     } else {
         echo "Error: " . mysqli_error($con);
     }
