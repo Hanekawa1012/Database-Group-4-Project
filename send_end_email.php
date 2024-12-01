@@ -12,10 +12,11 @@ require_once "my_db_connect.php"
 $currentDate = date('Y-m-d H:i:s');
 
 // look up for outdated auctions, seller who created it and all buyers watching it
-$sql = "SELECT email, username FROM user WHERE user_id IN
+
+$sql = "SELECT email FROM user WHERE user_id IN
         (SELECT seller_id FROM auctions WHERE endDate <= '$currentDate' AND status = 0)
         UNION ALL
-        SELECT email, username FROM user WHERE user_id IN
+        SELECT email FROM user WHERE user_id IN
         (SELECT buyer_id FROM watchlist WHERE item_id IN
         (SELECT item_id  FROM auctions WHERE endDate <= '$currentDate' AND status = 0))";
 $result = $con->query($sql);
@@ -43,14 +44,14 @@ if ($result->num_rows > 0) {
         // 发送邮件给每个卖家
         while ($row = $result->fetch_assoc()) {
             $userEmail = $row['email'];
-            $username = $row['username'];
+            $username = $row['email'];
             $mail->addAddress($userEmail);
 
             // 内容
             $mail->isHTML(true);                                  // 设置邮件格式为HTML
             $mail->Subject = 'One auction/bid of yours has ended.';
             $mail->Body    = '<h3>One auction/bid of yours has ended.</h3>';
-            $mail->AltBody = '您的交易已结束。感谢您的使用！';
+            $mail->AltBody = 'One auction/bid of yours has ended.';
 
             $mail->send();
             $mail->clearAddresses();

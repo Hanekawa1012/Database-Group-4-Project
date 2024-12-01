@@ -36,8 +36,6 @@
 
 ## Schema Listing:
 
-### Entities:
-
 ### User Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
@@ -115,7 +113,7 @@
 ### Search Bar Related
 **MAIN FUNCTIONS: collaborate with search bar form input to show items in customized ways**
 
-### browse.php as example, and logically same as mybids.php, mylistings.php, mywatchlist.php:
+#### browse.php as example, and logically same as mybids.php, mylistings.php, mywatchlist.php:
 
 1. **SQL Statement:**
    ```sql
@@ -186,15 +184,109 @@ These SQL statements are used to dynamically construct and execute queries based
 
 ### Account Management Related 
 **FILES:**
-**MAIN FUNCTIONS: register, login, edit peronal profile, send verification code**
+**MAIN FUNCTIONS: register, login, edit peronal profile, change password, send verification code**
+
+#### login_result.php
+
+1. **SQL Statement:**
+   ```sql
+   $sql = "SELECT * FROM user WHERE email = '$email' AND password = SHA('$password') AND accountType = '$accountType';";
+   ```
+   **Explanation:** This query selects all columns from the `user` table where the `email`, `password` (hashed using the `SHA` function), and `accountType` match the provided values. It is used to verify the user's login credentials.
+
+2. **SQL Statement:**
+   ```sql
+   $sql_profile = "SELECT * FROM profile WHERE user_id = '$user_id';";
+   ```
+   **Explanation:** This query selects all columns from the `profile` table where the `user_id` matches the provided user ID. It is used to retrieve the user's profile information after successful login.
+
+These SQL statements are used to authenticate the user by checking their email, password, and account type, and then to retrieve their profile information if the login is successful.
+
+#### forget_password.php
+
+1. **SQL Statement:**
+   ```sql
+   $sql = "SELECT user_id FROM user WHERE email = '$email'";
+   ```
+   **Explanation:** This query selects the `user_id` from the `user` table where the `email` matches the provided email address. It is used to check if a user with the given email exists.
+
+2. **SQL Statement:**
+   ```sql
+   $sql_username = "SELECT username FROM profile WHERE user_id = '$user_id';";
+   ```
+   **Explanation:** This query selects the `username` from the `profile` table where the `user_id` matches the provided user ID. It is used to retrieve the username associated with the user ID.
+
+3. **SQL Statement:**
+   ```sql
+   $sql_update_password = "UPDATE user SET password = SHA('$new_password') WHERE user_id = $user_id";
+   ```
+   **Explanation:** This query updates the `password` column in the `user` table for the user with the specified `user_id`. The new password is hashed using the `SHA` function before being stored in the database.
+
+These SQL statements are used to verify the existence of a user by email, retrieve the username associated with the user ID, and update the user's password in the database after verification.
+
+#### change_password.php
+
+1. **SQL Statement:**
+   ```sql
+   $sql = "UPDATE user SET password = SHA('$new_password') WHERE user_id = '$user_id'";
+   ```
+   **Explanation:** This query updates the `password` column in the `user` table for the user with the specified `user_id`. The new password is hashed using the `SHA` function before being stored in the database.
+
+These SQL statements are used to update the user's password in the database after verifying the user's identity through a verification code sent to their email.
 
 ### Buyer/Bids Related
 **MAIN FUNCTIONS: watch, bid for an item, receive outbid or status update notifications of bidded/watching items**
 
+#### place_bid.php
+
+1. **SQL Statement:**
+   ```sql
+   $sql = "INSERT INTO bids (buyer_id, item_id, bidPrice, bidTime) 
+           VALUES ($user_id, $item_id, '$bidPrice', '$bidTime');";
+   ```
+   **Explanation:** This query inserts a new record into the `bids` table with the specified values for `buyer_id`, `item_id`, `bidPrice`, and `bidTime`. This is used to record a new bid made by a user on an auction item.
+
+2. **SQL Statement:**
+   ```sql
+   $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
+   ```
+   **Explanation:** This query selects the `title`, `details`, `category`, and `endDate` columns from the `auctions` table for the auction with the specified `item_id`. This information is used to provide details about the auction item for email notifications.
+
+3. **SQL Statement:**
+   ```sql
+   $sql_watching = "SELECT email FROM user WHERE user_id IN
+                    (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
+   ```
+   **Explanation:** This query selects the `email` addresses from the `user` table for users who have the specified `item_id` in their `watchlist`. This is used to notify all users watching the auction about the new bid.
+
+These SQL statements are used to insert a new bid into the database, retrieve auction item details for email notifications, and get the email addresses of users watching the auction to notify them of the new bid.
+
 ### Seller/Auctions Related
 **MAIN FUNCTIONS: create, cancel, update status of auctions**
 
-### cancel_auction.php:
+#### create_auction_result.php
+
+1. **SQL Statement:**
+   ```sql
+   $sql = "INSERT INTO auctions(title, details, category, startPrice, reservePrice, startDate, endDate, seller_id) 
+           VALUES ('$auctionTitle', '$auctionDetails', '$auctionCategory', '$auctionStartPrice', 
+                   '$auctionReservePrice', NOW(), '$auctionEndDate', '$auctionSellerID');";
+   ```
+   **Explanation:** This query inserts a new record into the `auctions` table with the specified values for `title`, `details`, `category`, `startPrice`, `reservePrice`, `startDate` (set to the current date and time using `NOW()`), `endDate`, and `seller_id`. This is used to create a new auction listing in the database.
+
+2. **SQL Statement:**
+   ```sql
+   if (mysqli_query($con, $sql)) {
+       echo "Data insert succeed.\n";
+   } else {
+       echo "Data insert failed.\n" . "<br/>" . $con->error;
+   }
+   ```
+   **Explanation:** This block executes the previously constructed SQL `INSERT` statement. If the query is successful, it outputs a success message. If the query fails, it outputs an error message along with the error details.
+
+These SQL statements are used to add a new auction listing to the database, ensuring that all necessary data is provided and valid before insertion.
+
+#### cancel_auction.php:
 
 1. **SQL Statement:**
    ```sql
