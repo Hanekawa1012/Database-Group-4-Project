@@ -87,10 +87,10 @@ CREATE TABLE `comments` (
 -- Comment Likes Table
 CREATE TABLE `comment_likes` (
     `comment_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    PRIMARY KEY (`comment_id`, `user_id`),
+    `buyer_id` INT NOT NULL,
+    PRIMARY KEY (`comment_id`, `buyer_id`),
     FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+    FOREIGN KEY (`buyer_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Inserting users
@@ -555,7 +555,7 @@ VALUES
 -- Buyer 3 raises again
 -- Inserting comments
 INSERT INTO
-    `comments` (`item_id`, `user_id`, `content`, `time`)
+    `comments` (`item_id`, `buyer_id`, `content`, `time`)
 VALUES
     (
         1,
@@ -686,7 +686,7 @@ VALUES
 
 -- Inserting comment likes (without time field)
 INSERT INTO
-    `comment_likes` (`comment_id`, `user_id`)
+    `comment_likes` (`comment_id`, `buyer_id`)
 VALUES
     (1, 2),
     (1, 3),

@@ -271,19 +271,19 @@ if (isset($_SESSION['user_id'])) {
                     echo "No accessible auctions for now.<a href='browse.php'>Bid in an auction to start your own bidding!</a>";
                     exit();
                 }
-                    $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
-                    $result = mysqli_query($con, $sql);
-                    while ($fetch = mysqli_fetch_array($result)) {
-                        $item_id = $fetch['item_id'];
-                        $title = $fetch['title'];
-                        $description = $fetch['details'];
+                $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
+                $result = mysqli_query($con, $sql);
+                while ($fetch = mysqli_fetch_array($result)) {
+                    $item_id = $fetch['item_id'];
+                    $title = $fetch['title'];
+                    $description = $fetch['details'];
 
-                        $end_date = $fetch['endDate'];
-                        $bidPrice = $fetch['bidPrice'];
-                        $bidTime = $fetch['bidTime'];
-                        $status = $fetch['status'];
-                        print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date, $status);
-                    }
+                    $end_date = $fetch['endDate'];
+                    $bidPrice = $fetch['bidPrice'];
+                    $bidTime = $fetch['bidTime'];
+                    $status = $fetch['status'];
+                    print_bid_listing_li($item_id, $title, $description, $bidPrice, $bidTime, $end_date, $status);
+                }
                 ?>
 
             </ul>
@@ -381,15 +381,16 @@ mysqli_data_seek($comments_result, 0);
     <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true): ?>
         <?php if ($_SESSION['account_type'] == 'buyer'): ?>
             <!-- Comment submission form -->
-        <form method="POST" action="post_comment.php">
-            <div class="form-group">
-                <textarea class="form-control" id="commentContent" name="content" placeholder="Write a comment..." required></textarea>
-            </div>
-            <input type="hidden" name="user_id" value="<?php echo $_SESSION["user_id"]; ?>">
-            <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
-            <input type="hidden" name="parent_comment_id" value="">
-            <button type="submit" class="btn btn-primary">Post Comment</button>
-        </form>
+            <form method="POST" action="post_comment.php">
+                <div class="form-group">
+                    <textarea class="form-control" id="commentContent" name="content" placeholder="Write a comment..."
+                        required></textarea>
+                </div>
+                <input type="hidden" name="user_id" value="<?php echo $_SESSION["user_id"]; ?>">
+                <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
+                <input type="hidden" name="parent_comment_id" value="">
+                <button type="submit" class="btn btn-primary">Post Comment</button>
+            </form>
         <?php endif; ?>
     <?php else: ?>
         <p>Please log in to post a comment.</p>
@@ -398,62 +399,42 @@ mysqli_data_seek($comments_result, 0);
     <!-- Displaying existing comments -->
     <ul class="list-group mt-3">
         <?php if (mysqli_num_rows($comments_result) > 0): ?>
-            <?php while ($comment = mysqli_fetch_assoc($comments_result)): ?>
-                <li class="list-group-item">
-                    <strong><?php echo htmlspecialchars($comment['username']); ?></strong>
-                    <span class="text-muted"><?php echo date("Y-m-d H:i:s", strtotime($comment['time'])); ?></span>
-                    
-                    <!-- Display comment ID as response number -->
-                    <span class="text-muted">#<?php echo $comment_order[$comment['comment_id']]; ?></span>
+            <?php
+            // Modify the display of comments to include a delete button for user's own comments
+            while ($comment = mysqli_fetch_assoc($comments_result)) {
+                echo '<li class="list-group-item">';
+                echo '<strong>' . htmlspecialchars($comment['username']) . '</strong>';
+                echo '<span class="text-muted">' . date("Y-m-d H:i:s", strtotime($comment['time'])) . '</span>';
+                echo '<span class="text-muted">#' . $comment_order[$comment['comment_id']] . '</span>';
 
-                    <!-- Display 'Reply to #x' if it.s a reply -->
-                    <?php if ($comment['parent_comment_id'] !== NULL): ?>
-                        <p class="text-muted">Reply to #<?php echo $comment_order[$comment['parent_comment_id']]; ?>:</p>
-                    <?php endif; ?>
+                if ($comment['parent_comment_id'] !== NULL) {
+                    echo '<p class="text-muted">Reply to #' . $comment_order[$comment['parent_comment_id']] . ':</p>';
+                }
 
-                    <p><?php echo nl2br(htmlspecialchars($comment['content'])); ?></p>
+                echo '<p>' . nl2br(htmlspecialchars($comment['content'])) . '</p>';
 
-                    <div class="comment-actions">
-                        <!-- Star-based rating (with placeholder logic) -->
-                        <button class="btn btn-link" onclick="likeComment(<?php echo $comment['comment_id']; ?>)">Like</button>
-                        <?php
-                        // Search in comment_likes table to see how many likes this comment has
-                        $sql = 'SELECT COUNT(*) AS likes FROM comment_likes WHERE comment_id = ' . $comment['comment_id'];
-                        $result = mysqli_query($con, $sql);
-                        $row = mysqli_fetch_assoc($result);
-                        $comment['likes'] = $row['likes'];
-                        ?>
-                        <span><?php echo $comment['likes'] . " like(s)";?></span>
-                        <!-- Reply functionality -->
-                         <?php
-                         if ($_SESSION['account_type'] == 'seller'){
-                            echo '<button class="btn btn-link disabled" onclick="">Reply</button>';
-                         }else{?>
-                            <button class="btn btn-link" onclick="showReplyForm(<?php echo $comment['comment_id']; ?>)">Reply</button>
-                        <?php
-                         }
+                echo '<div class="comment-actions">';
+                echo '<button class="btn btn-link" onclick="likeComment(' . $comment['comment_id'] . ')">Like</button>';
 
-                        ?>
-                    </div>
+                $likes_sql = 'SELECT COUNT(*) AS likes FROM comment_likes WHERE comment_id = ' . $comment['comment_id'];
+                $likes_result = mysqli_query($con, $likes_sql);
+                $likes_row = mysqli_fetch_assoc($likes_result);
+                echo '<span>' . $likes_row['likes'] . ' like(s)</span>';
 
-                    <!-- Reply form (hidden by default) -->
-                    <div id="replyForm-<?php echo $comment['comment_id']; ?>" style="display:none;">
-                        <form method="POST" action="post_comment.php">
-                            <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true): ?>
-                                <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
-                            <?php else: ?>
-                                <p>Please log in to post a reply.</p>
-                            <?php endif; ?>
-                            <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
-                            <input type="hidden" name="parent_comment_id" value="<?php echo $comment['comment_id']; ?>">
-                            <div class="form-group">
-                                <textarea class="form-control" id="replyContent-<?php echo $comment['comment_id']; ?>" name="content" placeholder="Reply..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Post Reply</button>
-                        </form>
-                    </div>
-                </li>
-            <?php endwhile; ?>
+                echo '<button class="btn btn-link" onclick="showReplyForm(' . $comment['comment_id'] . ')">Reply</button>';
+
+                // Add delete button for user's own comments
+                if ($_SESSION['user_id'] == $comment['buyer_id']) {
+                    echo '<form method="POST" action="delete_comment.php?item_id=' . $item_id . '" style="display:inline;">';
+                    echo '<input type="hidden" name="comment_id" value="' . $comment['comment_id'] . '">';
+                    echo '<button type="submit" class="btn btn-link text-danger">Delete</button>';
+                    echo '</form>';
+                }
+
+                echo '</div>';
+                echo '</li>';
+            }
+            ?>
         <?php else: ?>
             <p>No comments yet. Be the first to comment!</p>
         <?php endif; ?>
@@ -473,22 +454,25 @@ mysqli_data_seek($comments_result, 0);
 
     // JavaScript for liking a comment (requires backend logic)
     function likeComment(commentId) {
-        $.ajax('comment_funcs.php', {
-            type: "POST",
-            data: { functionname: 'like_comment', arguments: commentId },
-            success: function(response) {
-                if (response.trim() === "success") {
-                    alert("Comment liked!");
-                    location.reload(); // Refresh to show updated like count
-                } else {
-                    alert("Failed to like the comment. Try again later.");
-                }
+        fetch('like_comment.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            error: function() {
-                console.log("Error liking the comment.");
+            body: JSON.stringify({ comment_id: commentId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Liked!');
+                location.reload(); // Refresh to update like count
+            } else {
+                alert('Error: ' + data.message);
             }
-        });
+        })
+        .catch(error => console.error('Error:', error));
     }
+</script>
 </script>
 
 <?php include_once("footer.php") ?>
