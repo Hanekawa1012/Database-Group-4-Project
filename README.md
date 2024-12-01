@@ -36,6 +36,8 @@
 
 ### ER Diagram
 
+![ERDinTable](ERDinTable.png)
+
 ### Assumptions:
 User Roles: Users can be either buyers or sellers, but not both simultaneously.
 Profile Information: Each user has a profile containing their contact information.
@@ -50,7 +52,7 @@ Comments and Likes: Buyers can comment on auction items and like comments
 | `user_id`    | INT               | PK, AUTO_INCREMENT  | User ID                        |
 | `password`   | VARCHAR(100)      | NOT NULL            | User password                  |
 | `email`      | VARCHAR(100)      | NOT NULL, UNIQUE    | User email                     |
-| `accountType`| ENUM('buyer', 'seller') | NOT NULL       | Type of account (buyer/seller) |
+| `accountType`| ENUM('buyer', 'seller') | NOT NULL      | Type of account (buyer/seller) |
 
 - **1NF:** Each attribute contains atomic values.
 - **2NF:** All non-key attributes (`password`, `email`, `accountType`) are fully dependent on the primary key (`user_id`).
@@ -92,9 +94,9 @@ Comments and Likes: Buyers can comment on auction items and like comments
 | `item_id`      | INT               | PK, AUTO_INCREMENT  | Item ID                        |
 | `title`        | VARCHAR(50)       | CK, UNIQUE          | Auction title                  |
 | `details`      | TEXT              | NOT NULL            | Auction details                |
-| `category`     | VARCHAR(30)       | NOT NULL            | Auction category               |
-| `startPrice`   | DECIMAL(10, 2)    | NOT NULL            | Starting price                 |
-| `reservePrice` | DECIMAL(10, 2)    | CHECK (reservePrice IS NULL OR reservePrice >= startPrice) | Reserve price                  |
+| `category`     | VARCHAR(30)       |             | Auction category               |
+| `startPrice`   | DECIMAL(10, 2)    |            | Starting price                 |
+| `reservePrice` | DECIMAL(10, 2)    |   | Reserve price                  |
 | `startDate`    | DATETIME          | NOT NULL            | Auction start date             |
 | `endDate`      | DATETIME          | NOT NULL            | Auction end date               |
 | `seller_id`    | INT               | NOT NULL, FK        | Seller ID                      |
@@ -107,9 +109,9 @@ Comments and Likes: Buyers can comment on auction items and like comments
 ### Watchlist Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
-| `list_id`    | INT               | PK, AUTO_INCREMENT  | List ID                        |
-| `buyer_id`   | INT               | NOT NULL, FK        | Buyer ID                       |
-| `item_id`    | INT               | NOT NULL, FK        | Item ID                        |
+| `list_id`    | INT               | PK, AUTO_INCREMENT  | ID for each pair of buyer and item |
+| `buyer_id`   | INT               | FK        | Buyer ID                       |
+| `item_id`    | INT               | FK        | Item ID                        |
 
 - **1NF:** Each attribute contains atomic values.
 - **2NF:** All non-key attributes are fully dependent on the primary key (`list_id`).
@@ -118,11 +120,11 @@ Comments and Likes: Buyers can comment on auction items and like comments
 ### Bids Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
-| `bid_id`     | INT               | PK, AUTO_INCREMENT  | Bid ID                         |
-| `buyer_id`   | INT               | NOT NULL, FK        | Buyer ID                       |
-| `item_id`    | INT               | NOT NULL, FK        | Item ID                        |
-| `bidPrice`   | DECIMAL(10, 2)    | NOT NULL            | Bid price                      |
-| `bidTime`    | DATETIME          | NOT NULL            | Bid time                       |
+| `bid_id`     | INT               | PK  | Bid ID                         |
+| `buyer_id`   | INT               | FK        | Buyer ID                       |
+| `item_id`    | INT               | FK        | Item ID                        |
+| `bidPrice`   | DECIMAL(10, 2)    |            | Bid price                      |
+| `bidTime`    | DATETIME          |             | Bid time                       |
 
 - **1NF:** Each attribute contains atomic values.
 - **2NF:** All non-key attributes are fully dependent on the primary key (`bid_id`).
@@ -131,11 +133,11 @@ Comments and Likes: Buyers can comment on auction items and like comments
 ### Comments Table
 | Attribute          | Data Type         | Note                | Definition                     |
 |--------------------|-------------------|---------------------|--------------------------------|
-| `comment_id`       | INT               | PK, AUTO_INCREMENT  | Comment ID                     |
-| `item_id`          | INT               | NOT NULL, FK        | Item ID                        |
-| `buyer_id`         | INT               | NOT NULL, FK        | Buyer ID                       |
-| `time`             | DATETIME          | NOT NULL            | Comment time                   |
-| `content`          | VARCHAR(1023)     | NOT NULL            | Comment content                |
+| `comment_id`       | INT               | PK                  | Comment ID                     |
+| `item_id`          | INT               | FK                  | Item ID                        |
+| `buyer_id`         | INT               | FK                  | Buyer ID                       |
+| `time`             | DATETIME          |                     | Comment time                   |
+| `content`          | VARCHAR(1023)     |                     | Comment content                |
 | `parent_comment_id`| INT               | FK                  | Parent comment ID              |
 
 - **1NF:** Each attribute contains atomic values.
