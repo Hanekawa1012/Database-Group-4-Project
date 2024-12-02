@@ -46,7 +46,7 @@ CREATE TABLE `auctions` (
     `startDate` DATETIME NOT NULL,
     `endDate` DATETIME NOT NULL,
     `seller_id` INT NOT NULL,
-    `status` ENUM('active', 'closed', 'cancelled') NOT NULL,
+    `status` ENUM('active', 'closed', 'cancelled') NOT NULL DEFAULT 'active',
     FOREIGN KEY (`seller_id`) REFERENCES `seller` (`user_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
