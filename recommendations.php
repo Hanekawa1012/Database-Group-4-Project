@@ -25,6 +25,7 @@
             a.details,
             a.startPrice,
             a.endDate,
+            a.status,
             SUM(CASE WHEN b1.present = 1 AND b2.present = 1 THEN 1 ELSE 0 END) / 
             (SQRT(SUM(POWER(b1.present, 2))) * SQRT(SUM(POWER(b2.present, 2)))) AS cosine_similarity
         FROM
@@ -56,7 +57,7 @@
         JOIN
             auctions a ON b1.item_id = a.item_id
         WHERE
-            b1.user_id = $user_id AND b2.user_id != $user_id AND a.endDate > NOW()
+            b1.user_id = $user_id AND b2.user_id != $user_id AND a.endDate > NOW() AND a.status = 'active'
         GROUP BY
             b1.item_id, a.title, a.details, a.startPrice, a.endDate
         HAVING
