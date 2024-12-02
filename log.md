@@ -80,9 +80,87 @@
    4. 刷新页面，展示该 auction 已结束，无法 bid
    5. TODO：如何展示 The system should confirm to both the winner and seller of an auction its outcome.功能
 
-附加功能： 6. buyer watch 1. 登陆 buyer 账户，进入某个商品页面，尝试 watch 2. 切换到 watchlist,展示 watch 成功的结果 3. 点击该 watch 商品，进入商品页面 4. 进入邮箱，展示收到 watch 成功邮件 5. 切换到其他 buyer 账户，bid 同一件商品 6. 进入邮箱，展示收到 outbid 邮件 7. 切换回原 buyer,取消 watch 8. 切换到 watchlist,展示 watch 取消的结果 7. ==TODO buyer recommendation 8. comment 功能展示
+附加功能：
+
+1. buyer watch
+   1. 登陆 buyer 账户，进入某个商品页面，尝试 watch
+   2. 切换到 watchlist,展示 watch 成功的结果
+   3. 点击该 watch 商品，进入商品页面
+   4. 进入邮箱，展示收到 watch 成功邮件
+   5. 切换到其他 buyer 账户，bid 同一件商品
+   6. 进入邮箱，展示收到 outbid 邮件
+   7. 切换回原 buyer,取消 watch 8. 切换到 watchlist,展示 watch 取消的结果
+2. ==TODO buyer recommendation
+3. comment 功能展示
 
 ### 4.功能清单
+
+#### 1.基本功能：
+
+1. 用户注册：
+   1. 注册失败（密码 2 次输入不一致）时弹出提示
+   2. buyer 注册成功
+   3. seller 注册成功
+2. 用户登陆：
+   1. 新注册的 buyer 登陆成功
+   2. 新注册的 seller 登陆成功
+3. 用户个人主页：
+   1. 查看个人信息
+   2. 用户修改个人信息
+4. 游客浏览网页：
+   1. 浏览 auction 清单
+   2. 点击 auction 标题可查看对于商品介绍
+5. buyer 浏览网页：
+   1. 浏览 auction 清单
+   2. 点击 auction 标题可查看对于商品介绍
+   3. 按关键词搜索商品
+   4. 高级搜索：
+      1. 选择 category 筛选对应类型商品
+      2. 选择排序类型，排序搜索结果
+         1. 按价格递增
+         2. 按价格递减
+         3. 按结束时间递增
+         4. 按结束时间递减
+6. buyer bid
+   1. buyer 可以在商品页面 bid 商品
+      1. 已结束 / 取消的商品无法 bid
+      2. 对于未结束 / 未取消 的商品价格：
+         1. 低于当前价格，bid 失败
+         2. 价格高于当前价格，bid 成功，刷新页面可查看 bid 成功结果
+   2. buyer 可以查看所有人的 bid history
+      1. 可翻页
+   3. buyer 可在 mybids 页面查看自己的 bid 历史
+7. seller auction
+   1. seller 可发起新 auction
+   2. seller 可在 my listings 页面查看自己创建的 auction
+   3. seller 可取消自己创建的 auction；已取消的 auction，其它 buyer 无法 bid
+8. auction 系统管理
+   1. auction 结束前，buyer 可 bid auction
+   2. auction 结束后，buyer 无法 bid 该 auction
+   3. TODO：如何展示 The system should confirm to both the winner and seller of an auction its outcome.功能
+
+#### 2.附加功能
+
+1. buyer watch
+   1. buyer 可 watch 商品
+   2. watch 的商品可以在 my watchlist 查看
+   3. watch 成功后，buyer 会收到邮件提醒
+   4. 其它 buyer bid 该商品，buyer 会收到 outbid 邮件提醒
+   5. buyer 可取消 watch 的商品
+2. buyer recommendation
+   1. buyer 可收到 recommendation
+3. 高级搜索
+
+   1. 可选择搜索类型：
+
+      1. intersection
+      2. union
+
+4. 评论
+   1. 商品页面可以浏览用户评论
+   2. buyer 可 comment 商品
+   3. buyer 可点赞 commit
+   4. buyer 可回复 comment
 
 ### 5.问题 checklist
 
@@ -97,7 +175,7 @@
 7. [ ] listing.php 在 seller 时提示仍然显示 Bid in an auction to start your own bidding
 8. [ ] cancel 的 auction 仍然可以关注
 9. [ ] create_auction_result.php 的时间判断有问题：例当前时间为 22:36,输入结束时间 22:40，会报 Error:end date should be later than present time.错
-1. [ ] mywatchlist.php 文字打错了：Page not accessible for guests. If you want to watch an ==itemm==, please register
+10. [ ] mywatchlist.php 文字打错了：Page not accessible for guests. If you want to watch an ==itemm==, please register
 
 以下为呈现&robustness 问题，可以延缓维修
 bid 页面在 bid 成功后不会自动刷新新的 bid 价格 10.[ ] 游客/buyer 进入保护：cancel_auction.php / create_auction_result.php / create_auction.php / logout.php
@@ -111,11 +189,11 @@ bid 页面在 bid 成功后不会自动刷新新的 bid 价格 10.[ ] 游客/buy
 7. [ ] mywatchlist.php：My Watchlist 文字太大了
 8. [ ] mywatchlist.php 文字打错了：Page not accessible for guests. If you want to watch an ==itemm==, please register
 9. [ ] 游客在 listing.php / mywatchlist.php / recommendations.php / change_password 页面无法登陆
-1. [ ] buyer/seller 没有更改密码的链接（但可以手工输入 change_password.php 到 url 来更改）
-1. [ ] create_auction.php 没有前端表单验证
-1. [ ] 因为以上原因，功能 award the item to the highest bidder after end time 和 award the item to the highest bidder 无法测试
-1. [ ] 商品介绍 detail 等没有限制长度
-1. [ ] 余弦相似度推荐算法可能存在问题（当相似度阈值为 0 时仍然无法看到 bid 了相同物品的其他用户的其它 bid）
+10. [ ] buyer/seller 没有更改密码的链接（但可以手工输入 change_password.php 到 url 来更改）
+11. [ ] create_auction.php 没有前端表单验证
+12. [ ] 因为以上原因，功能 award the item to the highest bidder after end time 和 award the item to the highest bidder 无法测试
+13. [ ] 商品介绍 detail 等没有限制长度
+14. [ ] 余弦相似度推荐算法可能存在问题（当相似度阈值为 0 时仍然无法看到 bid 了相同物品的其他用户的其它 bid）
 
 - PS：邮件相关功能未检查
 - PS: debug 分支版本的 send_email.php 有 bug，默认返回'e000'，修复这个函数完成后再移除相关绕过代码
@@ -139,10 +217,12 @@ bid 页面在 bid 成功后不会自动刷新新的 bid 价格 10.[ ] 游客/buy
   - 将搜索栏重做，现在三个搜索选项下拉框被装入了一个 Advanced search 隐藏栏
   - 搜索的 category 现在会随数据库实时变化
   - 添加了 JavaScript 语句，让搜索栏/下拉框和 URL 中的 metadata 保持同步
+
 - 修正了 browse.php 的一些问题
 - 添加了 recommendation，利用**余弦相似度**完成相似度检测。最多展示 10 条结果
 
   (_TODO_: by Evan 大样本量测试推荐系统的正确性。现在的状况，只能说“看起来”是正确的)
+
 - 在 listing 界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
 - _TODO_：添加 comments？(Tim: 求放过（bushi，但是真的想做的话浅浅规划下，主要是添加新的 comment 表，独立主键，引入 item 和 buyer 的 id 为外键，最后是 comment 的具体内容和发布时间)（网页部分则是在 listing 下加额外 div 显示对应评论）
 
