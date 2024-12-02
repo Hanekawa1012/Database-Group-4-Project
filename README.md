@@ -1,25 +1,35 @@
 # Database Project Group 4 Report 
 
-- URL for your Youtube video
-- Your ERD, giving any assumptions that it makes about the processes that uses the data.
-- A listing of your database schema (list of table names and attributes) with an explanatic of how it translates the ER diagram
-- An analsis showing that the database schema is in third normal form.
-- A listing and explanation of your database queries
-- Other individual submission: 1) a self-assessment 2) peer assessment
-
 ## Youtube Link for Demo Video:
+
+## Github link for Our Project:
+
+- https://github.com/Hanekawa1012/Database-Group-4-Project.git
 
 ## ER Diagram and Assumptions
 
 ### ER Diagram
 
-![ERDinTable](./ER_COMP0178.png)
+#### Geometry Way
+
+![ERDinTable](./ERDinGeometry.png)
+
+#### Table Way
+
+![ERDinTable](./ERDinTable_final.png)
+
+**Translation:** Comparing ERD drawn in 2 different ways, the tables in the database are more easy to come across. The blue tables refers to constraints and relationships, and red tables are entities. The buyer and seller tables seem different from each other diagram, because in geometry way it is explained as entity, but in practice it is more used to give foreign key constraint, but not used to look up as an entity.
 
 ### Assumptions:
 - User Roles: Users can be either buyers or sellers, but not both simultaneously.
+    - Buyers can make multiple comments, bid multiple auctions for multiple times, and also are able to watch many auctions.
+    - Sellers can make many auctions as they want to.
 - Profile Information: Each user has a profile containing their contact information.
+    - Each account email only refers to only one address, tel etc.
 - Auctions: Sellers create auctions, and buyers can add items to their watchlist or place bids.
+    - Each auction only belong to one seller, and one bidder if the auction is successful.
 - Comments and Likes: Buyers can comment on auction items and like comments
+    - Each auction can have many comments and likes.
 
 ## Schema Listing and Analysis of 3rd Normal Form:
 
@@ -61,26 +71,12 @@
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
 
-**Functional Dependencies**:
-- `user_id` → `user_id`
-
-**Analysis**:
-- **1NF**: Each attribute contains atomic values.
-- **2NF**: Fully dependent on the primary key (`user_id`).
-- **3NF**: No transitive dependencies.
 
 ### Seller Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
 
-**Functional Dependencies**:
-- `user_id` → `user_id`
-
-**Analysis**:
-- **1NF**: Each attribute contains atomic values.
-- **2NF**: Fully dependent on the primary key (`user_id`).
-- **3NF**: No transitive dependencies.
 
 ### Auctions Table
 | Attribute      | Data Type         | Note                | Definition                     |
@@ -160,9 +156,6 @@
 | `comment_id` | INT               | FK                  | Comment ID                     |
 | `buyer_id`   | INT               | FK                  | Buyer ID                       |
 
-**Functional Dependencies**:
-- (`comment_id`, `buyer_id`) → `comment_id`, `buyer_id`
-
 **Analysis**:
 - **1NF**: Each attribute contains atomic values.
 - **2NF**: Fully dependent on the composite primary key (`comment_id`, `buyer_id`).
@@ -212,23 +205,9 @@ In conclusion, all tables in the schema meet the criteria for 1NF, 2NF, and 3NF.
         - If `search_type` is `union`, it uses a `UNION` to combine results from the keyword search and category filter.
         - If an `ordering` parameter is provided, it adds an `ORDER BY` clause to sort the results.
 
-3. **Executing the Main Query**:
-    ```php
-    $result_q = mysqli_query($con, $sql);
-    ```
 
-    - **Purpose**: This executes the constructed SQL query and stores the result in `$result_q`.
 
-4. **Pagination**:
-    ```php
-    $num_results = mysqli_num_rows($result_q);
-    $results_per_page = 10;
-    $max_page = ceil($num_results / $results_per_page);
-    ```
-
-    - **Purpose**: This calculates the total number of results and determines the number of pages needed for pagination.
-
-5. **Limiting Results for Current Page**:
+3. **Limiting Results for Current Page**:
     ```php
     if ($curr_page != "") {
         $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
@@ -238,7 +217,7 @@ In conclusion, all tables in the schema meet the criteria for 1NF, 2NF, and 3NF.
 
     - **Purpose**: This modifies the SQL query to limit the results to the current page based on the pagination settings and re-executes the query.
 
-6. **Fetching Auction Details**:
+4. **Fetching Auction Details**:
     ```php
     while ($fetch = mysqli_fetch_array($result_q)) {
         $item_id = $fetch['item_id'];
