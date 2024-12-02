@@ -754,7 +754,7 @@ These SQL statements handle the core functionalities of verifying comment owners
 
 1. **Retrieving Recommended Items Based on Cosine Similarity**:
     ```sql
-$sql = "WITH user_item_scores AS (
+        $sql = "WITH user_item_scores AS (
             SELECT 
                 u.user_id,
                 a.item_id,
