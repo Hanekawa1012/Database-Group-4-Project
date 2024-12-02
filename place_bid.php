@@ -65,27 +65,32 @@ if ($_POST['bidPrice'] != "") {
                    (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
         $result_watching = mysqli_query($con, $sql_watching);
         $email_list = [];
-        while($fetch = mysqli_fetch_array($result_watching)){
-            $email_list[] = $fetch['email'];
-        }
-        $itemTitle = $fetch_item['title'];
-        $title = "One of your watching auction has new bid update!";
-        $content = "<h3>Auction Update</h3>
-                    <p>Bidder name: $username</p>
-                    <p>Item name: $itemTitle</p>
-                    <p>New bid price: $bidPrice</p>
-                    <p>Update time: $bidTime</p>";
-        $outline = "One of your watching auction has new bid update!";
-        switch (sendmail::sendemail($email_list, $email_list, $title, $content, $outline)) {
-            case 'e000':
-                echo "A receipt email sent to your email. Please check.";
-                break;
-            case 'e001':
-                echo "Sending email failed";
-                break;
-            default:
-                echo "Unknown Error";
-                break;
+
+        if (mysqli_num_rows($check_result) > 0) {
+
+            while($fetch = mysqli_fetch_array($result_watching)){
+                $email_list[] = $fetch['email'];
+            }
+            $itemTitle = $fetch_item['title'];
+            $title = "One of your watching auction has new bid update!";
+            $content = "<h3>Auction Update</h3>
+                        <p>Bidder name: $username</p>
+                        <p>Item name: $itemTitle</p>
+                        <p>New bid price: $bidPrice</p>
+                        <p>Update time: $bidTime</p>";
+            $outline = "One of your watching auction has new bid update!";
+            switch (sendmail::sendemail($email_list, $email_list, $title, $content, $outline)) {
+                case 'e000':
+                    echo "A receipt email sent to your email. Please check.";
+                    break;
+                case 'e001':
+                    echo "Sending email failed";
+                    break;
+                default:
+                    echo "Unknown Error";
+                    break;
+            }
+
         }
     } else {
         echo "Data insert failed.\n" . "<br/>" . $con->error;
