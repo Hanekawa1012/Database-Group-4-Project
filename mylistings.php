@@ -106,7 +106,7 @@ $max_page = ceil($num_results / $results_per_page);
         if ($curr_page != "") {
             $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
         }
-        echo $sql;
+        // echo $sql;
         $result = mysqli_query($con, $sql);
         while ($fetch = mysqli_fetch_array($result)) {
             $item_id = $fetch['item_id'];

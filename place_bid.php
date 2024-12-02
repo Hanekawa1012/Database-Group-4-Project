@@ -66,7 +66,7 @@ if ($_POST['bidPrice'] != "") {
         $result_watching = mysqli_query($con, $sql_watching);
         $email_list = [];
 
-        if (mysqli_num_rows($check_result) > 0) {
+        if (mysqli_num_rows($result_watching) > 0) {
 
             while($fetch = mysqli_fetch_array($result_watching)){
                 $email_list[] = $fetch['email'];
