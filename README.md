@@ -21,7 +21,7 @@
 
 
 
-# Database Project Group 4 Report (该部分内容在typora或overleaf内单独生成pdf)
+# Database Project Group 4 Report 
 
 - URL for your Youtube video
 - Your ERD, giving any assumptions that it makes about the processes that uses the data.
@@ -39,19 +39,19 @@
 ![ERDinTable](./ERDinTable.png)
 
 ### Assumptions:
-User Roles: Users can be either buyers or sellers, but not both simultaneously.
-Profile Information: Each user has a profile containing their contact information.
-Auctions: Sellers create auctions, and buyers can add items to their watchlist or place bids.
-Comments and Likes: Buyers can comment on auction items and like comments
+- User Roles: Users can be either buyers or sellers, but not both simultaneously.
+- Profile Information: Each user has a profile containing their contact information.
+- Auctions: Sellers create auctions, and buyers can add items to their watchlist or place bids.
+- Comments and Likes: Buyers can comment on auction items and like comments
 
 ## Schema Listing and Analysis of 3rd Normal Form:
 
 ### User Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
-| `user_id`    | INT               | PK, AUTO_INCREMENT  | User ID                        |
-| `password`   | VARCHAR(100)      | NOT NULL            | User password                  |
-| `email`      | VARCHAR(100)      | NOT NULL, UNIQUE    | User email                     |
+| `user_id`    | INT               | PK                  | User ID                        |
+| `password`   | VARCHAR(100)      |                      | User password                  |
+| `email`      | VARCHAR(100)      | Candidate Key UNIQUE    | User email                     |
 | `accountType`| ENUM('buyer', 'seller') | NOT NULL      | Type of account (buyer/seller) |
 
 - **1NF:** Each attribute contains atomic values.
@@ -62,9 +62,9 @@ Comments and Likes: Buyers can comment on auction items and like comments
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
-| `username`   | VARCHAR(50)       | NOT NULL            | Username                       |
-| `tel`        | VARCHAR(15)       | NOT NULL            | Telephone number               |
-| `address`    | VARCHAR(100)      | NOT NULL, UNIQUE    | Address                        |
+| `username`   | VARCHAR(50)       |                     | Username                       |
+| `tel`        | VARCHAR(15)       |                      | Telephone number               |
+| `address`    | VARCHAR(100)      | Candidate Key        | Address                        |
 
 - **1NF:** Each attribute contains atomic values.
 - **2NF:** All non-key attributes (`username`, `tel`, `address`) are fully dependent on the primary key (`user_id`).
@@ -75,31 +75,25 @@ Comments and Likes: Buyers can comment on auction items and like comments
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
 
-- **1NF:** Contains atomic values.
-- **2NF:** Fully dependent on the primary key.
-- **3NF:** No transitive dependencies.
-
 ### Seller Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
 
-- **1NF:** Contains atomic values.
-- **2NF:** Fully dependent on the primary key.
-- **3NF:** No transitive dependencies.
+- These 2 tables are interfaces and constraint for auctions/bids to get user id from user table. They don't have any internal functional dependencies and any other attribute than user_id, which is foreign key from user(user_id)
 
 ### Auctions Table
 | Attribute      | Data Type         | Note                | Definition                     |
 |----------------|-------------------|---------------------|--------------------------------|
-| `item_id`      | INT               | PK, AUTO_INCREMENT  | Item ID                        |
-| `title`        | VARCHAR(50)       | CK, UNIQUE          | Auction title                  |
-| `details`      | TEXT              | NOT NULL            | Auction details                |
-| `category`     | VARCHAR(30)       |             | Auction category               |
-| `startPrice`   | DECIMAL(10, 2)    |            | Starting price                 |
-| `reservePrice` | DECIMAL(10, 2)    |   | Reserve price                  |
-| `startDate`    | DATETIME          | NOT NULL            | Auction start date             |
-| `endDate`      | DATETIME          | NOT NULL            | Auction end date               |
-| `seller_id`    | INT               | NOT NULL, FK        | Seller ID                      |
+| `item_id`      | INT               | PK                  | Item ID                        |
+| `title`        | VARCHAR(50)       | CK                  | Auction title                  |
+| `details`      | TEXT              |                     | Auction details                |
+| `category`     | VARCHAR(30)       |                     | Auction category               |
+| `startPrice`   | DECIMAL(10, 2)    |                     | Starting price                 |
+| `reservePrice` | DECIMAL(10, 2)    |                     | Reserve price                  |
+| `startDate`    | DATETIME          |                     | Auction start date             |
+| `endDate`      | DATETIME          |                     | Auction end date               |
+| `seller_id`    | INT               | FK                  | Seller ID                      |
 | `status`       | ENUM('active', 'closed', 'cancelled') | NOT NULL | Auction status        |
 
 - **1NF:** Each attribute contains atomic values.
@@ -109,9 +103,9 @@ Comments and Likes: Buyers can comment on auction items and like comments
 ### Watchlist Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
-| `list_id`    | INT               | PK, AUTO_INCREMENT  | ID for each pair of buyer and item |
-| `buyer_id`   | INT               | FK        | Buyer ID                       |
-| `item_id`    | INT               | FK        | Item ID                        |
+| `list_id`    | INT               | PK                  | ID for each pair of buyer and item |
+| `buyer_id`   | INT               | FK                  | Buyer ID                       |
+| `item_id`    | INT               | FK                  | Item ID                        |
 
 - **1NF:** Each attribute contains atomic values.
 - **2NF:** All non-key attributes are fully dependent on the primary key (`list_id`).
@@ -120,11 +114,11 @@ Comments and Likes: Buyers can comment on auction items and like comments
 ### Bids Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
-| `bid_id`     | INT               | PK  | Bid ID                         |
-| `buyer_id`   | INT               | FK        | Buyer ID                       |
-| `item_id`    | INT               | FK        | Item ID                        |
-| `bidPrice`   | DECIMAL(10, 2)    |            | Bid price                      |
-| `bidTime`    | DATETIME          |             | Bid time                       |
+| `bid_id`     | INT               | PK                  | Bid ID                         |
+| `buyer_id`   | INT               | FK                  | Buyer ID                       |
+| `item_id`    | INT               | FK                  | Item ID                        |
+| `bidPrice`   | DECIMAL(10, 2)    |                     | Bid price                      |
+| `bidTime`    | DATETIME          |                     | Bid time                       |
 
 - **1NF:** Each attribute contains atomic values.
 - **2NF:** All non-key attributes are fully dependent on the primary key (`bid_id`).
@@ -144,7 +138,7 @@ Comments and Likes: Buyers can comment on auction items and like comments
 - **2NF:** All non-key attributes are fully dependent on the primary key (`comment_id`).
 - **3NF:** No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
 
-### Comment Likes Table
+### Comment_likes Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
 | `comment_id` | INT               | FK                  | Comment ID                     |
@@ -162,74 +156,95 @@ All tables in the schema meet the criteria for 1NF, 2NF, and 3NF. Therefore, the
 ### Search Bar Related
 **MAIN FUNCTIONS: collaborate with search bar form input to show items in customized ways**
 
-#### browse.php as example, and logically same as mybids.php, mylistings.php, mywatchlist.php:
+#### browse.php
 
-1. **SQL Statement:**
-   ```sql
-   $sql = "SELECT * FROM auctions";
-   ```
-   **Explanation:** This query selects all columns from the `auctions` table. It serves as the base query for retrieving auction listings.
+1. **Constructing the Main Query**:
+    ```php
+    $sql = "SELECT * FROM auctions";
+    ```
 
-2. **SQL Statement:**
-   ```sql
-   if (isset($_GET['keyword']) || $keyword != "") {
-       $sql .= " WHERE (title LIKE '%$keyword%' OR details LIKE '%$keyword%')";
-       if ($category != "") {
-           if ($search_type == "union") {
-               $sql .= " UNION SELECT * FROM auctions WHERE category = '$category'";
-           } else {
-               $sql .= " AND category = '$category'";
-           }
-       }
-   } else if ($category != "") {
-       $sql .= " WHERE category = '$category'";
-   }
-   ```
-   **Explanation:** This block modifies the base query to filter results based on the `keyword` and `category` parameters from the URL. If a keyword is provided, it searches for auctions where the title or details contain the keyword. If a category is also provided, it either adds it to the existing filter (for intersection search) or performs a union with another query filtering by category (for union search).
+    - **Purpose**: This initializes the SQL query to select all columns from the `auctions` table.
 
-3. **SQL Statement:**
-   ```sql
-   if ($ordering != "") {
-       $sql .= " ORDER BY $ordering";
-   }
-   ```
-   **Explanation:** This adds an `ORDER BY` clause to the query to sort the results based on the `order_by` parameter from the URL.
+2. **Adding Conditions Based on User Input**:
+    ```php
+    if (isset($_GET['keyword']) || $keyword != "") {
+        $sql .= " WHERE (title LIKE '%$keyword%' OR details LIKE '%$keyword%')";
+        if ($category != "") {
+            if ($search_type == "union") {
+                $sql .= " UNION SELECT * FROM auctions WHERE category = '$category'";
+            } else {
+                $sql .= " AND category = '$category'";
+            }
+        }
+    } else if ($category != "") {
+        $sql .= " WHERE category = '$category'";
+    }
+    if ($ordering != "") {
+        $sql .= " ORDER BY $ordering";
+    }
+    ```
 
-4. **SQL Statement:**
-   ```sql
-   $result_q = mysqli_query($con, $sql);
-   ```
-   **Explanation:** This executes the constructed SQL query and stores the result set in `$result_q`.
+    - **Purpose**: This section dynamically modifies the SQL query based on user input from the URL parameters.
+    - **Conditions**:
+        - If a `keyword` is provided, it adds a `WHERE` clause to search for the keyword in the `title` or `details` columns.
+        - If a `category` is provided, it adds a condition to filter by the specified category.
+        - If `search_type` is `union`, it uses a `UNION` to combine results from the keyword search and category filter.
+        - If an `ordering` parameter is provided, it adds an `ORDER BY` clause to sort the results.
 
-5. **SQL Statement:**
-   ```sql
-   $num_results = mysqli_num_rows($result_q);
-   ```
-   **Explanation:** This retrieves the number of rows in the result set, which is used for pagination.
+3. **Executing the Main Query**:
+    ```php
+    $result_q = mysqli_query($con, $sql);
+    ```
 
-6. **SQL Statement:**
-   ```sql
-   if ($curr_page != "") {
-       $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
-   }
-   $result_q = mysqli_query($con, $sql);
-   ```
-   **Explanation:** This adds a `LIMIT` clause to the query to paginate the results, fetching only a subset of rows based on the current page number. The query is then re-executed with the limit applied.
+    - **Purpose**: This executes the constructed SQL query and stores the result in `$result_q`.
 
-7. **SQL Statement:**
-   ```sql
-   $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
-   $bid_result = mysqli_query($con, $bid_sql);
-   ```
-   **Explanation:** This query retrieves the highest bid price for a specific auction item from the `bids` table, ordered in descending order by bid price.
+4. **Pagination**:
+    ```php
+    $num_results = mysqli_num_rows($result_q);
+    $results_per_page = 10;
+    $max_page = ceil($num_results / $results_per_page);
+    ```
 
-8. **SQL Statement:**
-   ```sql
-   $num_bids = mysqli_num_rows($bid_result);
-   ```
-   **Explanation:** This retrieves the number of bids for the specific auction item.
+    - **Purpose**: This calculates the total number of results and determines the number of pages needed for pagination.
 
-These SQL statements are used to dynamically construct and execute queries based on user input from the URL parameters, allowing for flexible searching, filtering, and pagination of auction listings. 
+5. **Limiting Results for Current Page**:
+    ```php
+    if ($curr_page != "") {
+        $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
+    }
+    $result_q = mysqli_query($con, $sql);
+    ```
+
+    - **Purpose**: This modifies the SQL query to limit the results to the current page based on the pagination settings and re-executes the query.
+
+6. **Fetching Auction Details**:
+    ```php
+    while ($fetch = mysqli_fetch_array($result_q)) {
+        $item_id = $fetch['item_id'];
+        $title = $fetch['title'];
+        $description = $fetch['details'];
+        // sql search for newest price and number of bids
+        $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
+        $bid_result = mysqli_query($con, $bid_sql);
+        $num_bids = mysqli_num_rows($bid_result);
+        if ($num_bids > 0) {
+            $current_price = mysqli_fetch_array($bid_result)[0];
+        } else {
+            $current_price = $fetch['startPrice'];
+        }
+        $end_date = $fetch['endDate'];
+        print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+    }
+    ```
+
+    - **Purpose**: This loop fetches each auction listing and retrieves the latest bid price and number of bids for each item.
+    - **Bid Query**:
+        ```php
+        $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
+        ```
+        - **Purpose**: This query selects the highest bid price for the current item from the `bids` table.
+
+These SQL statements handle the core functionalities of searching, filtering, and paginating auction listings, as well as retrieving bid information for each listing.
 
 ### Account Management Related 
 **FILES:**
@@ -363,6 +378,71 @@ These SQL statements are used to insert a new bid into the database, retrieve au
    - **Purpose:** This query retrieves all the profile information for the user with the specified `user_id`. It is used to fetch the user's telephone number and address, which are then displayed on the profile page.
 
 This SQL statement ensures that the user's profile information is correctly retrieved from the database and displayed on the profile page. If the user has not set their telephone number or address, the page will prompt them to update their profile.
+
+#### comment_func.php
+
+1. **Adding a Comment**:
+    ```php
+    $query = sprintf(
+        "INSERT INTO comments (item_id, buyer_id, time, content, parent_comment_id) 
+         VALUES ('%d', '%d', '%s', '%s', %s)",
+        $item_id,
+        $buyer_id,
+        $con->real_escape_string($time),
+        $con->real_escape_string($content),
+        $parent_comment_id === null ? 'NULL' : $parent_comment_id
+    );
+    ```
+    - **Purpose**: This SQL statement inserts a new comment into the `comments` table.
+    - **Parameters**:
+        - `item_id`: The ID of the item being commented on.
+        - `buyer_id`: The ID of the buyer making the comment.
+        - `time`: The timestamp of when the comment is made.
+        - `content`: The content of the comment.
+        - `parent_comment_id`: The ID of the parent comment if it's a reply; otherwise, it's `NULL`.
+
+2. **Liking a Comment**:
+    ```php
+    $query = sprintf(
+        "INSERT INTO comment_likes (comment_id, buyer_id) VALUES ('%d', '%d')",
+        $comment_id,
+        $buyer_id
+    );
+    ```
+    - **Purpose**: This SQL statement inserts a new like into the `comment_likes` table.
+    - **Parameters**:
+        - `comment_id`: The ID of the comment being liked.
+        - `buyer_id`: The ID of the buyer liking the comment.
+
+3. **Retrieving Comments**:
+    ```php
+    $query = sprintf(
+        "SELECT c.comment_id, c.content, c.time, COUNT(cl.buyer_id) AS like_count, c.parent_comment_id, b.username AS buyer_username 
+         FROM comments c 
+         LEFT JOIN buyer b ON c.buyer_id = b.user_id 
+         LEFT JOIN comment_likes cl ON c.comment_id = cl.comment_id 
+         WHERE c.item_id = '%d' 
+         GROUP BY c.comment_id 
+         ORDER BY c.time DESC 
+         LIMIT %d OFFSET %d",
+        $item_id,
+        $limit,
+        $offset
+    );
+    ```
+    - **Purpose**: This SQL statement retrieves comments for a specific item, including the number of likes each comment has received.
+    - **Parameters**:
+        - `item_id`: The ID of the item for which comments are being retrieved.
+        - `limit`: The maximum number of comments to retrieve.
+        - `offset`: The number of comments to skip before starting to retrieve.
+    - **Joins**:
+        - `LEFT JOIN buyer b ON c.buyer_id = b.user_id`: Joins the `comments` table with the `buyer` table to get the username of the buyer who made the comment.
+        - `LEFT JOIN comment_likes cl ON c.comment_id = cl.comment_id`: Joins the `comments` table with the `comment_likes` table to count the number of likes for each comment.
+    - **Grouping and Ordering**:
+        - `GROUP BY c.comment_id`: Groups the results by comment ID to aggregate likes.
+        - `ORDER BY c.time DESC`: Orders the comments by time in descending order.
+
+These SQL statements handle the core functionalities of adding comments, liking comments, and retrieving comments with their like counts and associated buyer usernames.
 
 ### Seller/Auctions Related
 **MAIN FUNCTIONS: create, cancel, update status of auctions**
