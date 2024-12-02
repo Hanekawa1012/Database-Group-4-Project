@@ -51,12 +51,17 @@
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK                  | User ID                        |
 | `password`   | VARCHAR(100)      |                      | User password                  |
-| `email`      | VARCHAR(100)      | Candidate Key UNIQUE    | User email                     |
+| `email`      | VARCHAR(100)      | Candidate Key UNIQUE| User email                     |
 | `accountType`| ENUM('buyer', 'seller') | NOT NULL      | Type of account (buyer/seller) |
 
-- **1NF:** Each attribute contains atomic values.
-- **2NF:** All non-key attributes (`password`, `email`, `accountType`) are fully dependent on the primary key (`user_id`).
-- **3NF:** There are no transitive dependencies. Each non-key attribute is directly dependent on the primary key.
+**Functional Dependencies**:
+- `user_id` → `password`, `email`, `accountType`
+- `email` → `user_id`, `password`, `accountType`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: All non-key attributes (`password`, `email`, `accountType`) are fully dependent on the primary key (`user_id`).
+- **3NF**: There are no transitive dependencies. Each non-key attribute is directly dependent on the primary key.
 
 ### Profile Table
 | Attribute    | Data Type         | Note                | Definition                     |
@@ -66,21 +71,39 @@
 | `tel`        | VARCHAR(15)       |                     | Telephone number               |
 | `address`    | VARCHAR(100)      |                     | Address                        |
 
-- **1NF:** Each attribute contains atomic values.
-- **2NF:** All non-key attributes (`username`, `tel`, `address`) are fully dependent on the primary key (`user_id`).
-- **3NF:** There are no transitive dependencies. Each non-key attribute is directly dependent on the primary key.
+**Functional Dependencies**:
+- `user_id` → `username`, `tel`, `address`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: All non-key attributes (`username`, `tel`, `address`) are fully dependent on the primary key (`user_id`).
+- **3NF**: There are no transitive dependencies. Each non-key attribute is directly dependent on the primary key.
 
 ### Buyer Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
 
+**Functional Dependencies**:
+- `user_id` → `user_id`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: Fully dependent on the primary key (`user_id`).
+- **3NF**: No transitive dependencies.
+
 ### Seller Table
 | Attribute    | Data Type         | Note                | Definition                     |
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
 
-- These 2 tables are interfaces and constraint for auctions/bids to get user id from user table. They don't have any internal functional dependencies and any other attribute than user_id, which is foreign key from user(user_id)
+**Functional Dependencies**:
+- `user_id` → `user_id`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: Fully dependent on the primary key (`user_id`).
+- **3NF**: No transitive dependencies.
 
 ### Auctions Table
 | Attribute      | Data Type         | Note                | Definition                     |
@@ -96,9 +119,13 @@
 | `seller_id`    | INT               | FK                  | Seller ID                      |
 | `status`       | ENUM('active', 'closed', 'cancelled') | NOT NULL | Auction status        |
 
-- **1NF:** Each attribute contains atomic values.
-- **2NF:** All non-key attributes are fully dependent on the primary key (`item_id`).
-- **3NF:** No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
+**Functional Dependencies**:
+- `item_id` → `title`, `details`, `category`, `startPrice`, `reservePrice`, `startDate`, `endDate`, `seller_id`, `status`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: All non-key attributes are fully dependent on the primary key (`item_id`).
+- **3NF**: No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
 
 ### Watchlist Table
 | Attribute    | Data Type         | Note                | Definition                     |
@@ -107,9 +134,13 @@
 | `buyer_id`   | INT               | FK                  | Buyer ID                       |
 | `item_id`    | INT               | FK                  | Item ID                        |
 
-- **1NF:** Each attribute contains atomic values.
-- **2NF:** All non-key attributes are fully dependent on the primary key (`list_id`).
-- **3NF:** No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
+**Functional Dependencies**:
+- `list_id` → `buyer_id`, `item_id`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: All non-key attributes are fully dependent on the primary key (`list_id`).
+- **3NF**: No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
 
 ### Bids Table
 | Attribute    | Data Type         | Note                | Definition                     |
@@ -120,9 +151,13 @@
 | `bidPrice`   | DECIMAL(10, 2)    |                     | Bid price                      |
 | `bidTime`    | DATETIME          |                     | Bid time                       |
 
-- **1NF:** Each attribute contains atomic values.
-- **2NF:** All non-key attributes are fully dependent on the primary key (`bid_id`).
-- **3NF:** No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
+**Functional Dependencies**:
+- `bid_id` → `buyer_id`, `item_id`, `bidPrice`, `bidTime`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: All non-key attributes are fully dependent on the primary key (`bid_id`).
+- **3NF**: No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
 
 ### Comments Table
 | Attribute          | Data Type         | Note                | Definition                     |
@@ -134,9 +169,13 @@
 | `content`          | VARCHAR(1023)     |                     | Comment content                |
 | `parent_comment_id`| INT               | FK                  | Parent comment ID              |
 
-- **1NF:** Each attribute contains atomic values.
-- **2NF:** All non-key attributes are fully dependent on the primary key (`comment_id`).
-- **3NF:** No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
+**Functional Dependencies**:
+- `comment_id` → `item_id`, `buyer_id`, `time`, `content`, `parent_comment_id`
+
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: All non-key attributes are fully dependent on the primary key (`comment_id`).
+- **3NF**: No transitive dependencies. Each non-key attribute is directly dependent on the primary key.
 
 ### Comment_likes Table
 | Attribute    | Data Type         | Note                | Definition                     |
@@ -144,12 +183,15 @@
 | `comment_id` | INT               | FK                  | Comment ID                     |
 | `buyer_id`   | INT               | FK                  | Buyer ID                       |
 
-- **1NF:** Each attribute contains atomic values.
-- **2NF:** Fully dependent on the composite primary key (`comment_id`, `buyer_id`).
-- **3NF:** No transitive dependencies.
+**Functional Dependencies**:
+- (`comment_id`, `buyer_id`) → `comment_id`, `buyer_id`
 
-### Conclusion
-All tables in the schema meet the criteria for 1NF, 2NF, and 3NF. Therefore, the database schema is in Third Normal Form (3NF). This ensures that the schema is free of redundancy and maintains data integrity.
+**Analysis**:
+- **1NF**: Each attribute contains atomic values.
+- **2NF**: Fully dependent on the composite primary key (`comment_id`, `buyer_id`).
+- **3NF**: No transitive dependencies.
+
+In conclusion, all tables in the schema meet the criteria for 1NF, 2NF, and 3NF. Therefore, the database schema is in Third Normal Form (3NF). This ensures that the schema is free of redundancy and maintains data integrity.
 
 ## All SQL Query Listings Sorted by PHP Files:
 

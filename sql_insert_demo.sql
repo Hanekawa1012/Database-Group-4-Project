@@ -16,7 +16,7 @@ CREATE TABLE `profile` (
     `email`  VARCHAR(100) PRIMARY KEY,
     `username` VARCHAR(50) NOT NULL,
     `tel` VARCHAR(15) NOT NULL,
-    `address` VARCHAR(100) NOT NULL UNIQUE,
+    `address` VARCHAR(100) NOT NULL,
     FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 

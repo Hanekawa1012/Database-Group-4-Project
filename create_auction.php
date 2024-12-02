@@ -1,4 +1,5 @@
 <?php include_once("header.php") ?>
+<?php include('my_db_connect.php');?>
 
 <?php
 /* (Uncomment this block to redirect people without selling privileges away from this page)
@@ -48,10 +49,22 @@
                         <label for="auctionCategory" class="col-sm-2 col-form-label text-right">Category</label>
                         <div class="col-sm-10">
                             <select class="form-control" name="auctionCategory" id="auctionCategory">
-                                <option selected value="None">Choose...</option>
-                                <option value="classA">classA</option>
-                                <option value="classB">classB</option>
-                                <option value="classC">classC</option><!----needs further changes here--->
+                                <option selected value="">All categories</option>
+                                <?php
+                                // Fetch categories from the database
+                                $query = "SELECT DISTINCT category FROM auctions;";
+                                $result_q = mysqli_query($con, $query);
+
+                                if ($result_q) {
+                                    while ($row_q = mysqli_fetch_assoc($result_q)) {
+                                        // Echo each category as an option
+                                        echo '<option value="' . htmlspecialchars($row_q['category']) . '">' . htmlspecialchars($row_q['category']) . '</option>';
+                                    }
+                                } else {
+                                    // If query fails, show an error message in the dropdown
+                                    echo '<option value="">Error loading categories</option>';
+                                }
+                                ?>
                             </select>
                             <small id="categoryHelp" class="form-text text-muted"><span class="text-danger">*
                                     Required.</span> Select a category for this item.</small>
