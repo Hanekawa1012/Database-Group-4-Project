@@ -16,12 +16,12 @@ if ($_POST['email'] != "" && $_POST['password'] != "") {
     $result = mysqli_query($con, $sql);
     $row = mysqli_num_rows($result);
     if (!$row) {
-        echo ('<div class="text-center">Error:User does not exists.</div>');
+        echo ('<div class="text-center">Error: Username or password incorrect.</div>');
         header('refresh:3;url=browse.php');
         exit();
     }
 } else {
-    echo ('<div class="text-center">Error:Login information required.</div>');
+    echo ('<div class="text-center">Error: Login information required.</div>');
     header("refresh:3;url=browse.php");
     exit();
 }

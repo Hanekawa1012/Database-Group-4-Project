@@ -44,9 +44,9 @@ $sql = "INSERT INTO user (password, email, accountType) VALUES (SHA('$password')
 $sql .= "INSERT INTO $accountType SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType';";
 $sql .= "INSERT INTO profile (email, username) VALUES ('$email', '$username');";
 if ($con->multi_query($sql)) {
-    echo "User data insert succeed.\n";
+    echo "Registration success.\n";
 } else {
-    echo "data insert failed.\n" . "<br/>" . $con->error;
+    echo "Registration failed.\n" . "<br/>" . $con->error;
 }
 $con->close();
 

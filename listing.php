@@ -424,7 +424,7 @@ mysqli_data_seek($comments_result, 0);
                 echo '<button class="btn btn-link" onclick="showReplyForm(' . $comment['comment_id'] . ')">Reply</button>';
 
                 // Add delete button for user's own comments
-                if ($_SESSION['user_id'] == $comment['buyer_id']) {
+                if (isset($_SESSION['user_id']) and $_SESSION['user_id'] == $comment['buyer_id']) {
                     echo '<form method="POST" action="delete_comment.php?item_id=' . $item_id . '" style="display:inline;">';
                     echo '<input type="hidden" name="comment_id" value="' . $comment['comment_id'] . '">';
                     echo '<button type="submit" class="btn btn-link text-danger">Delete</button>';
