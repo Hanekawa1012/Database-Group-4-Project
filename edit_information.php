@@ -49,7 +49,7 @@ $address = $fetch['address']
         </div>
     </form>
 
-    <div class="text-center"> Want to change password? <a href="change_password.php" class="text-primary">Please click
+    <div class="text-center">Want to change password? <a href="change_password.php" class="text-primary">Please click
             here.</a></div>
 </div>
 

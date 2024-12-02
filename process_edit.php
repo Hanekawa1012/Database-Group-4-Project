@@ -105,7 +105,7 @@ if (empty($updates_user) and empty($updates_profile)) {
         $result_edit_profile = $con->query($sql_profile);
     }
 
-    if ($result_edit_user === TRUE and $result_edit_profile === TRUE) {
+    if ($result_edit_user === TRUE or $result_edit_profile === TRUE) {
         echo "<div class='container my-3'>";
         echo "<div class='alert alert-success' role='alert'>";
         echo "<p>Your profile has been updated</p>";
