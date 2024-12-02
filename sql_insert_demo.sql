@@ -39,10 +39,7 @@ CREATE TABLE `auctions` (
     `details` TEXT,
     `category` VARCHAR(30) NOT NULL,
     `startPrice` DECIMAL(10, 2) NOT NULL,
-    `reservePrice` DECIMAL(10, 2) CHECK (
-        `reservePrice` IS NULL
-        OR `reservePrice` >= `startPrice`
-    ),
+    `reservePrice` DECIMAL(10, 2) DEFAULT NULL,
     `startDate` DATETIME NOT NULL,
     `endDate` DATETIME NOT NULL,
     `seller_id` INT NOT NULL,

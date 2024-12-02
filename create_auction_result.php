@@ -42,6 +42,11 @@
         header("refresh:3;url=create_auction.php");
         exit();
     }
+    if ($auctionReservePrice && $auctionReservePrice <= $auctionStartPrice) {
+        echo "Error: Too low reserve price";
+        header("refresh:3;url=create_auction.php");
+        exit();
+    }
     $now = new DateTime();
     $checkEndDate = new DateTime($auctionEndDate);
     if ($checkEndDate <= $now) {
