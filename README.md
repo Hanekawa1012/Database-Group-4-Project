@@ -36,7 +36,7 @@
 
 ### ER Diagram
 
-![ERDinTable](./ERDinTable.png)
+![ERDinTable](./ER_COMP0178.png)
 
 ### Assumptions:
 - User Roles: Users can be either buyers or sellers, but not both simultaneously.
