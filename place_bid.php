@@ -1,12 +1,10 @@
-<?php session_start(); ?>
-<?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false): ?>
-    <?php require_once "header.php" ?>
+<?php require_once "header.php" ?>
+<?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false): ?>    
     <div>You are not logged in! <a href="" data-toggle="modal" data-target="#loginModal">Login</a></div>
     <?php require_once "footer.php" ?>
     <?php exit(); ?>
 
 <?php elseif (!isset($_SESSION['account_type']) || $_SESSION['account_type'] == 'seller'): ?>
-    <?php require_once "header.php" ?>
     <div>Only buyer-type account can join bidding. If you want to bid for an item, please register a buyer account.</div>
     <?php require_once "footer.php" ?>
     <?php exit(); ?>
