@@ -32,6 +32,7 @@
 2. 用户登陆：
    1. 新注册的 buyer 登陆成功
    2. 新注册的 seller 登陆成功
+   3. buyer 修改 user_info
 3. 游客浏览网页
    1. 浏览 auction 清单
    2. 点击 auction 标题进入对应商品介绍页
@@ -81,6 +82,44 @@
 
 附加功能： 6. buyer watch 1. 登陆 buyer 账户，进入某个商品页面，尝试 watch 2. 切换到 watchlist,展示 watch 成功的结果 3. 点击该 watch 商品，进入商品页面 4. 进入邮箱，展示收到 watch 成功邮件 5. 切换到其他 buyer 账户，bid 同一件商品 6. 进入邮箱，展示收到 outbid 邮件 7. 切换回原 buyer,取消 watch 8. 切换到 watchlist,展示 watch 取消的结果 7. ==TODO buyer recommendation 8. comment 功能展示
 
+### 4.功能清单
+
+### 5.问题 checklist
+
+以下为关键问题：
+
+1. [ ] 注册没有成功插入到 profile 表中；在 user_info.php 更改的用户信息，注销重新登录后会消失
+2. [ ] edit_information.php 电话和地址无法更改(应该也是 profile 写入的问题）
+3. [ ] create_auction.php 选择 category 时的选项是 classA / classB / classC
+4. [ ] listing.php：游客页面无法查看评论
+5. [ ] buyer 无法评论
+6. [ ] mylisting.php 会显示出查询语句
+7. [ ] listing.php 在 seller 时提示仍然显示 Bid in an auction to start your own bidding
+8. [ ] cancel 的 auction 仍然可以关注
+9. [ ] create_auction_result.php 的时间判断有问题：例当前时间为 22:36,输入结束时间 22:40，会报 Error:end date should be later than present time.错
+1. [ ] mywatchlist.php 文字打错了：Page not accessible for guests. If you want to watch an ==itemm==, please register
+
+以下为呈现&robustness 问题，可以延缓维修
+bid 页面在 bid 成功后不会自动刷新新的 bid 价格 10.[ ] 游客/buyer 进入保护：cancel_auction.php / create_auction_result.php / create_auction.php / logout.php
+
+1. [ ] buyer 进入保护：cancel_auction.php / login_result.php / mylistings.php
+2. [ ] buyer/seller 进入保护：register.php
+3. [ ] seller 进入保护：recommendations.php
+4. [ ] 游客进入跳转：change_password.php / post_comment.php
+5. [ ] create_auction_result.php：游客进入时会自动跳转到 create_auction.php;buyer 进入时则留在该网页不会跳转
+6. [ ] guest_error.php / mybids.php ：You are not logged in!文字太大了（可以改成 place_bid.php 里那种）
+7. [ ] mywatchlist.php：My Watchlist 文字太大了
+8. [ ] mywatchlist.php 文字打错了：Page not accessible for guests. If you want to watch an ==itemm==, please register
+9. [ ] 游客在 listing.php / mywatchlist.php / recommendations.php / change_password 页面无法登陆
+1. [ ] buyer/seller 没有更改密码的链接（但可以手工输入 change_password.php 到 url 来更改）
+1. [ ] create_auction.php 没有前端表单验证
+1. [ ] 因为以上原因，功能 award the item to the highest bidder after end time 和 award the item to the highest bidder 无法测试
+1. [ ] 商品介绍 detail 等没有限制长度
+1. [ ] 余弦相似度推荐算法可能存在问题（当相似度阈值为 0 时仍然无法看到 bid 了相同物品的其他用户的其它 bid）
+
+- PS：邮件相关功能未检查
+- PS: debug 分支版本的 send_email.php 有 bug，默认返回'e000'，修复这个函数完成后再移除相关绕过代码
+
 ## Commits
 
 ## Commit until 7:19, 27/11/2024 by Tim
@@ -100,12 +139,10 @@
   - 将搜索栏重做，现在三个搜索选项下拉框被装入了一个 Advanced search 隐藏栏
   - 搜索的 category 现在会随数据库实时变化
   - 添加了 JavaScript 语句，让搜索栏/下拉框和 URL 中的 metadata 保持同步
-
 - 修正了 browse.php 的一些问题
 - 添加了 recommendation，利用**余弦相似度**完成相似度检测。最多展示 10 条结果
 
   (_TODO_: by Evan 大样本量测试推荐系统的正确性。现在的状况，只能说“看起来”是正确的)
-
 - 在 listing 界面添加了一些注释，提示添加标签页，分别展示商品详情/竞拍记录/评论区
 - _TODO_：添加 comments？(Tim: 求放过（bushi，但是真的想做的话浅浅规划下，主要是添加新的 comment 表，独立主键，引入 item 和 buyer 的 id 为外键，最后是 comment 的具体内容和发布时间)（网页部分则是在 listing 下加额外 div 显示对应评论）
 
