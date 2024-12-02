@@ -753,52 +753,84 @@ These SQL statements handle the core functionalities of verifying comment owners
 #### recommendations.php
 
 1. **Retrieving Recommended Items Based on Cosine Similarity**:
-    ```php
-    $sql = "SELECT
-        b1.item_id,
-        a.title,
-        a.details,
-        a.startPrice,
-        a.endDate,
-        SUM(CASE WHEN b1.present = 1 AND b2.present = 1 THEN 1 ELSE 0 END) / 
-        (SQRT(SUM(POWER(b1.present, 2))) * SQRT(SUM(POWER(b2.present, 2)))) AS cosine_similarity
-    FROM
-        (
+    ```sql
+$sql = "WITH user_item_scores AS (
             SELECT 
                 u.user_id,
                 a.item_id,
-                IF(b.bid_id IS NOT NULL, 1, 0) AS present
+                COALESCE(b.coef, 0) + COALESCE(c.coef, 0) + COALESCE(w.coef, 0) AS coef
             FROM 
                 user u
             CROSS JOIN 
                 auctions a
-            LEFT JOIN 
-                bids b ON u.user_id = b.buyer_id AND a.item_id = b.item_id
-        ) AS b1
-    JOIN
-        (
+            LEFT JOIN (
+                SELECT b.buyer_id, b.item_id, 3 AS coef
+                FROM bids b
+            ) AS b
+            ON u.user_id = b.buyer_id AND a.item_id = b.item_id
+            LEFT JOIN (
+                SELECT c.buyer_id, c.item_id, 2 AS coef
+                FROM comments c
+            ) AS c
+            ON u.user_id = c.buyer_id AND a.item_id = c.item_id
+            LEFT JOIN (
+                SELECT w.buyer_id, w.item_id, 1 AS coef
+                FROM watchlist w
+            ) AS w
+            ON u.user_id = w.buyer_id AND a.item_id = w.item_id
+        ),
+        user_magnitude AS (
+            SELECT 
+                user_id,
+                SQRT(SUM(POWER(coef, 2))) AS user_mag
+            FROM user_item_scores
+            GROUP BY user_id
+        ),
+        item_magnitude AS (
+            SELECT 
+                item_id,
+                SQRT(SUM(POWER(coef, 2))) AS item_mag
+            FROM user_item_scores
+            GROUP BY item_id
+        ),
+        dot_product AS (
             SELECT 
                 u.user_id,
-                a.item_id,
-                IF(b.bid_id IS NOT NULL, 1, 0) AS present
+                u.item_id,
+                SUM(u.coef * v.coef) AS dot_prod
+            FROM user_item_scores u
+            JOIN user_item_scores v
+            ON u.item_id = v.item_id
+            GROUP BY u.user_id, u.item_id
+        ),
+        cosine_similarity_scores AS (
+            SELECT 
+                dp.user_id,
+                dp.item_id,
+                dp.dot_prod / (um.user_mag * im.item_mag) AS cosine_similarity
             FROM 
-                user u
-            CROSS JOIN 
-                auctions a
-            LEFT JOIN 
-                bids b ON u.user_id = b.buyer_id AND a.item_id = b.item_id
-        ) AS b2 ON b1.item_id = b2.item_id AND b1.user_id != b2.user_id
-    JOIN
-        auctions a ON b1.item_id = a.item_id
-    WHERE
-        b1.user_id = $user_id AND b2.user_id != $user_id AND a.endDate > NOW()
-    GROUP BY
-        b1.item_id, a.title, a.details, a.startPrice, a.endDate
-    HAVING
-        cosine_similarity > 0.3333333
-    ORDER BY
-        cosine_similarity DESC
-    LIMIT 10;";
+                dot_product dp
+            JOIN user_magnitude um ON dp.user_id = um.user_id
+            JOIN item_magnitude im ON dp.item_id = im.item_id
+        )
+        SELECT 
+            a.item_id,
+            a.title,
+            a.details,
+            a.startPrice,
+            a.endDate,
+            a.status
+        FROM 
+            cosine_similarity_scores cs
+        JOIN auctions a ON cs.item_id = a.item_id
+        WHERE 
+            cs.user_id = $user_id
+            AND a.endDate > NOW()
+            AND a.status = 'active'
+            AND cs.cosine_similarity > 0.25
+        ORDER BY 
+            cs.cosine_similarity DESC
+        LIMIT 10;";
     ```
     - **Purpose**: This SQL statement retrieves recommended auction items for the user based on cosine similarity of bidding patterns. It calculates the similarity between the current user and other users, and recommends items that similar users have bid on.
     - **Parameters**:
