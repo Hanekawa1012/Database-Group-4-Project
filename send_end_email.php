@@ -43,7 +43,7 @@ $sql = "SELECT
         JOIN 
             user u_seller ON s.user_id = u_seller.user_id
         WHERE 
-            b.bidPrice >= a.reservePrice AND a.status = 'active'
+            b.bidPrice >= a.reservePrice AND a.status = 'active' AND a.endDate <= '$currentDate'
         ORDER BY 
             a.item_id";
 $result = $con->query($sql);
@@ -79,7 +79,7 @@ $sql_fail = "SELECT
         JOIN 
             user u_seller ON s.user_id = u_seller.user_id
         WHERE 
-            b.bidPrice < a.reservePrice AND a.status = 'active'
+            b.bidPrice < a.reservePrice AND a.status = 'active' AND a.endDate <= '$currentDate'
         ORDER BY 
             a.item_id";
 $result_fail = $con->query($sql_fail);
