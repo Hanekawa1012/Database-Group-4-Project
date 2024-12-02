@@ -1,22 +1,22 @@
 # Requirement Ticklists:
 
-- Users can 
-  - register with the system 
-  - and create accounts. 
-- Users have roles of seller or buyer with different privileges. 
-- Sellers can 
-  - create auctions for particular items, 
-  - setting suitable conditions and features of the items including the item description, categorisation, starting price, reserve price and end date. 
-- Buyers can 
-  - search the system for particular kinds of item being auctioned and can 
-  - browse and visually re-arrange listings of items within categories. 
-- Buyers can bid for items and see the bids other users make as they are received. The system will manage the auction until the set end time and award the item to the highest bidder. The system should confirm to both the winner and seller of an auction its outcome. 
+- Users can
+  - register with the system
+  - and create accounts.
+- Users have roles of seller or buyer with different privileges.
+- Sellers can
+  - create auctions for particular items,
+  - setting suitable conditions and features of the items including the item description, categorisation, starting price, reserve price and end date.
+- Buyers can
+  - search the system for particular kinds of item being auctioned and can
+  - browse and visually re-arrange listings of items within categories.
+- Buyers can bid for items and see the bids other users make as they are received. The system will manage the auction until the set end time and award the item to the highest bidder. The system should confirm to both the winner and seller of an auction its outcome.
 - Extra functionality related to core features requiring usage of a database.
-- Buyers can 
-  - watch auctions on items and 
+- Buyers can
+  - watch auctions on items and
   - receive emailed updates on bids on those items including notifications when they are outbid.
-- Buyers can 
-  - receive recommendations for items to bid on based on collaborative filtering (i.e., ‘you might want to bid on the sorts of things other people, who have also bid on the sorts of things you have previously bid on, are currently bidding on). 
+- Buyers can
+  - receive recommendations for items to bid on based on collaborative filtering (i.e., ‘you might want to bid on the sorts of things other people, who have also bid on the sorts of things you have previously bid on, are currently bidding on).
 
 
 
@@ -385,7 +385,8 @@ These SQL statements handle the core functionalities of removing an item from th
 These SQL statements handle the core functionalities of retrieving comments for the auction item and counting the number of likes for each comment.
 
 
-### Account Management Related 
+### Account Management Related
+
 **FILES:**
 **MAIN FUNCTIONS: register, login, edit peronal profile, change password, send verification code**
 
@@ -492,35 +493,45 @@ This SQL statement handles the core functionality of retrieving the user's profi
 #### process_edit.php
 
 1. **Checking for existing email:**
+
    ```php
    $check_email_sql = "SELECT user_id FROM user WHERE email = '$email' AND user_id != '$user_id' AND accountType = '$accountType'";
    ```
+
    - **Purpose:** This query checks if the provided email address is already registered to another user with the same account type. If it finds a match, it prevents the email from being used again.
 
 2. **Fetching user profile information before editing:**
+
    ```php
    $sql_info_before_edit = "SELECT * FROM profile WHERE user_id = '$user_id';";
    ```
+
    - **Purpose:** This query retrieves the current profile information (telephone and address) of the user before any updates are made. This is used to compare and determine if any changes have been made.
 
 3. **Updating user information:**
+
    ```php
    $sql_user = "UPDATE user SET ";
    ```
+
    - **Purpose:** This is the base of the SQL update statement for the `user` table. It will be appended with specific fields to update if there are any changes.
 
 4. **Updating profile information:**
+
    ```php
    $sql_profile = "UPDATE profile SET ";
    ```
+
    - **Purpose:** This is the base of the SQL update statement for the `profile` table. It will be appended with specific fields to update if there are any changes.
 
 5. **Executing the update for user table:**
+
    ```php
    $sql_user .= implode(", ", $updates_user);
    $sql_user .= " WHERE user_id = '$user_id'";
    $result_edit_user = $con->query($sql_user);
    ```
+
    - **Purpose:** This query updates the `user` table with the new email if it has been changed. It constructs the full SQL statement by appending the changes and executes it.
 
 6. **Executing the update for profile table:**
@@ -867,15 +878,19 @@ These SQL statements handle the core functionalities of canceling an auction and
 #### watchlist_func.php
 
 1. **Adding an item to the watchlist:**
+
    ```php
    $sql = "INSERT INTO watchlist (buyer_id, item_id) VALUES ($buyer_id, $item_id);";
    ```
+
    - **Purpose:** This query inserts a new record into the `watchlist` table, associating the current user (`buyer_id`) with the specified item (`item_id`). It adds the item to the user's watchlist.
 
 2. **Fetching item details:**
+
    ```php
    $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
    ```
+
    - **Purpose:** This query retrieves the details of the specified item from the `auctions` table. It fetches the title, details, category, and end date of the item that has been added to the watchlist.
 
 3. **Removing an item from the watchlist:**
@@ -889,6 +904,7 @@ These SQL statements are used to manage the user's watchlist by adding or removi
 #### send_end_email.php
 
 1. **Selecting emails of sellers and buyers for outdated auctions:**
+
    ```php
    $sql = "SELECT email FROM user WHERE user_id IN
            (SELECT seller_id FROM auctions WHERE endDate <= '$currentDate' AND status = 'active')
@@ -897,6 +913,7 @@ These SQL statements are used to manage the user's watchlist by adding or removi
            (SELECT buyer_id FROM watchlist WHERE item_id IN
            (SELECT item_id FROM auctions WHERE endDate <= '$currentDate' AND status = 'active'))";
    ```
+
    - **Purpose:** This query retrieves the email addresses of users who are either sellers of auctions that have ended or buyers who are watching these auctions. It uses a `UNION ALL` to combine the results from two subqueries:
      - The first subquery selects emails of sellers whose auctions have ended.
      - The second subquery selects emails of buyers who are watching items in auctions that have ended.
@@ -908,3 +925,4 @@ These SQL statements are used to manage the user's watchlist by adding or removi
    - **Purpose:** This query updates the status of auctions that have ended by setting their status to 'closed'. It ensures that these auctions are marked as no longer active.
 
 These SQL statements are used to identify users who need to be notified about the end of auctions and to update the auction status accordingly. If there are any outdated auctions, the script sends notification emails to the relevant users and updates the auction status in the database.
+

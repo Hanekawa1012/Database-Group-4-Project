@@ -21,31 +21,32 @@ if ($_POST['functionname'] == "add_to_watchlist") {
     $sql = "INSERT INTO watchlist (buyer_id, item_id) VALUES ($buyer_id, $item_id);";
     if (mysqli_query($con, $sql)) {
         $res = "success";
+        // send email
+        $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
+        $fetch_item = mysqli_fetch_array(mysqli_query($con, $sql_item));
+        $con->close();
+        $email = $_SESSION['email'];
+        $username = $_SESSION['username'];
+        $title = "New watching item added!";
+        $content = "<h3>You added a new item!</h3>";
+        $outline = "You added a new item!";
+
+        $state = sendmail::sendemail($email, $username, $title, $content, $outline);
+        // switch ($state) {
+        //     case 'e000':
+        //         $res = "success";
+        //         break;
+        //     case 'e001':
+        //         $res = "error";
+        //         break;
+        //     default:
+        //         $res = "error";
+        //         break;
+        // }
     } else {
         $res = "error";
     }
-    $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
-    $fetch_item = mysqli_fetch_array(mysqli_query($con, $sql_item));
-    $con->close();
-    $email = $_SESSION['email'];
-    $username = $_SESSION['username'];
-    $title = "New watching item added!";
-    $content = "<h3>You added a new item!</h3>";
-    $outline = "You added a new item!";
-    switch (sendmail::sendemail($email, $username, $title, $content, $outline)) {
-        case 'e000':
-            $res = "success";
-            break;
-        case 'e001':
-            $res = "error";
-            break;
-        default:
-            $res = "error";
-            break;
-    }
 } else if ($_POST['functionname'] == "remove_from_watchlist") {
-    // TODO: Update database and return success/failure.
-    //NEEDS FIXING!!! I CAN'T FIND WHAT'S WRONG!!! -- TIM
     $sql = "DELETE FROM watchlist WHERE buyer_id = $buyer_id AND item_id = $item_id;";
     if (mysqli_query($con, $sql)) {
         $res = "success";

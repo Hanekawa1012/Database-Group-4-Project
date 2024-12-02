@@ -1,22 +1,28 @@
-<?php require_once "listing.php" ?>
-<?php require_once "send_email.php" ?>
+<?php session_start(); ?>
+<?php if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false): ?>
+    <?php require_once "header.php" ?>
+    <div>You are not logged in! <a href="" data-toggle="modal" data-target="#loginModal">Login</a></div>
+    <?php require_once "footer.php" ?>
+    <?php exit(); ?>
+
+<?php elseif (!isset($_SESSION['account_type']) || $_SESSION['account_type'] == 'seller'): ?>
+    <?php require_once "header.php" ?>
+    <div>Only buyer-type account can join bidding. If you want to bid for an item, please register a buyer account.</div>
+    <?php require_once "footer.php" ?>
+    <?php exit(); ?>
+
+<?php else: ?>
+    <?php require_once "listing.php" ?>
+    <?php require_once "send_email.php" ?>
+    <?php require "my_db_connect.php" ?>
+    <?php require("config/conf.php") ?>
+<?php endif; ?>
+
 <?php
-// TODO: Extract $_POST variables, check they're OK, and attempt to make a bid.
+// Extract $_POST variables, check they're OK, and attempt to make a bid.
 // Notify user of success/failure and redirect/give navigation options.
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
-    echo 'You are not logged in! <a href="" data-toggle="modal" data-target="#loginModal">Login</a>';
-    header('refresh:3;browse.php');
-    exit();
-}
-if (!isset($_SESSION['account_type']) || $_SESSION['account_type'] == 'seller') {
-    echo 'Only buyer-type account can join bidding. If you want to bid for an item, please register a buyer account.';
-    header('refresh:3;browse.php');
-    exit();
-}
 
-require "my_db_connect.php";
-
-if ($_POST['bidPrice'] != "") {
+if ($_POST['bidPrice'] != "" && is_numeric($_POST['bidPrice'])) {
     $user_id = intval($_SESSION['user_id']);
     $bidPrice = mysqli_real_escape_string($con, $_POST['bidPrice']);
     $bidTime = new DateTime();
@@ -30,7 +36,7 @@ if ($_POST['bidPrice'] != "") {
 
     //unset($_SESSION['viewing']);
     $sql = "INSERT INTO bids (buyer_id, item_id, bidPrice, bidTime) 
-            VALUES ($user_id, $item_id, '$bidPrice', '$bidTime');";
+                VALUES ($user_id, $item_id, '$bidPrice', '$bidTime');";
     if (mysqli_query($con, $sql)) {
         echo "Data insert succeed.\n";
 
@@ -42,10 +48,9 @@ if ($_POST['bidPrice'] != "") {
         $itemTitle = $fetch_item['title'];
         $title = "New Bid Success";
         $content = "<h3>Bid Receipt</h3>
-                    <p>Bidder name: $username</p>
-                    <p>Item name: $itemTitle</p>
-                    <p>Your bid price: $bidPrice</p>
-                    <p>Bid time: $bidTime</p>";
+                        <p>Bidder name: $username</p>
+                        <p>Item name: $itemTitle</p>
+                        <p>Your bid price: $itemTitle</p>";
         $outline = "You bidded a new item!";
         switch (sendmail::sendemail($email, $username, $title, $content, $outline)) {
             case 'e000':
@@ -64,7 +69,7 @@ if ($_POST['bidPrice'] != "") {
                    (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
         $result_watching = mysqli_query($con, $sql_watching);
         $email_list = [];
-        while($fetch = mysqli_fetch_array($result_watching)){
+        while ($fetch = mysqli_fetch_array($result_watching)) {
             $email_list[] = $fetch['email'];
         }
         $itemTitle = $fetch_item['title'];
@@ -94,6 +99,7 @@ if ($_POST['bidPrice'] != "") {
     echo ('<div class="text-center">Bid successfully created! <a href="mybids.php">View your new bid record.</a></div>');
 } else {
     echo ('Error:Bid price required.');
-    exit();
+    $con->close();
+    include_once("footer.php");
+    header("refresh:$t_refresh;url=listing.php?item_id=$item_id");
 }
-?>

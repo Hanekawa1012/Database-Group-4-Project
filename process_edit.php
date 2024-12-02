@@ -3,7 +3,10 @@ include_once("header.php");
 require("my_db_connect.php");
 
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    die("You haven't logged in. Please log in.");
+    echo "You haven't logged in. Please log in.";
+    $con->close();
+    header("refresh:$t_refresh;url=browse.php");
+    exit();
 }
 
 $username = $_SESSION['username'];
@@ -46,14 +49,14 @@ if (!empty($errors)) {
 $sql_info_before_edit = "SELECT * FROM `profile` WHERE email = '$user_email';";
 $result_before_edit = mysqli_query($con, $sql_info_before_edit);
 $fetch_before_edit = mysqli_fetch_array($result_before_edit);
-if (!is_null($fetch_before_edit['tel'])){
+if (!is_null($fetch_before_edit['tel'])) {
     $tel_before = $fetch_before_edit['tel'];
-}else{
+} else {
     $tel_before = "";
 }
-if (!is_null($fetch_before_edit['address'])){
+if (!is_null($fetch_before_edit['address'])) {
     $address_before = $fetch_before_edit['address'];
-}else{
+} else {
     $address_before = "";
 }
 
@@ -91,7 +94,6 @@ if (empty($updates_user) and empty($updates_profile)) {
     echo "</div>";
     header("refresh:3;url=user_info.php");
     exit();
-    
 } else {
     if (!empty($updates_user)) {
         $sql_user .= implode(", ", $updates_user);
@@ -124,4 +126,3 @@ if (empty($updates_user) and empty($updates_profile)) {
 
 $con->close();
 include_once("footer.php");
-?>

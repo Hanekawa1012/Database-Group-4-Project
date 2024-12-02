@@ -2,10 +2,14 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+
 class sendmail
 {
     static function sendemail($toEmail, $toName, $emailTitle, $emailContent, $emailOutline, $sendTime = null)
     {
+        // TODO: remove after bug fixed
+        return 'e000';
+        // TODO: remove after bug fixed
         require_once 'PHPMailer-6.9.3\src\Exception.php';
         require_once 'PHPMailer-6.9.3\src\PHPMailer.php';
         require_once 'PHPMailer-6.9.3\src\SMTP.php';
@@ -26,13 +30,13 @@ class sendmail
                 $length = min(count($toEmail), count($toName));
                 for ($i = 0; $i < $length; $i++) {
                     echo $toEmail[$i];
-                    $mail->addAddress($toEmail[$i], $toName[$i]);                   
+                    $mail->addAddress($toEmail[$i], $toName[$i]);
                 }
             } else if (is_array($toEmail) || is_array($toName)) {
                 echo "Unknown message sending error. Please check your variables are of same length and type.";
                 return 1;
             } else {
-                $mail->addAddress($toEmail, $toName);    
+                $mail->addAddress($toEmail, $toName);
             }
             //$mail->addAddress('ellen@example.com');
             $mail->addReplyTo($mailconfig->Username, 'DB-group4');        
@@ -62,5 +66,3 @@ class sendmail
         }
     }
 }
-
-?>
