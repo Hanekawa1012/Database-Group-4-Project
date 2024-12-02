@@ -76,6 +76,7 @@
                 $title = $fetch['title'];
                 $description = $fetch['details'];
                 $current_price = $fetch['startPrice'];
+                $status = $fetch['status'];
                 $end_date = $fetch['endDate'];
 
                 // Fetch the current highest bid price for the item
@@ -89,7 +90,7 @@
                 $num_bids = mysqli_num_rows($bid_result);
 
                 // Print each item as a list item
-                print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+                print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date, $status);
             }
         } else {
             echo "<p>No recommendations available at the moment.</p>";

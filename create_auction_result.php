@@ -23,29 +23,29 @@
     $auctionSellerID = $_SESSION['user_id'];
 
     if ($auctionTitle == "") {
-        echo "Error:Title required.";
+        echo "Error: Title required.";
         header("refresh:3;url=create_auction.php");
         exit();
     }
     if ($auctionCategory == "None") {
-        echo "Error:category needed";
+        echo "Error: Category needed";
         header("refresh:3;url=create_auction.php");
         exit();
     }
     if ($auctionStartPrice == "") {
-        echo "Error:starting price required";
+        echo "Error: Starting price required";
         header("refresh:3;url=create_auction.php");
         exit();
     }
     if ($auctionEndDate == "") {
-        echo "Error:end date needed";
+        echo "Error: End date needed";
         header("refresh:3;url=create_auction.php");
         exit();
     }
     $now = new DateTime();
     $checkEndDate = new DateTime($auctionEndDate);
     if ($checkEndDate <= $now) {
-        echo "Error:end date should be later than present time.";
+        echo "Error: End date should be later than present time.";
         header("refresh:3;url=create_auction.php");
         exit();
     }
@@ -58,9 +58,9 @@
                     '$auctionReservePrice', NOW(), '$auctionEndDate', '$auctionSellerID');";
 
     if (mysqli_query($con, $sql)) {
-        echo "Data insert succeed.\n";
+        echo "Auction created successfully.\n";
     } else {
-        echo "Data insert failed.\n" . "<br/>" . $con->error;
+        echo "Create failed.\n" . "<br/>" . $con->error;
     }
     $con->close();
     // If all is successful, let user know.

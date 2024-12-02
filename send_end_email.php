@@ -27,7 +27,7 @@ if ($result->num_rows > 0) {
     $mail = new PHPMailer(true);
     try {
         // Server setting
-        $mailconfig = json_decode('{"Host":"smtp.163.com","Username":"cdzhj1012@163.com","Password":"WZbdaNUUc9NKqDTx","SMTPSecure":"ssl","Port":465}');
+        $mailconfig = json_decode('{"Host": "smtp.163.com", "Username": "cdzhj1012@163.com", "Password": "WZbdaNUUc9NKqDTx", "SMTPSecure": "ssl", "Port": 465}');
         $mail->CharSet = "UTF-8";                              
         $mail->SMTPDebug = 0;                                   
         $mail->isSMTP();                                        

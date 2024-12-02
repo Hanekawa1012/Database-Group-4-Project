@@ -22,7 +22,7 @@ function display_time_remaining($interval)
 
 // print_listing_li:
 // This function prints an HTML <li> element containing an auction listing
-function print_listing_li($item_id, $title, $desc, $price, $num_bids, $end_time)
+function print_listing_li($item_id, $title, $desc, $price, $num_bids, $end_time, $status)
 {
     // Truncate long descriptions
     if (strlen($desc) > 250) {
@@ -39,14 +39,20 @@ function print_listing_li($item_id, $title, $desc, $price, $num_bids, $end_time)
     }
 
     // Calculate time to auction end
-    $end_time = new DateTime($end_time);
-    $now = new DateTime();
-    if ($now > $end_time) {
-        $time_remaining = 'This auction has ended';
+    if ($status == 'cancelled') {
+        $time_remaining = 'Auction cancelled';
+    } elseif ($status == 'closed') {
+        $time_remaining = 'Auction closed';
     } else {
-        // Get interval:
-        $time_to_end = date_diff($now, $end_time);
-        $time_remaining = display_time_remaining($time_to_end) . ' remaining';
+        $end_time = new DateTime($end_time);
+        $now = new DateTime();
+        if ($now > $end_time) {
+            $time_remaining = 'Auction closed';
+        } else {
+            // Get interval:
+            $time_to_end = date_diff($now, $end_time);
+            $time_remaining = display_time_remaining($time_to_end) . ' remaining';
+        }
     }
 
     // Print HTML
@@ -60,7 +66,7 @@ function print_listing_li($item_id, $title, $desc, $price, $num_bids, $end_time)
 
 // print_listing_li:
 // This function prints an HTML <li> element containing an auction listing
-function print_bid_listing_li($item_id, $title, $desc, $bidPrice, $bidTime, $end_time,$status)
+function print_bid_listing_li($item_id, $title, $desc, $bidPrice, $bidTime, $end_time, $status)
 {
     // Truncate long descriptions
     if (strlen($desc) > 250) {
@@ -69,14 +75,16 @@ function print_bid_listing_li($item_id, $title, $desc, $bidPrice, $bidTime, $end
         $desc_shortened = $desc;
     }
 
-    if ($status == "cancelled"){
-        $time_remaining = "This auction is cancelled";
-    }else{
+    if ($status == "cancelled") {
+        $time_remaining = "Auction cancelled";
+    } elseif ($status == "closed") {
+        $time_remaining = "Auction closed";
+    } else {
         // Calculate time to auction end
         $end_time = new DateTime($end_time);
         $now = new DateTime();
         if ($now > $end_time) {
-            $time_remaining = 'This auction has ended';
+            $time_remaining = 'Auction closed';
         } else {
             // Get interval:
             $time_to_end = date_diff($now, $end_time);

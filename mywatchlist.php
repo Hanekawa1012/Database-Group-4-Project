@@ -122,9 +122,9 @@ $max_page = ceil($num_results / $results_per_page);
             } else {
                 $current_price = $fetch['startPrice'];
             }
-
+            $status = $fetch['status'];
             $end_date = $fetch['endDate'];
-            print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date);
+            print_listing_li($item_id, $title, $description, $current_price, $num_bids, $end_date, $status);
         }
         ?>
 
