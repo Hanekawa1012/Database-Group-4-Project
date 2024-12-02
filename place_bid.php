@@ -22,6 +22,7 @@ if ($_POST['bidPrice'] != "") {
     $bidTime = new DateTime();
     $bidTime = $bidTime->format('y-m-d H:i:s');
     $item_id = intval($_SESSION['viewing']);
+    $current_price = $_POST['current_price'];
 
     if ($bidPrice <= $current_price) {
         echo ('Error: Bid price shold be greater than current one.');

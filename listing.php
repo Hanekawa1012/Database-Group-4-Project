@@ -120,26 +120,23 @@ if (isset($_SESSION['user_id'])) {
                     </p>
                     <p class="lead">Current bid: £<?php echo (number_format($current_price, 2)) ?></p>
 
-                <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer') { ?>
+                <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'buyer'): ?>
                         <!-- Bidding form -->
-                    <?php echo ('
-            <form method="POST" action="place_bid.php">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">£</span>
+                <form method="POST" action="place_bid.php">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">£</span>
+                        </div>
+                        <input type="number" class="form-control" name="bidPrice" id="bid">
                     </div>
-                    <input type="number" class="form-control" name="bidPrice" id="bid">
-                </div>
-                <button type="submit" class="btn btn-primary form-control">Place bid</button>
-            </form>
-            '); ?>
-                <?php } else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'seller' && $_SESSION['user_id'] == $seller_id) { ?>
-                    <?php echo ('
-            <form method="GET" action="cancel_auction.php">
-                <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
-            </form>
-            '); ?>
-                <?php } ?>
+                    <button type="submit" class="btn btn-primary form-control" name="current_price" value= $current_price>Place bid</button>
+                </form>
+                <?php else: if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true && $_SESSION['account_type'] == 'seller' && $_SESSION['user_id'] == $seller_id): ?>
+                    <form method="GET" action="cancel_auction.php">
+                        <button type="submit" class="btn btn-danger form-control">Cancel auction</button>
+                    </form>
+                <?php endif ?>
+                <?php endif ?>
             <!-- <?php endif ?> -->
 
 
