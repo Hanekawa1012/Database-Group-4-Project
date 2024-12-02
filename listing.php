@@ -423,6 +423,23 @@ mysqli_data_seek($comments_result, 0);
 
                 echo '<button class="btn btn-link" onclick="showReplyForm(' . $comment['comment_id'] . ')">Reply</button>';
 
+                echo '<div id="replyForm-' . $comment['comment_id'] . '" style="display:none;"> <form method="POST" action="post_comment.php">';
+
+                if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true) {
+                    echo '<input type="hidden" name="buyer_id" value="' . $_SESSION['user_id'] . '">';
+                } else {
+                    echo '<p>Please log in to post a reply.</p>';
+                }
+                echo '<input type="hidden" name="item_id" value="' . $item_id . '">';
+                echo '<input type="hidden" name="parent_comment_id" value="' . $comment['comment_id'] . '">';
+                echo '<div class="form-group">';
+                echo '<textarea class="form-control" id="replyContent-' . $comment['comment_id'] . '" name="content" placeholder="Reply..." required></textarea>';
+                echo '</div>';
+                echo '<button type="submit" class="btn btn-primary">Post Reply</button>
+                        </form>
+                    </div>';
+
+
                 // Add delete button for user's own comments
                 if (isset($_SESSION['user_id']) and $_SESSION['user_id'] == $comment['buyer_id']) {
                     echo '<form method="POST" action="delete_comment.php?item_id=' . $item_id . '" style="display:inline;">';
@@ -461,16 +478,16 @@ mysqli_data_seek($comments_result, 0);
             },
             body: JSON.stringify({ comment_id: commentId })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Liked!');
-                location.reload(); // Refresh to update like count
-            } else {
-                alert('Error: ' + data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Liked!');
+                    location.reload(); // Refresh to update like count
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
 </script>
 </script>
