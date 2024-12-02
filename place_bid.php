@@ -1,7 +1,7 @@
 <?php include_once "header.php" ?>
 <?php require_once "send_email.php" ?>
 <?php
-// TODO: Extract $_POST variables, check they're OK, and attempt to make a bid.
+// Extract $_POST variables, check they're OK, and attempt to make a bid.
 // Notify user of success/failure and redirect/give navigation options.
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
     echo 'You are not logged in! <a href="" data-toggle="modal" data-target="#loginModal">Login</a>';
@@ -99,4 +99,4 @@ if ($_POST['bidPrice'] != "") {
 }
 ?>
 
-<?php include "footer.php" ?>
+<?php include_once "footer.php" ?>
