@@ -80,7 +80,7 @@ if (isset($_SESSION['user_id'])) {
             <?php
             /* The following watchlist functionality uses JavaScript, but could
                just as easily use PHP as in other places in the code */
-            if ($now < $end_time && $_SESSION['account_type'] == 'buyer'):
+            if (isset($_SESSION['account_type']) && $now < $end_time && $_SESSION['account_type'] == 'buyer'):
                 ?>
                 <div id="watch_nowatch" <?php if ($has_session && $watching)
                     echo ('style="display: none"'); ?>>
