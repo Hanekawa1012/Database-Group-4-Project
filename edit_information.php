@@ -23,25 +23,25 @@ $address = $fetch['address']
         <div class="form-group row">
             <label for="username" class="col-sm-2 col-form-label text-right">Username</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="username" id="username" placeholder=<?php echo htmlspecialchars($_SESSION['username']); ?>>
+                <input type="text" class="form-control" name="username" id="username" value=<?php echo htmlspecialchars($_SESSION['username']); ?>>
             </div>
         </div>
         <div class="form-group row">
             <label for="email" class="col-sm-2 col-form-label text-right">Email</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="email" id="email" placeholder=<?php echo htmlspecialchars($_SESSION['email']); ?>>
+                <input type="text" class="form-control" name="email" id="email" value=<?php echo htmlspecialchars($_SESSION['email']); ?>>
             </div>
         </div>
         <div class="form-group row">
             <label for="tel" class="col-sm-2 col-form-label text-right">Telephone</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="tel" placeholder=<?php echo !empty($tel) ? htmlspecialchars($tel) : ''; ?>>
+                <input type="text" class="form-control" name="tel" value=<?php echo !empty($tel) ? htmlspecialchars($tel) : ''; ?>>
             </div>
         </div>
         <div class="form-group row">
             <label for="address" class="col-sm-2 col-form-label text-right">Address</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="address" placeholder=<?php echo !empty($address) ? htmlspecialchars($address) : ''; ?>>
+                <input type="text" class="form-control" name="address" value=<?php echo !empty($address) ? htmlspecialchars($address) : ''; ?>>
             </div>
         </div>
         <div class="form-group row">
