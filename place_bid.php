@@ -1,4 +1,4 @@
-<?php require_once "listing.php" ?>
+<?php include_once "header.php" ?>
 <?php require_once "send_email.php" ?>
 <?php
 // TODO: Extract $_POST variables, check they're OK, and attempt to make a bid.
@@ -22,6 +22,7 @@ if ($_POST['bidPrice'] != "") {
     $bidTime = new DateTime();
     $bidTime = $bidTime->format('y-m-d H:i:s');
     $item_id = intval($_SESSION['viewing']);
+    $current_price = $_POST['current_price'];
 
     if ($bidPrice <= $current_price) {
         echo ('Error: Bid price shold be greater than current one.');
@@ -97,3 +98,5 @@ if ($_POST['bidPrice'] != "") {
     exit();
 }
 ?>
+
+<?php include "footer.php" ?>
