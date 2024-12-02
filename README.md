@@ -63,8 +63,8 @@
 |--------------|-------------------|---------------------|--------------------------------|
 | `user_id`    | INT               | PK, FK              | User ID                        |
 | `username`   | VARCHAR(50)       |                     | Username                       |
-| `tel`        | VARCHAR(15)       |                      | Telephone number               |
-| `address`    | VARCHAR(100)      | Candidate Key        | Address                        |
+| `tel`        | VARCHAR(15)       |                     | Telephone number               |
+| `address`    | VARCHAR(100)      |                     | Address                        |
 
 - **1NF:** Each attribute contains atomic values.
 - **2NF:** All non-key attributes (`username`, `tel`, `address`) are fully dependent on the primary key (`user_id`).
@@ -153,8 +153,10 @@ All tables in the schema meet the criteria for 1NF, 2NF, and 3NF. Therefore, the
 
 ## All SQL Query Listings Sorted by PHP Files:
 
-### Search Bar Related
-**MAIN FUNCTIONS: collaborate with search bar form input to show items in customized ways**
+### Main page Related
+**MAIN FUNCTIONS:** 
+   - **For browse, mylistings, mybids, mywatchlist: collaborate with search bar form input to show items in customized ways**
+   - **For listing, show the item information, comment and current user's bid history of corresponding items if user logged in as buyer**
 
 #### browse.php
 
@@ -246,47 +248,204 @@ All tables in the schema meet the criteria for 1NF, 2NF, and 3NF. Therefore, the
 
 These SQL statements handle the core functionalities of searching, filtering, and paginating auction listings, as well as retrieving bid information for each listing.
 
+
+#### listing.php
+
+1. **Retrieving Auction Details**:
+    ```php
+    $sql = "SELECT * FROM auctions WHERE item_id = '$item_id';";
+    $result = mysqli_query($con, $sql);
+    $fetch = mysqli_fetch_array($result);
+    ```
+    - **Purpose**: This SQL statement retrieves all details of the auction item from the `auctions` table.
+    - **Parameters**:
+        - `item_id`: The ID of the auction item.
+
+2. **Retrieving Bid Prices**:
+    ```php
+    $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC";
+    $bid_result = mysqli_query($con, $bid_sql);
+    ```
+    - **Purpose**: This SQL statement retrieves all bid prices for the auction item, ordered by the highest bid first, from the `bids` table.
+    - **Parameters**:
+        - `item_id`: The ID of the auction item.
+
+3. **Checking if User is Watching the Item**:
+    ```php
+    $sql = "SELECT buyer_id, item_id FROM watchlist WHERE buyer_id = '$user_id' AND item_id = '$item_id'";
+    $result = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement checks if the user is watching the auction item by looking for a record in the `watchlist` table.
+    - **Parameters**:
+        - `buyer_id`: The ID of the user.
+        - `item_id`: The ID of the auction item.
+
+These SQL statements handle the core functionalities of retrieving auction details, bid prices, and checking if the user is watching the auction item.
+
+4. **Removing from Watchlist**:
+    ```php
+    $sql = "SELECT buyer_id, item_id FROM watchlist WHERE buyer_id = '$user_id' AND item_id = '$item_id'";
+    $result = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement checks if the user is watching the auction item by looking for a record in the `watchlist` table.
+    - **Parameters**:
+        - `buyer_id`: The ID of the user.
+        - `item_id`: The ID of the auction item.
+
+5. **Retrieving Bidding History**:
+    ```php
+    $sql = "SELECT auctions.item_id, auctions.title, auctions.details, auctions.endDate, auctions.status, b.bidTime, b.bidPrice 
+            FROM (SELECT item_id, bidTime, bidPrice FROM bids WHERE bids.item_id = $item_id) as b
+            INNER JOIN auctions
+            ON b.item_id = auctions.item_id
+            ORDER BY bidPrice DESC";
+    $result = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement retrieves the bidding history for the auction item, including details such as bid time and bid price, from the `bids` and `auctions` tables.
+    - **Parameters**:
+        - `item_id`: The ID of the auction item.
+
+6. **Pagination for Bidding History**:
+    ```php
+    $sql .= " LIMIT " . (($curr_page - 1) * $results_per_page) . ", $results_per_page";
+    $result = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement limits the results for the bidding history to the current page based on the pagination settings.
+    - **Parameters**:
+        - `curr_page`: The current page number.
+        - `results_per_page`: The number of results to display per page.
+
+These SQL statements handle the core functionalities of removing an item from the watchlist, retrieving bidding history, and implementing pagination for the bidding history.
+
+7. **Retrieving Comments for the Auction**:
+    ```php
+    $comments_sql = "SELECT c.comment_id, c.buyer_id, c.time, c.content, u.username, c.parent_comment_id
+                     FROM user
+                     JOIN comments c ON user.user_id = c.buyer_id
+                     JOIN profile u ON user.email = u.email
+                     WHERE c.item_id = $item_id
+                     ORDER BY c.time ASC";
+    $comments_result = mysqli_query($con, $comments_sql);
+    ```
+    - **Purpose**: This SQL statement retrieves all comments for the auction item, including the comment ID, buyer ID, time, content, username, and parent comment ID, ordered by time in ascending order.
+    - **Parameters**:
+        - `item_id`: The ID of the auction item.
+
+8. **Counting Likes for Each Comment**:
+    ```php
+    $likes_sql = 'SELECT COUNT(*) AS likes FROM comment_likes WHERE comment_id = ' . $comment['comment_id'];
+    $likes_result = mysqli_query($con, $likes_sql);
+    ```
+    - **Purpose**: This SQL statement counts the number of likes for each comment.
+    - **Parameters**:
+        - `comment_id`: The ID of the comment.
+
+These SQL statements handle the core functionalities of retrieving comments for the auction item and counting the number of likes for each comment.
+
+
 ### Account Management Related 
 **FILES:**
 **MAIN FUNCTIONS: register, login, edit peronal profile, change password, send verification code**
 
+#### process_registration.php
+
+1. **Checking if Email is Already Registered**:
+    ```php
+    $sql = "SELECT * FROM user WHERE email = '$email' AND accountType = '$accountType';";
+    $result = $con->query($sql);
+    ```
+    - **Purpose**: This SQL statement checks if the provided email address is already registered for the specified account type in the `user` table.
+    - **Parameters**:
+        - `email`: The email address entered by the user.
+        - `accountType`: The type of account (e.g., buyer, seller).
+
+2. **Inserting New User Data**:
+    ```php
+    $sql = "INSERT INTO user (password, email, accountType) VALUES (SHA('$password'),'$email','$accountType');";
+    $sql .= "INSERT INTO $accountType SELECT user_id FROM user WHERE email = '$email' AND accountType = '$accountType';";
+    $sql .= "INSERT INTO profile (email, username) VALUES ('$email', '$username');";
+    if ($con->multi_query($sql)) {
+        echo "User data insert succeed.\n";
+    } else {
+        echo "data insert failed.\n" . "<br/>" . $con->error;
+    }
+    ```
+    - **Purpose**: These SQL statements insert new user data into the `user`, `accountType`, and `profile` tables.
+    - **Parameters**:
+        - `password`: The password entered by the user, hashed using the `SHA` function.
+        - `email`: The email address entered by the user.
+        - `accountType`: The type of account (e.g., buyer, seller).
+        - `username`: A randomly generated username.
+
+These SQL statements handle the core functionalities of checking for existing email addresses and inserting new user data into the database.
+
 #### login_result.php
 
-1. **SQL Statement:**
-   ```sql
-   $sql = "SELECT * FROM user WHERE email = '$email' AND password = SHA('$password') AND accountType = '$accountType';";
-   ```
-   **Explanation:** This query selects all columns from the `user` table where the `email`, `password` (hashed using the `SHA` function), and `accountType` match the provided values. It is used to verify the user's login credentials.
+1. **User Login Query**:
+    ```php
+    $sql = "SELECT * FROM user WHERE email = '$email' AND password = SHA('$password') AND accountType = '$accountType';";
+    $result = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement checks if a user with the provided email, password, and account type exists in the `user` table.
+    - **Parameters**:
+        - `email`: The email address entered by the user.
+        - `password`: The password entered by the user, hashed using the `SHA` function.
+        - `accountType`: The type of account (e.g., buyer, seller) selected by the user.
 
-2. **SQL Statement:**
-   ```sql
-   $sql_profile = "SELECT * FROM profile WHERE user_id = '$user_id';";
-   ```
-   **Explanation:** This query selects all columns from the `profile` table where the `user_id` matches the provided user ID. It is used to retrieve the user's profile information after successful login.
+2. **Profile Query**:
+    ```php
+    $sql_profile = "SELECT * FROM profile WHERE email = '$email';";
+    $result_profile = mysqli_query($con, $sql_profile);
+    ```
+    - **Purpose**: This SQL statement retrieves the profile information of the user from the `profile` table based on the provided email.
+    - **Parameters**:
+        - `email`: The email address of the user.
 
-These SQL statements are used to authenticate the user by checking their email, password, and account type, and then to retrieve their profile information if the login is successful.
+These SQL statements handle the core functionalities of verifying user credentials during login and retrieving the user's profile information.
 
 #### forget_password.php
 
-1. **SQL Statement:**
-   ```sql
-   $sql = "SELECT user_id FROM user WHERE email = '$email'";
-   ```
-   **Explanation:** This query selects the `user_id` from the `user` table where the `email` matches the provided email address. It is used to check if a user with the given email exists.
+1. **Checking if User Exists**:
+    ```php
+    $sql = "SELECT user_id FROM user WHERE email = '$email'";
+    $user_record = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement checks if a user with the provided email exists in the `user` table.
+    - **Parameters**:
+        - `email`: The email address entered by the user.
 
-2. **SQL Statement:**
-   ```sql
-   $sql_username = "SELECT username FROM profile WHERE user_id = '$user_id';";
-   ```
-   **Explanation:** This query selects the `username` from the `profile` table where the `user_id` matches the provided user ID. It is used to retrieve the username associated with the user ID.
+2. **Retrieving Username**:
+    ```php
+    $sql_username = "SELECT username FROM profile WHERE email = '$email';";
+    $result_profile = mysqli_query($con, $sql_username);
+    ```
+    - **Purpose**: This SQL statement retrieves the username associated with the provided email from the `profile` table.
+    - **Parameters**:
+        - `email`: The email address of the user.
 
-3. **SQL Statement:**
-   ```sql
-   $sql_update_password = "UPDATE user SET password = SHA('$new_password') WHERE user_id = $user_id";
-   ```
-   **Explanation:** This query updates the `password` column in the `user` table for the user with the specified `user_id`. The new password is hashed using the `SHA` function before being stored in the database.
+3. **Updating Password**:
+    ```php
+    $sql_update_password = "UPDATE user SET password = SHA('$new_password') WHERE user_id = $user_id";
+    ```
+    - **Purpose**: This SQL statement updates the password for the user with the specified `user_id` in the `user` table.
+    - **Parameters**:
+        - `new_password`: The new password entered by the user, hashed using the `SHA` function.
+        - `user_id`: The ID of the user whose password is being updated.
 
-These SQL statements are used to verify the existence of a user by email, retrieve the username associated with the user ID, and update the user's password in the database after verification.
+These SQL statements handle the core functionalities of verifying the existence of a user, retrieving the user's username, and updating the user's password.
+
+#### edit_information.php
+
+1. **Retrieving User Profile Information**:
+    ```php
+    $sql = "SELECT * FROM profile WHERE email = '$email';";
+    $result = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement retrieves the profile information of the user based on their email address from the `profile` table.
+    - **Parameters**:
+        - `email`: The email address of the user.
+
+This SQL statement handles the core functionality of retrieving the user's profile information to display it on the profile edit page.
 
 #### process_edit.php
 
@@ -334,52 +493,85 @@ These SQL statements are used to ensure that the user's profile information is c
 
 #### change_password.php
 
-1. **SQL Statement:**
-   ```sql
-   $sql = "UPDATE user SET password = SHA('$new_password') WHERE user_id = '$user_id'";
-   ```
-   **Explanation:** This query updates the `password` column in the `user` table for the user with the specified `user_id`. The new password is hashed using the `SHA` function before being stored in the database.
+1. **Checking if User Exists**:
+    ```php
+    $sql = "SELECT user_id FROM user WHERE email = '$email'";
+    $user_record = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement checks if a user with the provided email exists in the `user` table.
+    - **Parameters**:
+        - `email`: The email address entered by the user.
 
-These SQL statements are used to update the user's password in the database after verifying the user's identity through a verification code sent to their email.
+2. **Retrieving Username**:
+    ```php
+    $sql_username = "SELECT username FROM profile WHERE email = '$email';";
+    $result_profile = mysqli_query($con, $sql_username);
+    ```
+    - **Purpose**: This SQL statement retrieves the username associated with the provided email from the `profile` table.
+    - **Parameters**:
+        - `email`: The email address of the user.
+
+3. **Updating Password**:
+    ```php
+    $sql_update_password = "UPDATE user SET password = SHA('$new_password') WHERE user_id = $user_id";
+    ```
+    - **Purpose**: This SQL statement updates the password for the user with the specified `user_id` in the `user` table.
+    - **Parameters**:
+        - `new_password`: The new password entered by the user, hashed using the `SHA` function.
+        - `user_id`: The ID of the user whose password is being updated.
+
+These SQL statements handle the core functionalities of verifying the existence of a user, retrieving the user's username, and updating the user's password.
 
 ### Buyer/Bids Related
-**MAIN FUNCTIONS: watch, bid for an item, receive outbid or status update notifications of bidded/watching items**
+**MAIN FUNCTIONS: watch, bid for an item, receive outbid or status update notifications of bidded/watching items, get recommendations**
 
 #### place_bid.php
 
-1. **SQL Statement:**
-   ```sql
-   $sql = "INSERT INTO bids (buyer_id, item_id, bidPrice, bidTime) 
-           VALUES ($user_id, $item_id, '$bidPrice', '$bidTime');";
-   ```
-   **Explanation:** This query inserts a new record into the `bids` table with the specified values for `buyer_id`, `item_id`, `bidPrice`, and `bidTime`. This is used to record a new bid made by a user on an auction item.
+1. **Inserting a New Bid**:
+    ```php
+    $sql = "INSERT INTO bids (buyer_id, item_id, bidPrice, bidTime) 
+            VALUES ($user_id, $item_id, '$bidPrice', '$bidTime');";
+    ```
+    - **Purpose**: This SQL statement inserts a new bid into the `bids` table.
+    - **Parameters**:
+        - `buyer_id`: The ID of the buyer making the bid.
+        - `item_id`: The ID of the item being bid on.
+        - `bidPrice`: The bid amount.
+        - `bidTime`: The timestamp of when the bid was made.
 
-2. **SQL Statement:**
-   ```sql
-   $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
-   ```
-   **Explanation:** This query selects the `title`, `details`, `category`, and `endDate` columns from the `auctions` table for the auction with the specified `item_id`. This information is used to provide details about the auction item for email notifications.
+2. **Retrieving Item Details**:
+    ```php
+    $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
+    ```
+    - **Purpose**: This SQL statement retrieves details of the item being bid on from the `auctions` table.
+    - **Parameters**:
+        - `item_id`: The ID of the item.
 
-3. **SQL Statement:**
-   ```sql
-   $sql_watching = "SELECT email FROM user WHERE user_id IN
-                    (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
-   ```
-   **Explanation:** This query selects the `email` addresses from the `user` table for users who have the specified `item_id` in their `watchlist`. This is used to notify all users watching the auction about the new bid.
+3. **Retrieving Emails of Users Watching the Auction**:
+    ```php
+    $sql_watching = "SELECT email FROM user WHERE user_id IN
+                   (SELECT buyer_id FROM watchlist WHERE item_id = $item_id);";
+    ```
+    - **Purpose**: This SQL statement retrieves the email addresses of users who are watching the auction.
+    - **Parameters**:
+        - `item_id`: The ID of the item being watched.
 
-These SQL statements are used to insert a new bid into the database, retrieve auction item details for email notifications, and get the email addresses of users watching the auction to notify them of the new bid.
+These SQL statements handle the core functionalities of placing a bid, retrieving item details, and notifying users who are watching the auction.
 
 #### user_info.php
 
-1. **Fetching user profile information:**
-   ```sql
-   $sql = "SELECT * FROM profile WHERE user_id = '$user_id';";
-   ```
-   - **Purpose:** This query retrieves all the profile information for the user with the specified `user_id`. It is used to fetch the user's telephone number and address, which are then displayed on the profile page.
+1. **Retrieving User Profile Information**:
+    ```php
+    $sql = "SELECT * FROM profile WHERE email = '$email';";
+    $result = mysqli_query($con, $sql);
+    ```
+    - **Purpose**: This SQL statement retrieves the profile information of the user based on their email address from the `profile` table.
+    - **Parameters**:
+        - `email`: The email address of the user.
 
-This SQL statement ensures that the user's profile information is correctly retrieved from the database and displayed on the profile page. If the user has not set their telephone number or address, the page will prompt them to update their profile.
+These SQL statements handle the core functionality of retrieving the user's profile information to display it on the profile page.
 
-#### comment_func.php
+#### comment_funcs.php
 
 1. **Adding a Comment**:
     ```php
@@ -444,46 +636,189 @@ This SQL statement ensures that the user's profile information is correctly retr
 
 These SQL statements handle the core functionalities of adding comments, liking comments, and retrieving comments with their like counts and associated buyer usernames.
 
+#### post_comment.php
+
+1. **Inserting a New Comment**:
+    ```php
+    $sql = "INSERT INTO comments (item_id, buyer_id, time, content, parent_comment_id) 
+            VALUES ($item_id, $user_id, NOW(), '$content', $parent_comment_id)";
+    ```
+    - **Purpose**: This SQL statement inserts a new comment into the `comments` table.
+    - **Parameters**:
+        - `item_id`: The ID of the item being commented on.
+        - `buyer_id`: The ID of the buyer making the comment.
+        - `time`: The current timestamp when the comment is made.
+        - `content`: The content of the comment.
+        - `parent_comment_id`: The ID of the parent comment if it's a reply; otherwise, it's `NULL`.
+
+These SQL statements handle the core functionality of adding a new comment to the database.
+
+#### like_comment.php
+
+1. **Checking if User has Already Liked the Comment**:
+    ```php
+    $check_sql = "SELECT * FROM comment_likes WHERE buyer_id = $user_id AND comment_id = $comment_id";
+    $check_result = mysqli_query($con, $check_sql);
+    ```
+    - **Purpose**: This SQL statement checks if the user has already liked the comment by looking for a record in the `comment_likes` table.
+    - **Parameters**:
+        - `buyer_id`: The ID of the user.
+        - `comment_id`: The ID of the comment.
+
+2. **Inserting a Like into the Database**:
+    ```php
+    $insert_sql = "INSERT INTO comment_likes (buyer_id, comment_id) VALUES ($user_id, $comment_id)";
+    if (mysqli_query($con, $insert_sql)) {
+        echo json_encode(["success" => true]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Failed to like comment."]);
+    }
+    ```
+    - **Purpose**: This SQL statement inserts a new like into the `comment_likes` table.
+    - **Parameters**:
+        - `buyer_id`: The ID of the user liking the comment.
+        - `comment_id`: The ID of the comment being liked.
+
+These SQL statements handle the core functionalities of checking if the user has already liked a comment and inserting a new like into the database if they haven't.
+
+#### delete_comment.php
+
+1. **Checking if the Comment Belongs to the User**:
+    ```php
+    $check_sql = "SELECT * FROM comments WHERE comment_id = $comment_id AND buyer_id = $user_id";
+    $check_result = mysqli_query($con, $check_sql);
+    ```
+    - **Purpose**: This SQL statement checks if the comment with the specified `comment_id` belongs to the user with the specified `user_id`.
+    - **Parameters**:
+        - `comment_id`: The ID of the comment.
+        - `buyer_id`: The ID of the user.
+
+2. **Deleting the Comment**:
+    ```php
+    $delete_sql = "DELETE FROM comments WHERE comment_id = $comment_id";
+    if (mysqli_query($con, $delete_sql)) {
+        header("Location: listing.php?item_id=" . $_GET['item_id']);
+    } else {
+        echo "Error: " . mysqli_error($con);
+    }
+    ```
+    - **Purpose**: This SQL statement deletes the comment with the specified `comment_id` from the `comments` table.
+    - **Parameters**:
+        - `comment_id`: The ID of the comment.
+
+These SQL statements handle the core functionalities of verifying comment ownership and deleting the comment if the user is authorized.
+
+#### recommendations.php
+
+1. **Retrieving Recommended Items Based on Cosine Similarity**:
+    ```php
+    $sql = "SELECT
+        b1.item_id,
+        a.title,
+        a.details,
+        a.startPrice,
+        a.endDate,
+        SUM(CASE WHEN b1.present = 1 AND b2.present = 1 THEN 1 ELSE 0 END) / 
+        (SQRT(SUM(POWER(b1.present, 2))) * SQRT(SUM(POWER(b2.present, 2)))) AS cosine_similarity
+    FROM
+        (
+            SELECT 
+                u.user_id,
+                a.item_id,
+                IF(b.bid_id IS NOT NULL, 1, 0) AS present
+            FROM 
+                user u
+            CROSS JOIN 
+                auctions a
+            LEFT JOIN 
+                bids b ON u.user_id = b.buyer_id AND a.item_id = b.item_id
+        ) AS b1
+    JOIN
+        (
+            SELECT 
+                u.user_id,
+                a.item_id,
+                IF(b.bid_id IS NOT NULL, 1, 0) AS present
+            FROM 
+                user u
+            CROSS JOIN 
+                auctions a
+            LEFT JOIN 
+                bids b ON u.user_id = b.buyer_id AND a.item_id = b.item_id
+        ) AS b2 ON b1.item_id = b2.item_id AND b1.user_id != b2.user_id
+    JOIN
+        auctions a ON b1.item_id = a.item_id
+    WHERE
+        b1.user_id = $user_id AND b2.user_id != $user_id AND a.endDate > NOW()
+    GROUP BY
+        b1.item_id, a.title, a.details, a.startPrice, a.endDate
+    HAVING
+        cosine_similarity > 0.3333333
+    ORDER BY
+        cosine_similarity DESC
+    LIMIT 10;";
+    ```
+    - **Purpose**: This SQL statement retrieves recommended auction items for the user based on cosine similarity of bidding patterns. It calculates the similarity between the current user and other users, and recommends items that similar users have bid on.
+    - **Parameters**:
+        - `user_id`: The ID of the current user.
+        - `cosine_similarity`: A measure of similarity between users' bidding patterns.
+        - `item_id`, `title`, `details`, `startPrice`, `endDate`: Details of the auction items.
+
+2. **Fetching Current Highest Bid Price for Each Item**:
+    ```php
+    $bid_sql = "SELECT bidPrice FROM bids WHERE item_id = $item_id ORDER BY bidPrice DESC LIMIT 1";
+    $bid_result = mysqli_query($con, $bid_sql);
+    ```
+    - **Purpose**: This SQL statement retrieves the highest bid price for each recommended auction item.
+    - **Parameters**:
+        - `item_id`: The ID of the auction item.
+
+These SQL statements handle the core functionalities of generating personalized auction item recommendations based on user similarity and retrieving the highest bid prices for those items.
+
 ### Seller/Auctions Related
-**MAIN FUNCTIONS: create, cancel, update status of auctions**
+**MAIN FUNCTIONS: item page view, create, cancel, update status of auctions**
 
 #### create_auction_result.php
 
-1. **SQL Statement:**
-   ```sql
-   $sql = "INSERT INTO auctions(title, details, category, startPrice, reservePrice, startDate, endDate, seller_id) 
-           VALUES ('$auctionTitle', '$auctionDetails', '$auctionCategory', '$auctionStartPrice', 
-                   '$auctionReservePrice', NOW(), '$auctionEndDate', '$auctionSellerID');";
-   ```
-   **Explanation:** This query inserts a new record into the `auctions` table with the specified values for `title`, `details`, `category`, `startPrice`, `reservePrice`, `startDate` (set to the current date and time using `NOW()`), `endDate`, and `seller_id`. This is used to create a new auction listing in the database.
+1. **Inserting a New Auction**:
+    ```php
+    $sql = "INSERT INTO auctions(title, details, category, startPrice, reservePrice, startDate, endDate, seller_id) 
+            VALUES ('$auctionTitle', '$auctionDetails', '$auctionCategory', '$auctionStartPrice', 
+                    '$auctionReservePrice', NOW(), '$auctionEndDate', '$auctionSellerID');";
+    ```
+    - **Purpose**: This SQL statement inserts a new auction into the `auctions` table.
+    - **Parameters**:
+        - `title`: The title of the auction.
+        - `details`: The details or description of the auction.
+        - `category`: The category of the auction.
+        - `startPrice`: The starting price of the auction.
+        - `reservePrice`: The reserve price of the auction.
+        - `startDate`: The current date and time when the auction is created.
+        - `endDate`: The end date and time of the auction.
+        - `seller_id`: The ID of the seller creating the auction.
 
-2. **SQL Statement:**
-   ```sql
-   if (mysqli_query($con, $sql)) {
-       echo "Data insert succeed.\n";
-   } else {
-       echo "Data insert failed.\n" . "<br/>" . $con->error;
-   }
-   ```
-   **Explanation:** This block executes the previously constructed SQL `INSERT` statement. If the query is successful, it outputs a success message. If the query fails, it outputs an error message along with the error details.
-
-These SQL statements are used to add a new auction listing to the database, ensuring that all necessary data is provided and valid before insertion.
+This SQL statement handles the core functionality of adding a new auction listing to the database.
 
 #### cancel_auction.php:
 
-1. **SQL Statement:**
-   ```sql
-   $sql = "UPDATE auctions SET status = 3 WHERE item_id = $item_id;";
-   ```
-   **Explanation:** This query updates the `auctions` table, setting the `status` column to `3` (which represents a cancelled status) for the auction with the specified `item_id`.
+1. **Updating Auction Status**:
+    ```php
+    $sql = "UPDATE auctions SET status = 3 WHERE item_id = $item_id;";
+    ```
+    - **Purpose**: This SQL statement updates the status of the auction to `3` (which likely represents a canceled status) in the `auctions` table.
+    - **Parameters**:
+        - `item_id`: The ID of the auction item being canceled.
 
-2. **SQL Statement:**
-   ```sql
-   $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
-   ```
-   **Explanation:** This query selects the `title`, `details`, `category`, and `endDate` columns from the `auctions` table for the auction with the specified `item_id`. This information is used to provide details about the cancelled auction.
+2. **Retrieving Auction Details**:
+    ```php
+    $sql_item = "SELECT title, details, category, endDate FROM auctions WHERE item_id = $item_id;";
+    $fetch_item = mysqli_fetch_array(mysqli_query($con, $sql_item));
+    ```
+    - **Purpose**: This SQL statement retrieves the details of the auction item from the `auctions` table.
+    - **Parameters**:
+        - `item_id`: The ID of the auction item.
 
-These SQL statements are used to update the status of an auction to cancelled and to retrieve the details of the auction for confirmation and notification purposes. 
+These SQL statements handle the core functionalities of canceling an auction and retrieving the auction details for notification purposes.
 
 ### Daily Notification/ Watchlist Related
 
