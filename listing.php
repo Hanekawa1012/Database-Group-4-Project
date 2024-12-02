@@ -140,7 +140,7 @@ if (isset($_SESSION['user_id'])) {
             </form>
             '); ?>
                 <?php } ?>
-            <?php endif ?>
+            <!-- <?php endif ?> -->
 
 
         </div> <!-- End of right col with bidding info -->
